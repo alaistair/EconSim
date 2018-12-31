@@ -4,20 +4,30 @@ class Firm():
 
     def __init__(self):
 
-        self.production = 0
-        self.revenue = 0
-        self.inventory = 0
+        self.production = [0]
+        self.revenue = [0]
+        self.inventory = [0]
 
-    def firm_production(self, production):
-        self.production = production
+    def firm_production(self, revenue):
+        if self.inventory[-1] < 0:
+            production = revenue - self.inventory[-1]
+        elif self.inventory[-1] > 0.5 * revenue:
+            production = 0.5 * revenue
+            self.inventory[-1] -= 0.5 * revenue
+        elif self.inventory[-1] > 0.1 * revenue:
+            production = 0.9 * revenue
+            self.inventory[-1] -= 0.1 * revenue
+        else:
+            production = revenue
+            
+        self.production.append(production)
+
         print("Firm production = " + str(self.production))
-        self.inventory += production
-        print("Firm inventory = " + str(self.inventory))
-        return self.production
+        return production
 
     def firm_revenue(self, sales):
-        self.revenue = sales
+        self.revenue.append(sales)
         print("Firm sales = " + str(self.revenue))
-        self.inventory -= sales
+        self.inventory.append(self.inventory[-1] + self.production[-1] - self.revenue[-1])
         print("Firm inventory = " + str(self.inventory))
-        return self.revenue
+        return self.revenue[-1]
