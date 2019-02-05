@@ -2,40 +2,42 @@
 
 class Firm():
 
-    def __init__(self):
-        self.production = [100]
-        self.revenue = [100]
-        self.inventory = [0]
+    def __init__(self, firmID):
+        self.firmID = firmID
+
+        self.inventory = 200 # stock of inventory
+        self.production = 0 # production for one cycle
+        self.revenue = 0 # revenue for one cycle
 
     def firm_production(self, revenue):
-        if self.inventory[-1] < 0:
-            production = revenue - self.inventory[-1]
-        elif self.inventory[-1] > 0.5 * revenue:
-            production = 0.5 * revenue
-            self.inventory[-1] -= 0.5 * revenue
-        elif self.inventory[-1] > 0.1 * revenue:
-            production = 0.9 * revenue
-            self.inventory[-1] -= 0.1 * revenue
-        else:
-            production = revenue
+        self.production = revenue
 
-        self.production.append(production)
+        return self.production
 
-        print("Firm production = " + str(self.production))
-        return production
-
+    # Adds sales to firm's revenue.
+    # Return 0 if sales fulfilled, return residual if inventory run out
     def firm_revenue(self, sales):
-        self.revenue.append(sales)
-        print("Firm sales = " + str(self.revenue))
-        self.inventory.append(self.inventory[-1] + self.production[-1] - self.revenue[-1])
-        print("Firm inventory = " + str(self.inventory))
-        return self.revenue[-1]
+        if self.inventory > sales: # firm fulfils all sales
+            self.inventory -= sales
+            self.revenue += sales
+            print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()))
+            return 0
+        elif self.inventory > 0: # firm partially fulfils order, returns unfilled amount
+            self.revenue += sales
+            sales -= self.inventory
+            self.inventory = 0
+            print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()) + " " + str(sales) + ' leftover')
+            return sales
+        elif self.inventory == 0: # firm out of stock, return sales
+            print("firm" + str(self.get_firm_ID()) + " out of stock")
+            return sales
 
-    def get_firm_production(self):
-        return self.production[-1]
+    def get_firm_data(self):
+        data = {'firmID': self.firmID,
+                'inventory': [self.inventory],
+                'production': [self.production],
+                'revenue': [self.revenue]}
+        return data
 
-    def get_firm_inventory(self):
-        return self.inventory[-1]
-
-    def get_firm_revenue(self):
-        return self.revenue[-1]
+    def get_firm_ID(self):
+        return self.firmID
