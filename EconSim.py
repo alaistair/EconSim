@@ -15,9 +15,11 @@ econ1 = Economy(settings)
 def cycle(Economy):
     econ1.update_time()
     econ1.consumption_market()
+    econ1.update_economy_data('c')
     econ1.production_market()
+    econ1.update_economy_data('p')
     econ1.financial_market()
-    econ1.update_economy_data()
+
 
 print("Time elapsed: " + str(time.time() - t_zero))
 

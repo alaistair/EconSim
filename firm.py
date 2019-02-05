@@ -20,16 +20,16 @@ class Firm():
         if self.inventory > sales: # firm fulfils all sales
             self.inventory -= sales
             self.revenue += sales
-            print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()))
+            #print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()))
             return 0
         elif self.inventory > 0: # firm partially fulfils order, returns unfilled amount
             self.revenue += sales
             sales -= self.inventory
             self.inventory = 0
-            print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()) + " " + str(sales) + ' leftover')
+            #print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()) + " " + str(sales) + ' leftover')
             return sales
         elif self.inventory == 0: # firm out of stock, return sales
-            print("firm" + str(self.get_firm_ID()) + " out of stock")
+            #print("firm" + str(self.get_firm_ID()) + " out of stock")
             return sales
 
     def get_firm_data(self):

@@ -14,32 +14,32 @@ class Economy():
         # Initialise households
         self.max_hhID = 0
         self.households = [] # list of households
-        tuples = [] # index (time, hhID) for household dataframe
+        tuples = [] # index (time, cycle, hhID) for household dataframe
         for i in range(0, settings.init_households):
             self.households.append(Household(self.max_hhID))
-            tuples.append((self.time, i))
+            tuples.append((self.time, 'c', i))
             self.max_hhID += 1
 
         # Initialise dataframe for household data
         self.households_data = pd.DataFrame({'income': [0.],
                                 'savings': [0.],
                                 'spending': [0.]
-                                }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'hhID']))
+                                }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'hhID']))
 
         # Initialise firms
         self.max_firmID = 0
         self.firms = [] # list of firms
-        tuples = [] # index (time, firmID) for firm dataframe
+        tuples = [] # index (time, cycle, firmID) for firm dataframe
         for i in range(0, settings.init_firms):
             self.firms.append(Firm(self.max_firmID))
-            tuples.append((self.time, i))
+            tuples.append((self.time, 'c', i))
             self.max_firmID += 1
 
         # Initialise dataframe for firm data
         self.firms_data = pd.DataFrame({'inventory': [0.],
                                 'production': [0.],
                                 'revenue': [0.]
-                                }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'firmID']))
+                                }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
 
         #self.update_economy_data()
         #self.households_data = self.households_data.iloc[1:] # remove first blank row
@@ -50,7 +50,7 @@ class Economy():
         # Fill with initial household data
         for household in self.households:
             data = household.get_household_data()
-            self.households_data.loc[(0, household.get_household_ID())] = {
+            self.households_data.loc[(0, 'p', household.get_household_ID())] = {
                                 'income':data['income'][-1],
                                 'savings':data['savings'][-1],
                                 'spending':data['spending'][-1],}
@@ -58,7 +58,7 @@ class Economy():
         # Fill with initial firm data
         for firm in self.firms:
             data = firm.get_firm_data()
-            self.firms_data.loc[(0, firm.get_firm_ID())] = {
+            self.firms_data.loc[(0, 'p', firm.get_firm_ID())] = {
                                 'inventory':data['inventory'][-1],
                                 'production':data['production'][-1],
                                 'revenue':data['revenue'][-1],}
@@ -66,13 +66,26 @@ class Economy():
         # Dataframe for economy data
         df1 = self.households_data.groupby(level=0).sum()
         df2 = self.firms_data.groupby(level=0).sum()
-        self.economy_data = pd.DataFrame({'total hh income':[float(df1['income'])],
-                                        'total hh savings':[float(df1['savings'])],
-                                        'total hh spending':[float(df1['spending'])],
-                                        'total firm inventory':[float(df2['inventory'])],
-                                        'total firm production':[float(df2['production'])],
-                                        'total firm revenue':[float(df2['revenue'])]
-                        }, index = [self.time])
+        tuples = []
+        tuples.append((self.time, 'c'))
+        tuples.append((self.time, 'p'))
+
+        self.economy_data = pd.DataFrame({'total hh income':[0.],
+                                        'total hh savings':[0.],
+                                        'total hh spending':[0.],
+                                        'total firm inventory':[0.],
+                                        'total firm production':[0.],
+                                        'total firm revenue':[0.]
+                        }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
+
+        self.economy_data.loc[(0, 'p')] = {
+                                    'total hh income':float(df1['income']),
+                                    'total hh savings':float(df1['savings']),
+                                    'total hh spending':float(df1['spending']),
+                                    'total firm inventory':float(df2['inventory']),
+                                    'total firm production':float(df2['production']),
+                                    'total firm revenue':float(df2['revenue']),}
+
 
     def production_market(self):
         # cycle through each firm's production
@@ -100,14 +113,14 @@ class Economy():
     def financial_market(self):
         pass
 
-    def update_economy_data(self):
+    def update_economy_data(self, cycle):
 
         for household in self.households:
             data = household.get_household_data()
             df = pd.DataFrame({'income':data['income'],
                             'savings':data['savings'],
                             'spending':data['spending']},
-                            index = [(self.time, data['hhID'])])
+                            index = [(self.time, cycle, data['hhID'])])
             self.households_data = pd.concat([self.households_data, df])
 
         for firm in self.firms:
@@ -115,7 +128,7 @@ class Economy():
             df = pd.DataFrame({'inventory':data['inventory'],
                             'production':data['production'],
                             'revenue':data['revenue']},
-                            index = [(self.time, data['firmID'])])
+                            index = [(self.time, cycle, data['firmID'])])
             self.firms_data = pd.concat([self.firms_data, df])
 
         df1 = self.households_data.groupby(level=0).sum().loc[self.time]
@@ -126,7 +139,7 @@ class Economy():
                             'total firm inventory': float(df2['inventory']),
                             'total firm production': float(df2['production']),
                             'total firm revenue': float(df2['revenue'])},
-                            index = [self.time])
+                            index = [(self.time, cycle)])
         self.economy_data = pd.concat([self.economy_data, sum])
         return 1
 
