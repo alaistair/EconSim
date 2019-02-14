@@ -7,7 +7,7 @@ external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 #external_stylesheets = ['https://alaistairchan.com/objects/style.css']
 
 class Bar_graph():
-    def __init__(self, households_data, firms_data):
+    def __init__(self, households_data, firms_data, economy_data):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
         self.app.layout = html.Div(children=[
             html.H1(children='EconSim'),
@@ -23,7 +23,7 @@ class Bar_graph():
                 marks={str(time): str(time) for time in households_data.index.get_level_values('time').unique()}
             ),
             dcc.Graph(
-                id='firms',
+                id='economy',
             ),
             dcc.Slider(
                 id='firms-year-slider',

@@ -2,16 +2,20 @@
 
 class Firm():
 
-    def __init__(self, firmID):
+    def __init__(self, firmID, settings):
         self.firmID = firmID
 
-        self.inventory = 200 # stock of inventory
-        self.production = 0 # production for one cycle
-        self.revenue = 0 # revenue for one cycle
+        self.expected_revenue = settings.init_firm_expected_revenue # = 100
+        self.capital = 0
+        self.debt = settings.init_firm_debt # stock of debt
+        self.inventory = 0 # stock of inventory
+        self.production = 0 # flow of production (one cycle)
+        self.productivity = settings.init_productivity # output per labour input
+        self.revenue = 0 # flow of revenue (one cycle)
 
-    def firm_production(self, revenue):
-        self.production = revenue
-
+    def firm_production(self, labour_cost):
+        self.debt += labour_cost
+        self.production = labour_cost * self.productivity
         return self.production
 
     # Adds sales to firm's revenue.
@@ -20,24 +24,16 @@ class Firm():
         if self.inventory > sales: # firm fulfils all sales
             self.inventory -= sales
             self.revenue += sales
-            #print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()))
             return 0
         elif self.inventory > 0: # firm partially fulfils order, returns unfilled amount
-            self.revenue += sales
+            self.revenue += self.inventory
             sales -= self.inventory
             self.inventory = 0
-            #print("spend " + str(sales) + " at firm" + str(self.get_firm_ID()) + " " + str(sales) + ' leftover')
             return sales
         elif self.inventory == 0: # firm out of stock, return sales
-            #print("firm" + str(self.get_firm_ID()) + " out of stock")
             return sales
 
-    def get_firm_data(self):
-        data = {'firmID': self.firmID,
-                'inventory': [self.inventory],
-                'production': [self.production],
-                'revenue': [self.revenue]}
-        return data
-
-    def get_firm_ID(self):
-        return self.firmID
+    def firm_financial(self, interest_rate):
+        self.debt *= interest_rate
+        self.debt -= self.revenue
+        self.revenue = 0
