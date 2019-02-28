@@ -2,14 +2,14 @@
 
 class Household():
 
-    def __init__(self, hhID, settings):
-        self.hhID = hhID
+    def __init__(self, settings):
         self.people = 2 # labour endowment
 
         self.wages = 0 # income from working for one cycle
         self.spending = 0 # spending for one cycle
-        self.savings = settings.init_savings # stock of savings
-        self.MPC = settings.init_MPC
+        self.savings = settings.init_hh_savings # stock of savings
+        self.MPC = settings.init_MPC # 0.9
+        self.human_capital = settings.init_human_capital # productive capacity, init = 100
 
     def household_production(self, wages):
         self.wages = wages
@@ -25,3 +25,5 @@ class Household():
         self.savings += self.wages
         self.wages = 0
         self.spending = 0
+
+        return 0

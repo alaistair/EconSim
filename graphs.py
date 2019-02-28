@@ -3,85 +3,67 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-#external_stylesheets = ['https://alaistairchan.com/objects/style.css']
+external_stylesheets = ['static/style.css']
 
 class Bar_graph():
-    def __init__(self, households_data, firms_data, economy_data):
+    def __init__(self, economy):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+        self.economy = economy
+        self.index = self.df.index.get_level_values(0).unique()
+        self.graph_economy(economy)
+
+    def graph_economy(self, economy):
         self.app.layout = html.Div(children=[
             html.H1(children='EconSim'),
-            #html.Div([
-            dcc.Graph(
-                id='households',
+            dcc.Graph(id='economy',config={'displayModeBar': False}),
+
+            html.Label('Display options'),
+            dcc.Checklist(
+                id='checklist',
+                options=[
+                    {'label': 'Total household income', 'value': 'total hh income'},
+                    {'label': 'Total household savings', 'value': 'total hh savings'},
+                    {'label': 'Total household spending', 'value': 'total hh spending'},
+                    {'label': 'Total firm inventory', 'value': 'total firm inventory'},
+                    {'label': 'Total firm production', 'value': 'total firm production'},
+                    {'label': 'Total firm revenue', 'value': 'total firm revenue'},
+                    {'label': 'Total firm debt', 'value': 'total firm debt'},
+                ],
+                values=['total hh savings', 'total hh spending']
             ),
-            dcc.Slider(
-                id='households-year-slider',
-                min=0,
-                max=households_data.index.get_level_values('time').max(),
-                value=households_data.index.get_level_values('time').max(),
-                marks={str(time): str(time) for time in households_data.index.get_level_values('time').unique()}
-            ),
-            dcc.Graph(
-                id='economy',
-            ),
-            dcc.Slider(
-                id='firms-year-slider',
-                min=0,
-                max=firms_data.index.get_level_values('time').max(),
-                value=firms_data.index.get_level_values('time').max(),
-                marks={str(time): str(time) for time in firms_data.index.get_level_values('time').unique()}
-            )
-        #])
         ])
 
         @self.app.callback(
-            dash.dependencies.Output('households', 'figure'),
-            [dash.dependencies.Input('households-year-slider', 'value')])
-
-        def update_figure(selected_year):
-            bars = ['income', 'savings', 'spending']
-            traces = []
-            for bar in bars:
-                traces.append(go.Bar(
-                    x = households_data.index.get_level_values('hhID').unique(),
-                    y = households_data[bar][selected_year],
-                    name = bar,
-                ))
-
-            return {
-                'data': traces,
-                'layout': go.Layout(
-                    {'title':'Households'},
-                    #xaxis={'title':'number'},
-                    yaxis={'title':'$'},
-                    legend={'x': 0, 'y': 1},
-
-                    #margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-                )}
-
-        @self.app.callback(
-            dash.dependencies.Output('firms', 'figure'),
-            [dash.dependencies.Input('firms-year-slider', 'value')])
-
-        def update_figure(selected_year):
-            bars = ['inventory', 'production', 'revenue']
-            traces = []
-            for bar in bars:
-                traces.append(go.Bar(
-                    x = [1,2,3,4,5,6,7,8,9,10],
-                    y = firms_data[bar][selected_year],
-                    name = bar,
-                ))
+            dash.dependencies.Output('economy', 'figure'),
+            [dash.dependencies.Input('checklist', 'values')]
+        )
+        def update_graph(graphs):
+            graph_data = []
+            for i in graphs:
+                if i == 'total hh income' or i == 'total firm production' or i == 'total firm inventory':
+                    graph_data.append(go.Scatter(
+                        x = self.index,
+                        y = self.economy.get_production_cycle_data()[i],
+                        name = i
+                    ))
+                elif i == 'total hh spending' or i == 'total firm revenue':
+                    graph_data.append(go.Scatter(
+                        x = self.index,
+                        y = self.economy.get_consumption_cycle_data()[i],
+                        name = i
+                    ))
+                elif i == 'total hh savings' or i == 'total firm debt':
+                    graph_data.append(go.Scatter(
+                        x = self.index,
+                        y = self.economy.get_financial_cycle_data()[i],
+                        name = i
+                    ))
 
             return {
-                'data': traces,
-                'layout': go.Layout(
-                    {'title':'Firms'},
-                    #xaxis={'title':'number'},
-                    yaxis={'title':'$'},
-                    legend={'x': 0, 'y': 1},
-
-                    #margin={'l': 40, 'b': 40, 't': 10, 'r': 10},
-
-                )}
+                'data':graph_data,
+                'layout':
+                    go.Layout(
+                        xaxis={'title':'Year'},
+                        yaxis={'title':'$'}
+                    )
+            }
