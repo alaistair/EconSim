@@ -1,1 +1,1 @@
-# EconSim
+# Kuznets
