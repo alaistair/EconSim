@@ -18,7 +18,7 @@ Tyler Cowen
 
 I have created various toy economic models in the past. In high school I created a circular flow of income in Visual Basic. I am increasingly convinced that there is latent demand for this.
 
-The initial market to address is CFA students. This is a
+The initial market to address is CFA students. Surveys show each student spends at least 300 hours on each of the Level I and Level II exams. Meanwhile the pass rate for the June 2017 Level II was 47%.
 
 
 Kuznets.co
