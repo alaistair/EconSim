@@ -9,7 +9,7 @@ Data generated from the simulation can be used to illustrate various relationshi
 
 I am currently implementing the simulation in Python and will have a minimum viable version of the model soon. The next stage will be developing a front-end (likely in React given that the data are visualised in Dash) and then a back end to handle the users and data. Following that will be developing the content and testing the results. Click here to see a wireframe mockup.
 
-Why Kuznets
+# Why Kuznets
 
 Australia is seeing a precipitous decline in the study of economics. Enrolment in Yr 12 Economics has fallen by 70 per cent over the past 25 years, with even steeper declines seen in the enrolment of females and of public school students. Declining interest in economics has been observed in other countries, including the United States and United Kingdom (with the steepest declines seen among those not white, relatively wealthy, or male, although there have been declines within that cohort too).
 
@@ -25,10 +25,10 @@ The initial market to address is CFA students. Surveys show each student spends 
 
 enrolments
 
-Kuznets.co
+# Kuznets.co
 
 The platform is named in honour of Simon Kuznets, an economist who, among other things, helped create the concept of Gross National Product, devised measures to compute it, won a Nobel Prize for his work on economic growth and how countries at similar stages of development are nonetheless different, and discovered a relationship between income inequality and economic growth.
 
-About me
+# About me
 
 I graduated from The University of Western Australia with degrees in Economics (Hons) and Computer Science. While at UWA I tutored Macroeconomics 101 and Monetary Economics 210. I am a Senior Analyst at the Reserve Bank of Australia.
