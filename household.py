@@ -16,8 +16,18 @@ class Household():
         return self.wages
 
     def household_consumption(self):
-        self.spending = self.wages * self.MPC
-        self.wages *= (1 - self.MPC)
+        if self.savings > 1.5 * self.wages:
+            self.MPC = 1.15
+            self.spending = self.wages * self.MPC
+            self.wages *= (1 - self.MPC)
+            self.savings += self.wages
+            self.wages = 0
+        else:
+            self.MPC = 0.95
+            self.spending = self.wages * self.MPC
+            self.wages *= (1 - self.MPC)
+
+
         return self.spending
 
     def household_financial(self, interest_rate):
@@ -27,3 +37,7 @@ class Household():
         self.spending = 0
 
         return 0
+
+    def status(self):
+        status = "Income: " + str(round(self.wages,2)) + " savings: " + str(round(self.savings,2)) + " spending: " + str(round(self.spending,2))
+        return status

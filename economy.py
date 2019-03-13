@@ -109,54 +109,95 @@ class Economy():
             i = random.choice(total_population)
             firm.workers[i] = self.households[i]
             total_population.remove(i)
-        # allocate remaining workers
-        unemployed = total_population.pop()
 
+        # unemployed
+        unemployed = total_population.pop()
         self.government.unemployed[unemployed] = self.households[unemployed]
+
+        # allocate remaining workers
         for worker in total_population:
             i = random.choice(list(self.firms.keys()))
             self.firms[i].workers[worker] = self.households[worker]
 
-        self.print_labour_market()
-
         self.update_economy_data('c')
         self.update_economy_data('f')
+        self.print_labour_market()
 
     def production_market(self):
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
+        print("\nProduction market")
+        total_production = 0
         for firmID, firm in self.firms.items():
             labour_cost = firm.firm_production()
+            total_production += firm.production
+            print("Firm " + str(firmID) + " production: " +
+                    str(round(firm.production,2)) + " labour cost: " + str(round(labour_cost, 2)))
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
+                print("Household " + str(hhID) + " wages: " + str(round(worker.wages,2)))
 
-        self.update_economy_data('p')
+        print("Total production: " + str(total_production))
 
-        # move production to inventory
+
+    def income_tax(self):
+        print("\nIncome tax")
+        self.government.revenue = 0
+        for hhID, worker in self.households.items():
+            self.government.revenue += worker.wages * self.government.income_tax
+            print("Household " + str(hhID) + " tax: " + str(round(worker.wages * self.government.income_tax, 2)))
+            worker.wages *= (1-self.government.income_tax)
+            print("Wages: " + str(round(worker.wages,2)))
+
+    def welfare(self):
+        total_unemployed = len(self.government.unemployed.keys())
+        for hhID, household in self.government.unemployed.items():
+            household.wages = self.government.revenue/total_unemployed
+            print("Welfare for Household " + str(hhID) + ": " + str(round(household.wages,2)))
+            self.government.expenditure = self.government.revenue
+
+    def move_production_to_inventory(self):
+        total_product = 0
         for firm in self.firms.values():
             firm.inventory += firm.production
             firm.production = 0
-
-        # income tax
-        for hhID, worker in self.households.items():
-            self.government.revenue += worker.wages * self.government.income_tax
-            worker.wages *= (1-self.government.income_tax)
+            total_product += firm.inventory
+        print("Total product: " + str(total_product))
 
     def consumption_market(self):
         # Cycle through every household's spending.
         # randomly assign 10% of spending to random firm
         # if firm has no inventory, reallocate
+        print("\nConsumption market")
+        total_spending = 0
         for hhID, household in self.households.items():
             spending = household.household_consumption()
-            auction = spending/10
+            total_spending += spending
+            print("Household " + str(hhID) + " spending: " + str(round(spending)))
+            auction = spending/5
+            test = 0
             while spending > 0:
                 spending -= auction
                 i = random.choice(list(self.firms.keys()))
+                print("Try to spend " + str(round(auction,2)) + " at firm " + str(i), end="... ", flush=True)
                 spending += self.firms[i].firm_revenue(auction)
+                test += 1
+                if test == 2000:
+                    print("Time: " + str(self.time))
+                    for hhID, household in self.households.items():
+                        print(str(hhID) + " " + str(household.wages))
+                    break
                 if spending < auction:
                     auction = spending
-        self.update_economy_data('c')
+
+        print("Total spending: " + str(total_spending))
+
+    def company_tax(self):
+        for firm in self.firms.values():
+            tax = firm.revenue * self.government.corporate_tax
+            self.government.revenue += tax
+            # FIX
 
 
     def financial_market(self):
@@ -164,8 +205,6 @@ class Economy():
             h.household_financial(self.interest_rate)
         for f in self.firms.values():
             f.firm_financial(self.interest_rate)
-        self.update_economy_data('f')
-
 
     def update_economy_data(self, cycle):
         for hhID, household in self.households.items():
@@ -213,8 +252,16 @@ class Economy():
     def cycle(self):
         self.update_time()
         self.production_market()
+        self.update_economy_data('p')
+        self.income_tax()
+        self.welfare()
+        self.move_production_to_inventory()
         self.consumption_market()
+        self.update_economy_data('c')
+        #self.company_tax()
         self.financial_market()
+        self.update_economy_data('f')
+
 
     def get_production_cycle_data(self):
         return self.economy_data.iloc[::3,]
@@ -238,18 +285,31 @@ class Economy():
     def firm_remove(self, firmID):
         print("Firm remove")
 
-    def print_households_data(self):
-        print(self.households_data.to_string())
+    def print_economy_data(self, time):
+        print(self.economy_data.loc[(time,):(time,)])
 
-    def print_firms_data(self):
-        print(self.firms_data.to_string())
+    def print_households_data(self, time):
+        print(self.households_data.loc[(time,):(time,)])
 
-    def print_government_data(self):
-        print(self.government_data.to_string())
+    def print_firms_data(self, time):
+        print(self.firms_data.loc[(time,):(time,)])
+
+    def print_government_data(self, time):
+        print(self.government_data.loc[(time,):(time,)])
 
     def print_labour_market(self):
         for firmID, firm in self.firms.items():
             print(str(firmID) + " " + str(firm.workers.keys()))
+        for hhID in self.government.unemployed.keys():
+            print("Unemp: " + str(hhID))
+
+
 
     def update_time(self):
         self.time += 1
+        print("Time is: " + str(self.time))
+
+    def status(self):
+        self.print_economy_data(self.time)
+        self.print_households_data(self.time)
+        self.print_firms_data(self.time)

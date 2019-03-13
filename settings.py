@@ -4,13 +4,13 @@ class Settings():
     def __init__(self):
 
         # Initial economy settings. Households >= firms
-        self.init_households = 100
-        self.init_firms = 3
+        self.init_households = 10
+        self.init_firms = 5
         self.init_interest_rate = 1.03
 
         # Initial household settings
-        self.init_hh_savings = 100
-        self.init_MPC = 0.9
+        self.init_hh_savings = 20
+        self.init_MPC = 0.95
         self.init_human_capital = 100
 
         # Initial firm settings
