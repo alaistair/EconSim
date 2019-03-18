@@ -1,4 +1,7 @@
 import unittest
+import sys
+
+sys.path.insert(0, '/Kuznets')
 from household import Household
 from firm import Firm
 from economy import Economy
@@ -11,5 +14,6 @@ class householdTest(unittest.TestCase):
         householdtest = Household(settings)
         self.assertEqual(householdtest.household_production(100), 100)
         #self.assertEqual()
+
 
 unittest.main()
