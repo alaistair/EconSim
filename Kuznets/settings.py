@@ -16,7 +16,7 @@ class Settings():
         # Initial firm settings
         self.init_production = int(100) # 10 * self.init_households
         self.init_productivity = 1.1 # output per input
-        self.init_firm_debt = 0.2 * self.init_production
+        self.init_firm_debt = 0.1 * self.init_production
 
         # Initial government settings
         self.init_govt_revenue = 0
