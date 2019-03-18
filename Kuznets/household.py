@@ -25,11 +25,15 @@ class Household():
 
     # Decide how much to spend and how much to save
     def household_consumption(self):
-        if self.savings < 1.3 * self.wages:
+        if self.savings < 0.3 * self.wages:
+            self.MPC = 0.8
+            self.spending = self.wages * self.MPC
+            self.wages *= (1 - self.MPC)
+        elif self.savings < 0.7 * self.wages:
             self.MPC = 0.95
             self.spending = self.wages * self.MPC
             self.wages *= (1 - self.MPC)
-        elif self.savings < 1.5 * self.wages:
+        elif self.savings < 1 * self.wages:
             self.MPC = 1.04
             self.spending = self.wages * self.MPC
             self.wages *= (1 - self.MPC)

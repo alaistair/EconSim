@@ -123,8 +123,6 @@ class Economy():
             self.products[firm.product_name].append(firmID)
 
         print(self.products)
-        self.index = self.economy_data.get_level_values(0).unique()
-
 
         self.update_economy_data('c')
         self.update_economy_data('f')

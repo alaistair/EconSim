@@ -2,34 +2,33 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
-import pandas as pd
 
-external_stylesheets = ['static/style.css']
+external_stylesheets = ['../static/style.css']
 
 class Bar_graph():
     def __init__(self, economy):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
         self.economy = economy
-        self.index = self.economy.economy_data.get_level_values(0).unique()
+        self.index = self.economy.economy_data.index.get_level_values(0).unique()
         self.graph_economy(economy)
 
     def graph_economy(self, economy):
         self.app.layout = html.Div(children=[
-            html.H1(children='EconSim'),
-            html.Label('Display options'),
+            html.H1(children='Kuznets'),
             dcc.Graph(id='economy',config={'displayModeBar': False}),
             dcc.Checklist(
                 id='checklist',
                 options=[
-                    {'label': 'Total household income', 'value': 'total hh income'},
-                    {'label': 'Total household savings', 'value': 'total hh savings'},
-                    {'label': 'Total household spending', 'value': 'total hh spending'},
-                    {'label': 'Total firm inventory', 'value': 'total firm inventory'},
-                    {'label': 'Total firm production', 'value': 'total firm production'},
-                    {'label': 'Total firm revenue', 'value': 'total firm revenue'},
-                    {'label': 'Total firm debt', 'value': 'total firm debt'},
+                    {'label': 'Total household income', 'value': 'hh income'},
+                    {'label': 'Total household savings', 'value': 'hh savings'},
+                    {'label': 'Total household spending', 'value': 'hh spending'},
+                    {'label': 'CPI', 'value': 'CPI'},
+                    {'label': 'Total firm inventory', 'value': 'firm inventory'},
+                    {'label': 'Total firm production', 'value': 'firm production'},
+                    {'label': 'Total firm revenue', 'value': 'firm revenue'},
+                    {'label': 'Total firm debt', 'value': 'firm debt'},
                 ],
-                values=['total hh savings', 'total hh spending']
+                values=['hh savings', 'hh spending']
             ),
         ])
 
@@ -40,23 +39,30 @@ class Bar_graph():
         def update_graph(graphs):
             graph_data = []
             for i in graphs:
-                if i == 'total hh income' or i == 'total firm production' or i == 'total firm inventory':
+                if i == 'hh income' or i == 'firm production' or i == 'firm inventory':
                     graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_production_cycle_data()[i],
                         name = i
                     ))
-                elif i == 'total hh spending' or i == 'total firm revenue':
+                elif i == 'hh spending' or i == 'firm revenue':
                     graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i
                     ))
-                elif i == 'total hh savings' or i == 'total firm debt':
+                elif i == 'hh savings' or i == 'firm debt':
                     graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i
+                    ))
+                elif i == 'CPI':
+                    graph_data.append(go.Scatter(
+                        x = self.index,
+                        y = self.economy.get_consumption_cycle_data()[i],
+                        name = i,
+                        yaxis = 'y2'
                     ))
 
             return {
@@ -64,6 +70,9 @@ class Bar_graph():
                 'layout':
                     go.Layout(
                         xaxis={'title':'Year'},
-                        yaxis={'title':'$'}
+                        yaxis={'title':'$'},
+                        yaxis2={'title':'Index',
+                                'overlaying':'y',
+                                'side':'right'}
                     )
             }
