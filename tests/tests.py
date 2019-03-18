@@ -13,7 +13,6 @@ class householdTest(unittest.TestCase):
         settings = Settings()
         householdtest = Household(settings)
         self.assertEqual(householdtest.household_production(100), 100)
-        #self.assertEqual()
 
 
 unittest.main()
