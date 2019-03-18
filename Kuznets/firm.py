@@ -30,7 +30,7 @@ class Firm():
                 self.product_price *= 1.1
                 self.expected_production *= 1.1
             elif self.inventory > 0.5 * self.expected_production:
-                self.product_price *= 1
+                self.product_price *= 0.97
                 self.expected_production *= 0.97
             else:
                 self.product_price *= 1.01

@@ -2,6 +2,7 @@ import dash
 import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
+import pandas as pd
 
 external_stylesheets = ['static/style.css']
 
@@ -9,15 +10,14 @@ class Bar_graph():
     def __init__(self, economy):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
         self.economy = economy
-        self.index = self.df.index.get_level_values(0).unique()
+        self.index = self.economy.economy_data.get_level_values(0).unique()
         self.graph_economy(economy)
 
     def graph_economy(self, economy):
         self.app.layout = html.Div(children=[
             html.H1(children='EconSim'),
-            dcc.Graph(id='economy',config={'displayModeBar': False}),
-
             html.Label('Display options'),
+            dcc.Graph(id='economy',config={'displayModeBar': False}),
             dcc.Checklist(
                 id='checklist',
                 options=[

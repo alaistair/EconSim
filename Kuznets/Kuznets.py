@@ -74,7 +74,7 @@ print(econ1.economy_data.to_string())
 #print(test2)
 
 # Graphs
-graph = 0
+graph = 1
 
 if graph:
     from graphs import Bar_graph
