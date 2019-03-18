@@ -37,7 +37,8 @@ pygame.init()
 
 print("SPACE to advance cycle, q to quit")
 
-for i in range(100):
+
+for i in range(200):
     econ1.cycle()
 
 """
@@ -48,7 +49,7 @@ def check_events():
         elif event.type == pygame.KEYDOWN:
             if event.key == pygame.K_SPACE:
                 econ1.cycle()
-                #econ1.status()
+                econ1.status()
 
             elif event.key == pygame.K_q:
                 sys.exit()
@@ -58,6 +59,8 @@ while True:
 """
 
 econ1.status()
+print(econ1.households_data.to_string())
+print(econ1.firms_data.to_string())
 print(econ1.economy_data.to_string())
 #print(econ1.get_consumption_cycle_data().to_string())
 #print(econ1.get_production_cycle_data().to_string())

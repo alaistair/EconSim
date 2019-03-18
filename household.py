@@ -1,34 +1,48 @@
 """ Class for all information about a household """
+import random
 
 class Household():
 
     def __init__(self, settings):
         self.people = 2 # labour endowment
-
-        self.wages = 0 # income from working for one cycle
-        self.spending = 0 # spending for one cycle
-        self.savings = settings.init_hh_savings # stock of savings
-        self.MPC = settings.init_MPC # 0.9
         self.human_capital = settings.init_human_capital # productive capacity, init = 100
 
+        self.wages = 0 # income from working for one cycle
+        self.savings = settings.init_hh_savings # stock of savings
+        self.MPC = settings.init_MPC # 0.95
+
+        self.spending = 0 # spending for one cycle
+        self.spending_basket = [{'Name': 'A',
+                            'Price': 1 + (random.random() - 0.5) * 0.1,
+                            'Proportion': 1}] # proportion = % spending
+
     def household_production(self, wages):
+        if wages < 0:
+            wages = 0
+            print("Error: negative wages")
         self.wages = wages
         return self.wages
 
+    # Decide how much to spend and how much to save
     def household_consumption(self):
-        if self.savings > 1.5 * self.wages:
-            self.MPC = 1.15
+        if self.savings < 1.3 * self.wages:
+            self.MPC = 0.95
+            self.spending = self.wages * self.MPC
+            self.wages *= (1 - self.MPC)
+        elif self.savings < 1.5 * self.wages:
+            self.MPC = 1.04
             self.spending = self.wages * self.MPC
             self.wages *= (1 - self.MPC)
             self.savings += self.wages
             self.wages = 0
         else:
-            self.MPC = 0.95
+            self.MPC = 1.1
             self.spending = self.wages * self.MPC
             self.wages *= (1 - self.MPC)
+            self.savings += self.wages
+            self.wages = 0
 
-
-        return self.spending
+        return self.spending_basket
 
     def household_financial(self, interest_rate):
         self.savings *= interest_rate

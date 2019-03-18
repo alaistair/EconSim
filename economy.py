@@ -1,4 +1,5 @@
 from __future__ import division
+from collections import defaultdict
 from household import Household
 from firm import Firm
 from government import Government
@@ -15,7 +16,9 @@ class Economy():
         self.interest_rate = settings.init_interest_rate
         self.households = {} # dictionary of households
         self.firms = {} # dictionary of firms
+        self.products = defaultdict(list)
         self.government = Government(settings)
+        self.CPI = 1
 
         # Initialise households
         tuples = [] # index (time, cycle, hhID) for household dataframe
@@ -38,9 +41,8 @@ class Economy():
         # Initialise dataframe for firm data
         self.firms_data = pd.DataFrame({'inventory': [0.],
                                 'production': [0.],
+                                'price': [0.],
                                 'revenue': [0.],
-                                'expected revenue': [0.],
-                                'capital': [0.],
                                 'debt': [0.]
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
 
@@ -56,9 +58,8 @@ class Economy():
             self.firms_data.loc[(self.time, 'p', firmID)] = {
                                 'inventory':firm.inventory,
                                 'production':firm.production,
+                                'price':firm.product_price,
                                 'revenue':firm.revenue,
-                                'expected revenue':firm.expected_revenue,
-                                'capital':firm.capital,
                                 'debt':firm.debt,}
 
         # Initialise dataframe for government data
@@ -81,9 +82,8 @@ class Economy():
                                         'firm inventory':[0.],
                                         'firm production':[0.],
                                         'firm revenue':[0.],
-                                        'firm expected revenue':[0.],
-                                        'firm capital':[0.],
                                         'firm debt':[0.],
+                                        'CPI':[0.],
                                         'govt revenue':[0.],
                                         'govt expenditure':[0.]
                         }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
@@ -95,9 +95,8 @@ class Economy():
                                     'firm inventory':float(df2['inventory']),
                                     'firm production':float(df2['production']),
                                     'firm revenue':float(df2['revenue']),
-                                    'firm expected revenue':float(df2['expected revenue']),
-                                    'firm capital':float(df2['capital']),
                                     'firm debt':float(df2['debt']),
+                                    'CPI':float(self.CPI),
                                     'govt revenue':float(df3['revenue']),
                                     'govt expenditure':float(df3['expenditure'])
                                     }
@@ -119,6 +118,12 @@ class Economy():
             i = random.choice(list(self.firms.keys()))
             self.firms[i].workers[worker] = self.households[worker]
 
+        # Allocate firms to product
+        for firmID, firm in self.firms.items():
+            self.products[firm.product_name].append(firmID)
+
+        print(self.products)
+
         self.update_economy_data('c')
         self.update_economy_data('f')
         self.print_labour_market()
@@ -126,35 +131,25 @@ class Economy():
     def production_market(self):
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
-        print("\nProduction market")
         total_production = 0
         for firmID, firm in self.firms.items():
             labour_cost = firm.firm_production()
             total_production += firm.production
-            print("Firm " + str(firmID) + " production: " +
-                    str(round(firm.production,2)) + " labour cost: " + str(round(labour_cost, 2)))
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
-                print("Household " + str(hhID) + " wages: " + str(round(worker.wages,2)))
-
-        print("Total production: " + str(total_production))
 
 
     def income_tax(self):
-        print("\nIncome tax")
         self.government.revenue = 0
         for hhID, worker in self.households.items():
             self.government.revenue += worker.wages * self.government.income_tax
-            print("Household " + str(hhID) + " tax: " + str(round(worker.wages * self.government.income_tax, 2)))
             worker.wages *= (1-self.government.income_tax)
-            print("Wages: " + str(round(worker.wages,2)))
 
     def welfare(self):
         total_unemployed = len(self.government.unemployed.keys())
         for hhID, household in self.government.unemployed.items():
             household.wages = self.government.revenue/total_unemployed
-            print("Welfare for Household " + str(hhID) + ": " + str(round(household.wages,2)))
             self.government.expenditure = self.government.revenue
 
     def move_production_to_inventory(self):
@@ -163,35 +158,61 @@ class Economy():
             firm.inventory += firm.production
             firm.production = 0
             total_product += firm.inventory
-        print("Total product: " + str(total_product))
 
     def consumption_market(self):
         # Cycle through every household's spending.
         # randomly assign 10% of spending to random firm
         # if firm has no inventory, reallocate
         print("\nConsumption market")
-        total_spending = 0
+        total_quantity = 0
+        total_sales = 0
         for hhID, household in self.households.items():
-            spending = household.household_consumption()
-            total_spending += spending
-            print("Household " + str(hhID) + " spending: " + str(round(spending)))
-            auction = spending/5
-            test = 0
-            while spending > 0:
-                spending -= auction
-                i = random.choice(list(self.firms.keys()))
-                print("Try to spend " + str(round(auction,2)) + " at firm " + str(i), end="... ", flush=True)
-                spending += self.firms[i].firm_revenue(auction)
-                test += 1
-                if test == 2000:
-                    print("Time: " + str(self.time))
-                    for hhID, household in self.households.items():
-                        print(str(hhID) + " " + str(household.wages))
-                    break
-                if spending < auction:
-                    auction = spending
+            household.household_consumption()
+            print("Household " + str(hhID) + " spending: " + str(round(household.spending)))
 
-        print("Total spending: " + str(total_spending))
+            # Cycle through each product in household's spending basket
+            for household_product in household.spending_basket:
+                spending = household.spending * household_product['Proportion']
+                random.shuffle(self.products[household_product['Name']])
+                count = 0
+                total_sales += spending
+                while spending > 0:
+                    count += 1
+                    # Cycle though list of firms that makes product
+                    for firmID in self.products[household_product['Name']]:
+                        print("Try to spend " + str(spending) + " at firm " + str(firmID), end="... ", flush=True)
+
+                        if household_product['Price'] >= self.firms[firmID].product_price:
+                            total_quantity += spending/self.firms[firmID].product_price
+
+                            spending -= self.firms[firmID].firm_revenue(spending) # return fulfilled sales
+                            total_quantity -= spending/self.firms[firmID].product_price
+                        else:
+                            print('to exy: ' + str(household_product['Price']) +
+                                    " firm " + str(self.firms[firmID].product_price))
+                        if spending == 0:
+                            break
+                    if spending > 0:
+                        household_product['Price'] *= 1.03
+                        print("HH price increase")
+                    # check if all firms are out of stock
+                    out_of_stock = 1
+                    for firmID in self.products[household_product['Name']]:
+                        if self.firms[firmID].inventory > 0:
+                            out_of_stock = 0
+                    if out_of_stock:
+                        household.savings += spending
+                        household.spending -= spending
+                        total_sales -= spending
+                        break
+                        """self.update_economy_data('c')
+                        print(self.households_data.to_string())
+                        print(self.firms_data.to_string())
+                        print(self.economy_data.to_string())
+                        quit()"""
+
+        self.CPI = total_sales/total_quantity
+
 
     def company_tax(self):
         for firm in self.firms.values():
@@ -218,11 +239,10 @@ class Economy():
             self.firms_data = pd.concat([self.firms_data,
                                 pd.DataFrame({'inventory':firm.inventory,
                                     'production':firm.production,
+                                    'price':firm.product_price,
                                     'revenue':firm.revenue,
-                                    'expected revenue':firm.expected_revenue,
-                                    'capital':firm.capital,
                                     'debt':firm.debt},
-                                    index = [(self.time, cycle, firmID)])])
+                                    index = [(self.time, cycle, firmID)])], sort=True)
 
         self.government_data = pd.concat([self.government_data,
                             pd.DataFrame({'revenue':float(self.government.revenue),
@@ -234,14 +254,13 @@ class Economy():
         df3 = self.government_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
 
         sum = pd.DataFrame({'hh income': float(df1['income']),
-                            'hh savings': float(df1['savings']),
+                            'hh savings': '{0:f}'.format(df1['savings']),
                             'hh spending': float(df1['spending']),
                             'firm inventory': float(df2['inventory']),
                             'firm production': float(df2['production']),
                             'firm revenue': float(df2['revenue']),
-                            'firm expected revenue': float(df2['expected revenue']),
-                            'firm capital': float(df2['capital']),
                             'firm debt': float(df2['debt']),
+                            'CPI':float(self.CPI),
                             'govt revenue':float(df3['revenue']),
                             'govt expenditure':float(df3['expenditure'])
                             },
