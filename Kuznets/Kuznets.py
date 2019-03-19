@@ -26,6 +26,7 @@ from settings import Settings
 from economy import Economy
 import numpy as np
 import pandas as pd
+from graphs import Bar_graph
 
 #print("Time elapsed: " + str(time.time() - t_zero))
 print("EconSim 0.1")
@@ -37,11 +38,14 @@ pygame.init()
 
 print("SPACE to advance cycle, q to quit")
 
-
+"""
+# Test loop
 for i in range(200):
     econ1.cycle()
+"""
 
 """
+# Pygame
 def check_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -50,13 +54,13 @@ def check_events():
             if event.key == pygame.K_SPACE:
                 econ1.cycle()
                 econ1.status()
-
             elif event.key == pygame.K_q:
                 sys.exit()
 
 while True:
     check_events()
 """
+
 
 econ1.status()
 print(econ1.households_data.to_string())
@@ -77,7 +81,6 @@ print(econ1.economy_data.to_string())
 graph = 1
 
 if graph:
-    from graphs import Bar_graph
     bar_graph = Bar_graph(econ1)
     bar_graph.app.run_server(debug=True)
 
