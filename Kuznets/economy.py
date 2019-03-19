@@ -6,6 +6,7 @@ from government import Government
 import random
 import numpy as np
 import pandas as pd
+import time
 
 class Economy():
 
@@ -19,6 +20,7 @@ class Economy():
         self.products = defaultdict(list)
         self.government = Government(settings)
         self.CPI = 1
+        self.slow = 0
 
         # Initialise households
         tuples = [] # index (time, cycle, hhID) for household dataframe
@@ -253,18 +255,20 @@ class Economy():
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
         return 1
 
-    def cycle(self):
-        self.update_time()
-        self.production_market()
-        self.update_economy_data('p')
-        self.income_tax()
-        self.welfare()
-        self.move_production_to_inventory()
-        self.consumption_market()
-        self.update_economy_data('c')
-        #self.company_tax()
-        self.financial_market()
-        self.update_economy_data('f')
+    def cycle(self, number = 1):
+        for i in range(number):
+            self.update_time()
+            self.production_market()
+            self.update_economy_data('p')
+            self.income_tax()
+            self.welfare()
+            self.move_production_to_inventory()
+            self.consumption_market()
+            self.update_economy_data('c')
+            #self.company_tax()
+            self.financial_market()
+            self.update_economy_data('f')
+            if self.slow: time.sleep(100)
 
 
     def get_production_cycle_data(self):

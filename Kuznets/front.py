@@ -1,7 +1,7 @@
 import sys
 
-from settings import Settings
 from economy import Economy
+from settings import Settings
 import numpy as np
 import pandas as pd
 
@@ -23,11 +23,12 @@ class App():
 
 
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
-        self.graph_economy(self.economy)
 
-    def graph_economy(self, economy):
         self.app.layout = html.Div(children=[
             html.H1(children='Kuznets'),
+            html.Div(dcc.Input(id='cycle-input-box', type='number')),
+            html.Button('Submit', id='button'),
+            html.Div(id='output-container-button', children='Enter a value'),
             dcc.Graph(id='economy',config={'displayModeBar': False}),
             dcc.Checklist(
                 id='checklist',
@@ -40,10 +41,20 @@ class App():
                     {'label': 'Total firm production', 'value': 'firm production'},
                     {'label': 'Total firm revenue', 'value': 'firm revenue'},
                     {'label': 'Total firm debt', 'value': 'firm debt'},
+                    {'label': 'Cycle', 'value': 'cycle'},
                 ],
                 values=['hh savings', 'hh spending']
             ),
         ])
+
+        @self.app.callback(
+            dash.dependencies.Output('output-container-button', 'children'),
+            [dash.dependencies.Input('button', 'n_clicks')],
+            [dash.dependencies.State('cycle-input-box', 'value')])
+        def update_output(n_clicks, value):
+            return 'The input value was "{}" and the button has been clicked {} times'.format(
+                value,
+                n_clicks)
 
         @self.app.callback(
             dash.dependencies.Output('economy', 'figure'),
@@ -51,7 +62,6 @@ class App():
         )
         def update_graph(graphs):
             graph_data = []
-            print('test')
 
             for i in graphs:
                 if i == 'hh income' or i == 'firm production' or i == 'firm inventory':
@@ -79,7 +89,10 @@ class App():
                         name = i,
                         yaxis = 'y2'
                     ))
-
+                elif i=='cycle':
+                    #self.economy.slow = 1
+                    self.economy.cycle()
+                    self.index = self.economy.economy_data.index.get_level_values(0).unique()
             return {
                 'data':graph_data,
                 'layout':
