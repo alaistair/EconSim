@@ -122,11 +122,8 @@ class Economy():
         for firmID, firm in self.firms.items():
             self.products[firm.product_name].append(firmID)
 
-        print(self.products)
-
         self.update_economy_data('c')
         self.update_economy_data('f')
-        self.print_labour_market()
 
     def production_market(self):
         # Cycle through each firm's production

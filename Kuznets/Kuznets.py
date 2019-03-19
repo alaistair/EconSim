@@ -1,4 +1,4 @@
-from front import Graph
+from front import App
 
 """
 
