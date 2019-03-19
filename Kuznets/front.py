@@ -1,3 +1,10 @@
+import sys
+
+from settings import Settings
+from economy import Economy
+import numpy as np
+import pandas as pd
+
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -5,10 +12,16 @@ import plotly.graph_objs as go
 
 external_stylesheets = ['./style.css']
 
-class Bar_graph():
-    def __init__(self, economy):
+class App():
+    def __init__(self):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
-        self.economy = economy
+        self.settings = Settings()
+        self.economy = Economy(self.settings)
+
+        for i in range(20):
+            self.economy.cycle()
+
+
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
         self.graph_economy(self.economy)
 
@@ -38,6 +51,8 @@ class Bar_graph():
         )
         def update_graph(graphs):
             graph_data = []
+            print('test')
+
             for i in graphs:
                 if i == 'hh income' or i == 'firm production' or i == 'firm inventory':
                     graph_data.append(go.Scatter(

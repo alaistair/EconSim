@@ -1,3 +1,5 @@
+from front import Graph
+
 """
 
 Todo:
@@ -16,7 +18,7 @@ User login
 
 
 """
-
+"""
 import time
 t_zero = time.time()
 import sys
@@ -25,7 +27,7 @@ from settings import Settings
 from economy import Economy
 import numpy as np
 import pandas as pd
-from graphs import Bar_graph
+from front import Graph
 
 #print("Time elapsed: " + str(time.time() - t_zero))
 print("EconSim 0.1")
@@ -38,7 +40,7 @@ econ1 = Economy(settings)
 for i in range(20):
     econ1.cycle()
 
-
+"""
 """
 # Pygame
 import pygame
@@ -78,11 +80,9 @@ print(econ1.economy_data.to_string())
 #print(test2)
 
 # Graphs
-graph = 1
-
-if graph:
-    bar_graph = Bar_graph(econ1)
-    bar_graph.app.run_server(debug=True)
+Kuznets = App()
+print("test")
 
 if __name__ == '__main__':
-    print('finished')
+    print("EconSim 0.1")
+    Kuznets.app.run_server(debug=True)
