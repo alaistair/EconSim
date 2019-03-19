@@ -1,4 +1,5 @@
 import sys
+import time
 
 from economy import Economy
 from settings import Settings
@@ -33,9 +34,8 @@ class App():
                 ],
                 value='10', id='cycle-input-box'
                 )),
-            html.Button('Submit', id='button', n_clicks=0),
-            html.Div(id='output-container-button',
-             children=''),
+            html.Button('Submit', id='cycle-update-button', n_clicks=0, value = '0'),
+            dcc.Loading(id='loading-1', children=[html.Div(id='loading-output-1')], type='default'),
 
             dcc.Graph(id='economy',config={'displayModeBar': False}),
             dcc.Checklist(
@@ -54,16 +54,26 @@ class App():
             ),
         ])
 
+        """@self.app.callback(
+            dash.dependencies.Output('loading-output-1', 'children'),
+            [dash.dependencies.Input('cycle-update-button', 'value')])
+        def input_triggers_spinner(value):
+            #time.sleep(1)
+            pass"""
+            #return value
+
         @self.app.callback(
-            dash.dependencies.Output('economy', 'figure'),
+            [dash.dependencies.Output('economy', 'figure'),
+            dash.dependencies.Output('loading-output-1', 'children')],
             [dash.dependencies.Input('checklist', 'values'),
-            dash.dependencies.Input('button', 'n_clicks')],
+            dash.dependencies.Input('cycle-update-button', 'n_clicks')],
             [dash.dependencies.State('cycle-input-box', 'value')])
         def update_graph(graphs, n_clicks, value):
-            if n_clicks > self.cycle_clicks:
+            if n_clicks > self.cycle_clicks: # update cycle
                 self.economy.cycle(int(value))
                 self.index = self.economy.economy_data.index.get_level_values(0).unique()
                 self.cycle_clicks += 1
+
             graph_data = []
 
             for i in graphs:
@@ -92,7 +102,7 @@ class App():
                         name = i,
                         yaxis = 'y2'
                     ))
-            return {
+            return [{
                 'data':graph_data,
                 'layout':
                     go.Layout(
@@ -102,4 +112,4 @@ class App():
                                 'overlaying':'y',
                                 'side':'right'}
                     )
-            }
+            },'']
