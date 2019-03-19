@@ -275,7 +275,6 @@ class Economy():
         return 1
 
     def cycle(self, number = 1):
-        self.status()
         for i in range(number):
             self.update_time()
             self.production_market()
