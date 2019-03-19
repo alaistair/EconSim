@@ -163,12 +163,10 @@ class Economy():
         # Cycle through every household's spending.
         # randomly assign 10% of spending to random firm
         # if firm has no inventory, reallocate
-        print("\nConsumption market")
         total_quantity = 0
         total_sales = 0
         for hhID, household in self.households.items():
             household.household_consumption()
-            print("Household " + str(hhID) + " spending: " + str(round(household.spending)))
 
             # Cycle through each product in household's spending basket
             for household_product in household.spending_basket:
@@ -180,21 +178,16 @@ class Economy():
                     count += 1
                     # Cycle though list of firms that makes product
                     for firmID in self.products[household_product['Name']]:
-                        print("Try to spend " + str(spending) + " at firm " + str(firmID), end="... ", flush=True)
-
                         if household_product['Price'] >= self.firms[firmID].product_price:
                             total_quantity += spending/self.firms[firmID].product_price
-
                             spending -= self.firms[firmID].firm_revenue(spending) # return fulfilled sales
                             total_quantity -= spending/self.firms[firmID].product_price
-                        else:
-                            print('to exy: ' + str(household_product['Price']) +
-                                    " firm " + str(self.firms[firmID].product_price))
+
                         if spending == 0:
                             break
                     if spending > 0:
                         household_product['Price'] *= 1.03
-                        print("HH price increase")
+
                     # check if all firms are out of stock
                     out_of_stock = 1
                     for firmID in self.products[household_product['Name']]:
@@ -205,11 +198,6 @@ class Economy():
                         household.spending -= spending
                         total_sales -= spending
                         break
-                        """self.update_economy_data('c')
-                        print(self.households_data.to_string())
-                        print(self.firms_data.to_string())
-                        print(self.economy_data.to_string())
-                        quit()"""
 
         self.CPI = total_sales/total_quantity
 
@@ -321,8 +309,6 @@ class Economy():
             print(str(firmID) + " " + str(firm.workers.keys()))
         for hhID in self.government.unemployed.keys():
             print("Unemp: " + str(hhID))
-
-
 
     def update_time(self):
         self.time += 1

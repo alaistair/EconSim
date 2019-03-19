@@ -3,14 +3,14 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-external_stylesheets = ['../static/style.css']
+external_stylesheets = ['./style.css']
 
 class Bar_graph():
     def __init__(self, economy):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
         self.economy = economy
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
-        self.graph_economy(economy)
+        self.graph_economy(self.economy)
 
     def graph_economy(self, economy):
         self.app.layout = html.Div(children=[

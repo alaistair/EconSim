@@ -51,18 +51,14 @@ class Firm():
         if self.inventory > quantity: # firm fulfils all sales
             self.inventory -= quantity
             self.revenue += sales
-            print("success")
             return sales
         elif self.inventory > 0: # firm partially fulfils order, returns unfilled amount
             sales = self.inventory * self.product_price
             self.revenue += sales
-            print("partial spend " + str(round(sales, 2)))
             self.inventory = 0
             return sales
         elif self.inventory == 0: # firm out of stock, return sales
-            print("out of stock")
             return 0
-        print("error")
 
     def firm_financial(self, interest_rate):
         self.debt *= interest_rate

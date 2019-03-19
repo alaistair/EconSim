@@ -38,11 +38,11 @@ pygame.init()
 
 print("SPACE to advance cycle, q to quit")
 
-"""
+
 # Test loop
-for i in range(200):
+for i in range(20):
     econ1.cycle()
-"""
+
 
 """
 # Pygame
@@ -61,11 +61,12 @@ while True:
     check_events()
 """
 
-
+"""
 econ1.status()
 print(econ1.households_data.to_string())
 print(econ1.firms_data.to_string())
 print(econ1.economy_data.to_string())
+"""
 #print(econ1.get_consumption_cycle_data().to_string())
 #print(econ1.get_production_cycle_data().to_string())
 #print(econ1.get_financial_cycle_data().to_string())
