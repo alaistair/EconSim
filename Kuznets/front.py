@@ -12,11 +12,10 @@ import dash_html_components as html
 import plotly.graph_objs as go
 
 #external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
-external_stylesheets = ['/static/style.css']
 
 class App():
     def __init__(self):
-        self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+        self.app = dash.Dash(__name__)
         self.app.title = 'Kuznets'
         self.cycle_clicks = 0 # used for button
         self.settings = Settings()
@@ -25,7 +24,7 @@ class App():
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
 
         self.app.layout = html.Div(children=[
-            html.H1(children='Kuznets'),
+            html.H1(children='Kuznets demo'),
 
             html.Div([
                 html.H2('Policy settings'),
@@ -65,14 +64,14 @@ class App():
                         {'label': 'Total household income', 'value': 'Household income'},
                         {'label': 'Total household savings', 'value': 'Household savings'},
                         {'label': 'Total household spending', 'value': 'Household spending'},
-                        {'label': 'CPI', 'value': 'CPI'},
+                        {'label': 'CPI', 'value': 'CPI (R)'},
                         {'label': 'Total firm inventory', 'value': 'firm inventory'},
                         {'label': 'Total firm production', 'value': 'firm production'},
                         {'label': 'Total firm revenue', 'value': 'firm revenue'},
                         {'label': 'Total firm debt', 'value': 'firm debt'},
                     ],
                     values=['Household savings', 'Household spending'])])
-        ])
+        ], style={'padding-left':'5%', 'padding-right':'5%'})
 
         @self.app.callback(
             [dash.dependencies.Output('economy', 'figure'),
@@ -125,10 +124,10 @@ class App():
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i
                     ))
-                elif i == 'CPI':
+                elif i == 'CPI (R)':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()[i],
+                        y = self.economy.get_consumption_cycle_data()['CPI'],
                         name = i,
                         yaxis = 'y2'
                     ))
@@ -144,3 +143,15 @@ class App():
                                 'showgrid':False}
                     )
             },'']
+        @self.app.server.route('{}<stylesheet>'.format(static_css_route))
+        def serve_stylesheet(stylesheet):
+            if stylesheet not in stylesheets:
+                raise Exception(
+                    '"{}" is excluded from the allowed static files'.format(
+                        stylesheet
+                    )
+                )
+            return flask.send_from_directory(css_directory, stylesheet)
+
+        for stylesheet in stylesheets:
+            self.app.css.append_css({"external_url": "/static/{}".format(stylesheet)})

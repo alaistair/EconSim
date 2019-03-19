@@ -147,8 +147,6 @@ class Economy():
         #self.company_tax()
         self.financial_market()
         self.update_economy_data('f')
-        if self.slow: time.sleep(100)
-        self.status()
 
 
     def production_market(self):
