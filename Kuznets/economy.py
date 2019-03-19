@@ -48,22 +48,6 @@ class Economy():
                                 'debt': [0.]
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
 
-        # Fill with initial household data
-        for hhID, household in self.households.items():
-            self.households_data.loc[(self.time, 'p', hhID)] = {
-                                'income':household.wages,
-                                'savings':household.savings,
-                                'spending':household.spending,}
-
-        # Fill with initial firm data
-        for firmID, firm in self.firms.items():
-            self.firms_data.loc[(self.time, 'p', firmID)] = {
-                                'inventory':firm.inventory,
-                                'production':firm.production,
-                                'price':firm.product_price,
-                                'revenue':firm.revenue,
-                                'debt':firm.debt,}
-
         # Initialise dataframe for government data
         tuples = [(self.time, 'p')]
         self.government_data = pd.DataFrame({'revenue': [0.],
@@ -71,7 +55,7 @@ class Economy():
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
 
-        # Dataframe for economy data
+        # Initialise dataframe for economy data
         df1 = self.households_data.groupby(level=0).sum()
         df2 = self.firms_data.groupby(level=0).sum()
         df3 = self.government_data
@@ -90,19 +74,6 @@ class Economy():
                                         'govt expenditure':[0.]
                         }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
-        self.economy_data.loc[(self.time, 'p')] = {
-                                    'hh income':float(df1['income']),
-                                    'hh savings':float(df1['savings']),
-                                    'hh spending':float(df1['spending']),
-                                    'firm inventory':float(df2['inventory']),
-                                    'firm production':float(df2['production']),
-                                    'firm revenue':float(df2['revenue']),
-                                    'firm debt':float(df2['debt']),
-                                    'CPI':float(self.CPI),
-                                    'govt revenue':float(df3['revenue']),
-                                    'govt expenditure':float(df3['expenditure'])
-                                    }
-
         # Who works where
         # Every firm gets at least on worker
         total_population = list(self.households.keys())
@@ -120,24 +91,74 @@ class Economy():
             i = random.choice(list(self.firms.keys()))
             self.firms[i].workers[worker] = self.households[worker]
 
-        # Allocate firms to product
+        # allocate firms to product
         for firmID, firm in self.firms.items():
             self.products[firm.product_name].append(firmID)
 
-        self.update_economy_data('c')
-        self.update_economy_data('f')
-
-    def production_market(self):
-        # Cycle through each firm's production
-        # Each firm 'hires' labour to create production
-        total_production = 0
+        # Initial production
         for firmID, firm in self.firms.items():
-            labour_cost = firm.firm_production()
-            total_production += firm.production
+            labour_cost = firm.production/firm.productivity
+            firm.debt += labour_cost
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
 
+        # update economy dataframe
+        for hhID, household in self.households.items():
+            self.households_data.loc[(self.time, 'p', hhID)] = {
+                                'income':household.wages,
+                                'savings':household.savings,
+                                'spending':household.spending,}
+
+        for firmID, firm in self.firms.items():
+            self.firms_data.loc[(self.time, 'p', firmID)] = {
+                                'inventory':firm.inventory,
+                                'production':firm.production,
+                                'price':firm.product_price,
+                                'revenue':firm.revenue,
+                                'debt':firm.debt,}
+
+        self.government_data = pd.DataFrame({'revenue': [0.],
+                                'expenditure': [0.]
+                                }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
+
+        df1 = self.households_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
+        df2 = self.firms_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
+        df3 = self.government_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
+
+        self.economy_data.loc[(self.time, 'p')] = {
+                                    'hh income':float(df1['income']),
+                                    'hh savings':float(df1['savings']),
+                                    'hh spending':float(df1['spending']),
+                                    'firm inventory':float(df2['inventory']),
+                                    'firm production':float(df2['production']),
+                                    'firm revenue':float(df2['revenue']),
+                                    'firm debt':float(df2['debt']),
+                                    'CPI':float(self.CPI),
+                                    'govt revenue':float(df3['revenue']),
+                                    'govt expenditure':float(df3['expenditure'])
+                                    }
+
+        self.income_tax()
+        self.welfare()
+        self.move_production_to_inventory()
+        self.consumption_market()
+        self.update_economy_data('c')
+        #self.company_tax()
+        self.financial_market()
+        self.update_economy_data('f')
+        if self.slow: time.sleep(100)
+        self.status()
+
+
+    def production_market(self):
+        # Cycle through each firm's production
+        # Each firm 'hires' labour to create production
+        for firmID, firm in self.firms.items():
+            labour_cost = firm.firm_production()
+            wages_per_worker = labour_cost/len(firm.workers)
+            for hhID, worker in firm.workers.items():
+                self.households[hhID].household_production(wages_per_worker)
 
     def income_tax(self):
         self.government.revenue = 0
@@ -256,6 +277,7 @@ class Economy():
         return 1
 
     def cycle(self, number = 1):
+        self.status()
         for i in range(number):
             self.update_time()
             self.production_market()
@@ -269,7 +291,6 @@ class Economy():
             self.financial_market()
             self.update_economy_data('f')
             if self.slow: time.sleep(100)
-
 
     def get_production_cycle_data(self):
         return self.economy_data.iloc[::3,]

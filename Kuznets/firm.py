@@ -11,7 +11,7 @@ class Firm():
         self.product_name = 'A'
         self.inventory = int(0) # stock of inventory (units of output)
         self.expected_production = settings.init_production
-        self.production = 0 # flow of production (one cycle)
+        self.production = self.expected_production # flow of production (one cycle)
 
         self.product_price = 1 + (random.random() - 0.5) * 0.2
 
