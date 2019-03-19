@@ -10,11 +10,13 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+#external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
+external_stylesheets = ['/static/style.css']
 
 class App():
     def __init__(self):
         self.app = dash.Dash(__name__, external_stylesheets=external_stylesheets)
+        self.cycle_clicks = 0 # used for button
         self.settings = Settings()
         self.economy = Economy(self.settings)
 
@@ -31,7 +33,7 @@ class App():
                 ],
                 value='10', id='cycle-input-box'
                 )),
-            html.Button('Submit', id='submit-button'),
+            html.Button('Submit', id='button', n_clicks=0),
             html.Div(id='output-container-button',
              children=''),
 
@@ -53,19 +55,15 @@ class App():
         ])
 
         @self.app.callback(
-            dash.dependencies.Output('output-container-button', 'children'),
-            [dash.dependencies.Input('submit-button', 'n_clicks')],
-            [dash.dependencies.State('cycle-input-box', 'value')])
-        def update_output(n_clicks, value):
-            self.economy.cycle(int(value))
-            self.index = self.economy.economy_data.index.get_level_values(0).unique()
-            
-
-        @self.app.callback(
             dash.dependencies.Output('economy', 'figure'),
-            [dash.dependencies.Input('checklist', 'values')]
-        )
-        def update_graph(graphs):
+            [dash.dependencies.Input('checklist', 'values'),
+            dash.dependencies.Input('button', 'n_clicks')],
+            [dash.dependencies.State('cycle-input-box', 'value')])
+        def update_graph(graphs, n_clicks, value):
+            if n_clicks > self.cycle_clicks:
+                self.economy.cycle(int(value))
+                self.index = self.economy.economy_data.index.get_level_values(0).unique()
+                self.cycle_clicks += 1
             graph_data = []
 
             for i in graphs:
