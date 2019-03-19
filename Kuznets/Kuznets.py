@@ -20,7 +20,6 @@ User login
 import time
 t_zero = time.time()
 import sys
-import pygame
 
 from settings import Settings
 from economy import Economy
@@ -34,10 +33,6 @@ print("EconSim 0.1")
 settings = Settings()
 econ1 = Economy(settings)
 
-pygame.init()
-
-print("SPACE to advance cycle, q to quit")
-
 
 # Test loop
 for i in range(20):
@@ -46,6 +41,10 @@ for i in range(20):
 
 """
 # Pygame
+import pygame
+pygame.init()
+
+print("SPACE to advance cycle, q to quit")
 def check_events():
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
