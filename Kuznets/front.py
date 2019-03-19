@@ -10,7 +10,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 import plotly.graph_objs as go
 
-external_stylesheets = ['./style.css']
+external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 class App():
     def __init__(self):
@@ -18,17 +18,23 @@ class App():
         self.settings = Settings()
         self.economy = Economy(self.settings)
 
-        for i in range(20):
-            self.economy.cycle()
-
-
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
 
         self.app.layout = html.Div(children=[
             html.H1(children='Kuznets'),
-            html.Div(dcc.Input(id='cycle-input-box', type='number')),
-            html.Button('Submit', id='button'),
-            html.Div(id='output-container-button', children='Enter a value'),
+
+            html.Div(dcc.Dropdown(
+                options=[
+                    {'label': '1', 'value': '1'},
+                    {'label': '10', 'value': '10'},
+                    {'label': '50', 'value': '50'}
+                ],
+                value='10', id='cycle-input-box'
+                )),
+            html.Button('Submit', id='submit-button'),
+            html.Div(id='output-container-button',
+             children=''),
+
             dcc.Graph(id='economy',config={'displayModeBar': False}),
             dcc.Checklist(
                 id='checklist',
@@ -41,7 +47,6 @@ class App():
                     {'label': 'Total firm production', 'value': 'firm production'},
                     {'label': 'Total firm revenue', 'value': 'firm revenue'},
                     {'label': 'Total firm debt', 'value': 'firm debt'},
-                    {'label': 'Cycle', 'value': 'cycle'},
                 ],
                 values=['hh savings', 'hh spending']
             ),
@@ -49,12 +54,12 @@ class App():
 
         @self.app.callback(
             dash.dependencies.Output('output-container-button', 'children'),
-            [dash.dependencies.Input('button', 'n_clicks')],
+            [dash.dependencies.Input('submit-button', 'n_clicks')],
             [dash.dependencies.State('cycle-input-box', 'value')])
         def update_output(n_clicks, value):
-            return 'The input value was "{}" and the button has been clicked {} times'.format(
-                value,
-                n_clicks)
+            self.economy.cycle(int(value))
+            self.index = self.economy.economy_data.index.get_level_values(0).unique()
+            
 
         @self.app.callback(
             dash.dependencies.Output('economy', 'figure'),
@@ -89,10 +94,6 @@ class App():
                         name = i,
                         yaxis = 'y2'
                     ))
-                elif i=='cycle':
-                    #self.economy.slow = 1
-                    self.economy.cycle()
-                    self.index = self.economy.economy_data.index.get_level_values(0).unique()
             return {
                 'data':graph_data,
                 'layout':
