@@ -37,14 +37,14 @@ class App():
             html.Div([
                 html.P('Run simulation for ',
                     style={'display':'inline-block','vertical-align': 'middle', 'padding-right':'0.8%'}),
-                html.Div(dcc.Dropdown(
+                html.P(dcc.RadioItems(
                     options=[
-                        {'label': '1', 'value': '1'},
-                        {'label': '10', 'value': '10'},
-                        {'label': '50', 'value': '50'}
+                        {'label': '1 ', 'value': '1'},
+                        {'label': '10 ', 'value': '10'},
+                        {'label': '50 ', 'value': '50'}
                     ],
                     value='10', id='cycle-input-box'),
-                    style={'width':'8%', 'display':'inline-block','vertical-align': 'middle'}),
+                    style={'display':'inline-block','vertical-align': 'middle'}),
                 html.P('cycles ',
                     style={'display':'inline-block','vertical-align': 'middle', 'padding-left':'0.8%','padding-right':'2%'}),
                 html.Div(html.Button(
@@ -64,6 +64,7 @@ class App():
 
             html.Div(dcc.Graph(id='economy',config={'displayModeBar': False})),
             html.Div([html.H2('Display settings'),
+                html.P('Household'),
                 html.P(
                 dcc.Checklist(
                     id='checklist',
@@ -77,7 +78,9 @@ class App():
                         {'label': 'Total firm revenue', 'value': 'firm revenue'},
                         {'label': 'Total firm debt', 'value': 'firm debt'},
                     ],
-                    values=['Household savings', 'Household spending']))]),
+                    values=['Household savings', 'Household spending']),
+                    style={'display':'inline'}
+                    )]),
             html.Div(
 
             )
@@ -93,7 +96,7 @@ class App():
             if n_clicks > self.cycle_clicks: # update cycle
                 self.economy.cycle(int(value))
                 self.index = self.economy.economy_data.index.get_level_values(0).unique()
-                self.cycle_clicks += 1
+                self.cycle_clicks = n_clicks
 
             graph_data = []
 

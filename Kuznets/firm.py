@@ -4,10 +4,6 @@ import random
 class Firm():
 
     def __init__(self, settings):
-
-        self.debt = settings.init_firm_debt # stock of debt
-        self.revenue = 0 # flow of revenue (one cycle)
-
         self.product_name = 'A'
         self.inventory = int(0) # stock of inventory (units of output)
         self.expected_production = settings.init_production
@@ -15,33 +11,32 @@ class Firm():
 
         self.product_price = 1 + (random.random() - 0.5) * 0.2
 
-        self.productivity = settings.init_productivity # output per labour input
+        self.labour_productivity = settings.init_labour_productivity # output per labour input
+        self.capital_investment = 0.1 * settings.init_production
+        self.debt = self.capital_investment
+        self.revenue = 0 # flow of revenue (one cycle)
 
         self.workers = {} # hhID, worker dictionary
         self.owners = {} # hhID, owner dictionary
-        self.init = 1
 
     def firm_production(self):
         # Update firm's expected revenue based on sales
-        if self.init:
-            self.init = 0
+        if self.inventory == 0: # Ran out of inventory
+            self.product_price *= 1.1
+            self.expected_production *= 1.1
+        elif self.inventory > 0.5 * self.expected_production: # too much inventory
+            self.product_price *= 0.9
+            self.expected_production *= 0.95
         else:
-            if self.inventory == 0: # Ran out of inventory
-                self.product_price *= 1.1
-                self.expected_production *= 1.1
-            elif self.inventory > 0.5 * self.expected_production:
-                self.product_price *= 0.97
-                self.expected_production *= 0.97
-            else:
-                self.product_price *= 1.01
-                self.expected_production *= 1.01
+            self.product_price *= 1.02
+            self.expected_production *= 1.02
 
         if self.product_price < 0: self.product_price = 0.01
 
         self.production = self.expected_production
 
-        labour_cost = self.production/self.productivity # $
-        self.debt += labour_cost
+        labour_cost = self.production/self.labour_productivity # $
+        self.debt += labour_cost + self.capital_investment
         return labour_cost
 
     # Adds sales to firm's revenue.

@@ -40,7 +40,7 @@ class Household():
             self.savings += self.wages
             self.wages = 0
         else:
-            self.MPC = 1.1
+            self.MPC = 1.3
             self.spending = self.wages * self.MPC
             self.wages *= (1 - self.MPC)
             self.savings += self.wages

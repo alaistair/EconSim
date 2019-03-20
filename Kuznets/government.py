@@ -9,7 +9,7 @@ class Government():
 
         self.income_tax = 0.10
         self.unemployed = {}
-        self.corporate_tax = 0#0.10
+        self.corporate_tax = 0.10
 
 
     def govt_production_taxation(self):
@@ -23,9 +23,9 @@ class Government():
 
     def govt_financial(self, interest_rate):
         self.debt *= interest_rate
-        self.debt += (self.revenue - self.expenditure)
+        self.debt += (self.expenditure - self.revenue)
         self.revenue = 0
-        self.expenditure = 0
+        #self.expenditure = 0
         return 1
 
     def status(self):
