@@ -10,7 +10,7 @@ class Government():
         self.income_tax = 0.10
         self.unemployed = {}
         self.corporate_tax = 0.10
-
+        self.seigniorage = 1.04
 
     def govt_production_taxation(self):
         pass

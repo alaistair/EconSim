@@ -170,7 +170,7 @@ class Economy():
             worker.wages *= (1-self.government.income_tax)
 
     def welfare(self):
-        self.government.expenditure = self.government.revenue * 2.6
+        self.government.expenditure = self.government.revenue * 2.4
         total_unemployed = len(self.government.unemployed.keys())
         spending = self.government.expenditure/total_unemployed
         for hhID, household in self.government.unemployed.items():
@@ -229,11 +229,12 @@ class Economy():
             firm.revenue *= (1-self.government.corporate_tax)
 
     def financial_market(self):
+        self.government.govt_financial(self.interest_rate)
         for h in self.households.values():
+            h.savings *= self.government.seigniorage
             h.household_financial(self.interest_rate)
         for f in self.firms.values():
             f.firm_financial(self.interest_rate)
-        self.government.govt_financial(self.interest_rate)
 
     def update_economy_data(self, cycle):
         for hhID, household in self.households.items():
@@ -284,7 +285,6 @@ class Economy():
             self.production_market()
             self.income_tax()
             self.welfare()
-
             self.update_economy_data('p')
             self.move_production_to_inventory()
             self.consumption_market()

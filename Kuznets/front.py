@@ -18,7 +18,8 @@ class App():
     def __init__(self):
         self.app = dash.Dash(__name__)
         self.app.title = 'Kuznets'
-        self.cycle_clicks = 0 # used for button
+        self.last_cycle_click = 0 # used for cycle check
+        self.last_reset_click = 0 # used for reset check
         self.settings = Settings()
         self.economy = Economy(self.settings)
 
@@ -43,7 +44,7 @@ class App():
                         {'label': '10 ', 'value': '10'},
                         {'label': '50 ', 'value': '50'}
                     ],
-                    value='10', id='cycle-input-box'),
+                    value='10', id='cycle-update-box'),
                     style={'display':'inline-block','vertical-align': 'middle'}),
                 html.P('cycles ',
                     style={'display':'inline-block','vertical-align': 'middle', 'padding-left':'0.8%','padding-right':'2%'}),
@@ -53,14 +54,17 @@ class App():
                     n_clicks=0,
                     value = '0'),
                     style={'width':'10%', 'display':'inline-block','vertical-align': 'middle'}),
-                html.Div(daq.StopButton(buttonText='restart'),
+                html.Div(html.Button(
+                    'reset',
+                    id='reset-button',
+                    n_clicks=0),
                     style={'width':'10%', 'display':'inline-block','vertical-align': 'middle'}),
                 html.Div(dcc.Loading(
                     id='loading-1',
                     children=[html.Div(id='loading-output-1')],
                     type='dot',),
                     style={'width':'10%', 'display':'inline-block','vertical-align': 'middle'})
-            ], style={'height':'15%'}),
+            ], style={}),
 
             html.Div(dcc.Graph(id='economy',config={'displayModeBar': False})),
             html.Div([html.H2('Display settings'),
@@ -81,26 +85,48 @@ class App():
                     values=['Household savings', 'Household spending']),
                     style={'display':'inline'}
                     )]),
-            html.Div(
-
-            )
+            html.Div([
+                html.H2('Looking deeper'),
+                html.P('Interest rate')
+            ]),
         ], style={'padding-left':'5%', 'padding-right':'5%'})
 
         @self.app.callback(
             [dash.dependencies.Output('economy', 'figure'),
             dash.dependencies.Output('loading-output-1', 'children')],
             [dash.dependencies.Input('checklist', 'values'),
-            dash.dependencies.Input('cycle-update-button', 'n_clicks')],
-            [dash.dependencies.State('cycle-input-box', 'value')])
-        def update_graph(graphs, n_clicks, value):
-            if n_clicks > self.cycle_clicks: # update cycle
-                self.economy.cycle(int(value))
-                self.index = self.economy.economy_data.index.get_level_values(0).unique()
-                self.cycle_clicks = n_clicks
+            dash.dependencies.Input('cycle-update-button', 'n_clicks_timestamp'),
+            dash.dependencies.Input('reset-button', 'n_clicks_timestamp')],
+            [dash.dependencies.State('cycle-update-box', 'value')])
+        def update_graph(checks, n_clicks_timestamp_1, n_clicks_timestamp_2, value):
+            if n_clicks_timestamp_2 is not None:
+                if n_clicks_timestamp_2 > self.last_reset_click:
+                    self.settings = Settings()
+                    self.economy = Economy(self.settings)
+
+                    self.index = self.economy.economy_data.index.get_level_values(0).unique()
+                    self.last_reset_click = n_clicks_timestamp_2
+                    return [{
+                        'data':[],
+                        'layout':
+                            go.Layout(
+                                xaxis={'title':'Year'},
+                                yaxis={'title':'$'},
+                                yaxis2={'title':'Index',
+                                        'overlaying':'y',
+                                        'side':'right',
+                                        'showgrid':False}
+                            )
+                    },'']
+            if n_clicks_timestamp_1 is not None:
+                if n_clicks_timestamp_1 > self.last_cycle_click: # update cycle
+                    self.economy.cycle(int(value))
+                    self.index = self.economy.economy_data.index.get_level_values(0).unique()
+                    self.last_cycle_click = n_clicks_timestamp_1
 
             graph_data = []
 
-            for i in graphs:
+            for i in checks:
                 if i == 'Household income':
                     graph_data.append(go.Scatter(
                         x = self.index,
