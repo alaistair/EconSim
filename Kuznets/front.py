@@ -29,7 +29,9 @@ class App():
             html.H1(children='Kuznets demo'),
             html.Div([
                 html.H2('Simulation settings'),
-                html.P('Interest rate')
+                html.P('Households: ' + str(self.last_cycle_click)
+                    + ' Firms: ' + str(self.last_cycle_click)),
+                html.P('test', id='number'),
             ]),
             html.Div([
                 html.H2('Policy settings'),
@@ -89,6 +91,11 @@ class App():
                 html.H2('Looking deeper'),
                 html.P('Interest rate')
             ]),
+            html.Table(
+                [html.Tr([html.Th(col) for col in self.economy.economy_data.columns])] +
+                [html.Tr([html.Td(self.economy.economy_data.iloc[i][col]) for col in self.economy.economy_data.columns])
+                for i in range(min(len(self.economy.economy_data), 10))]
+            ),
         ], style={'padding-left':'5%', 'padding-right':'5%'})
 
         @self.app.callback(

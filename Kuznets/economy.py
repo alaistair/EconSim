@@ -10,7 +10,6 @@ import time
 
 class Economy():
 
-    # Initialise economy
     def __init__(self, settings):
 
         self.time = 1900
@@ -55,13 +54,9 @@ class Economy():
                                 'debt':[0.]
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
-
         # Initialise dataframe for economy data
-        df1 = self.households_data.groupby(level=0).sum()
-        df2 = self.firms_data.groupby(level=0).sum()
-        df3 = self.government_data
-        tuples = []
-        tuples.append((self.time, 'p'))
+        #tuples = []
+        #tuples.append((self.time, 'p'))
 
         self.economy_data = pd.DataFrame({'hh income':[0.],
                                         'hh savings':[0.],
