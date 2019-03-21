@@ -148,7 +148,6 @@ class Economy():
         self.financial_market()
         self.update_economy_data('f')
 
-
     def production_market(self):
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
