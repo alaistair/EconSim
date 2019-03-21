@@ -12,7 +12,7 @@ class Economy():
 
     def __init__(self, settings):
 
-        self.time = 1900
+        self.time = 0
         self.interest_rate = settings.init_interest_rate
         self.households = {} # dictionary of households
         self.firms = {} # dictionary of firms
