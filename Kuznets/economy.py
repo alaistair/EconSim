@@ -65,10 +65,12 @@ class Economy():
                                         'firm production':[0.],
                                         'firm revenue':[0.],
                                         'firm debt':[0.],
-                                        'CPI':[0.],
                                         'govt revenue':[0.],
                                         'govt expenditure':[0.],
-                                        'govt debt':[0.]
+                                        'govt debt':[0.],
+                                        'CPI':[0.],
+                                        'Interest rate':[0.],
+                                        'Unemployment rate':[0.],
                         }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
         # Who works where
@@ -135,10 +137,12 @@ class Economy():
                                     'firm production':float(df2['production']),
                                     'firm revenue':float(df2['revenue']),
                                     'firm debt':float(df2['debt']),
-                                    'CPI':float(self.CPI),
                                     'govt revenue':float(df3['revenue']),
                                     'govt expenditure':float(df3['expenditure']),
-                                    'govt debt':float(df3['debt'])
+                                    'govt debt':float(df3['debt']),
+                                    'CPI':float(self.CPI),
+                                    'Interest rate':float(self.interest_rate),
+                                    'Unemployment rate':float(self.interest_rate),
                                     }
 
         self.move_production_to_inventory()
@@ -264,10 +268,11 @@ class Economy():
                             'firm production': float(df2['production']),
                             'firm revenue': float(df2['revenue']),
                             'firm debt': float(df2['debt']),
-                            'CPI':float(self.CPI),
                             'govt revenue':float(df3['revenue']),
                             'govt expenditure':float(df3['expenditure']),
-                            'govt debt':float(df3['debt'])
+                            'govt debt':float(df3['debt']),
+                            'CPI':float(self.CPI),
+                            'Interest rate':float(self.interest_rate),
                             },
                             index = [(self.time, cycle)])
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)

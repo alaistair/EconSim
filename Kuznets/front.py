@@ -121,6 +121,8 @@ class App():
                     id='macro-lines-checklist',
                     options=[
                         {'label': 'CPI', 'value': 'CPI (R)'},
+                        {'label': 'Interest rate', 'value': 'Interest rate (R)'},
+                        {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
                     ],
                     values=[],
                     labelStyle={'display':'block'}),
@@ -150,9 +152,10 @@ class App():
         def update_graph(household_lines_checklist, firm_lines_checklist,
             government_lines_checklist, macro_lines_checklist,
             n_clicks_timestamp_1, n_clicks_timestamp_2, value_1, value_2):
+
             if n_clicks_timestamp_1 is not None: # run simulation
                 if n_clicks_timestamp_1 > self.last_cycle_click: # update cycle
-                    self.economy.interest_rate = value_2
+                    self.economy.interest_rate = 1 + value_2/100
                     self.economy.cycle(int(value_1))
                     self.index = self.economy.economy_data.index.get_level_values(0).unique()
                     self.last_cycle_click = n_clicks_timestamp_1
@@ -229,21 +232,18 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['govt revenue'],
                         name = i,
-                        yaxis = 'y2'
                     ))
-                if i == 'Government expenditure':
+                elif i == 'Government expenditure':
                     graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['govt expenditure'],
                         name = i,
-                        yaxis = 'y2'
                     ))
-                if i == 'Government debt':
+                elif i == 'Government debt':
                     graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['govt debt'],
                         name = i,
-                        yaxis = 'y2'
                     ))
             for i in macro_lines_checklist:
                 if i == 'CPI (R)':
@@ -253,15 +253,25 @@ class App():
                         name = i,
                         yaxis = 'y2'
                     ))
+                elif i == 'Interest rate (R)':
+                    graph_data.append(go.Scatter(
+                        x = self.index,
+                        y = (self.economy.get_consumption_cycle_data()['Interest rate']-1)*100,
+                        name = i,
+                        yaxis = 'y2'
+                    ))
             return [{
                 'data':graph_data,
                 'layout':
                     go.Layout(
                         xaxis={'title':'Year'},
-                        yaxis={'title':'$'},
+                        yaxis={'title':'$','automargin':True,},
                         yaxis2={'title':'Index',
                                 'overlaying':'y',
                                 'side':'right',
-                                'showgrid':False}
+                                'showgrid':False,
+                                'automargin':True,
+                                },
+                        legend=dict(orientation="h")
                     )
             },'']
