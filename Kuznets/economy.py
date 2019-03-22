@@ -142,7 +142,7 @@ class Economy():
                                     'Government debt':float(df3['debt']),
                                     'CPI':float(self.CPI),
                                     'Interest rate':float(self.interest_rate),
-                                    'Unemployment rate':float(self.interest_rate),
+                                    'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
                                     }
 
         self.move_production_to_inventory()
@@ -273,6 +273,7 @@ class Economy():
                             'Government debt':float(df3['debt']),
                             'CPI':float(self.CPI),
                             'Interest rate':float(self.interest_rate),
+                            'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
                             },
                             index = [(self.time, cycle)])
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
