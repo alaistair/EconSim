@@ -158,7 +158,9 @@ class Economy():
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
-            labour_cost = firm.firm_production()
+            expected_labour_cost = firm.expected_production()
+
+            labour_cost = firm.production()
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
