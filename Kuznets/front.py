@@ -186,64 +186,86 @@ class App():
                 if i == 'Household income':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_production_cycle_data()['hh income'],
-                        name = i
+                        y = self.economy.get_production_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(128,0,0)'},
+                        legendgroup = 'Households',
                     ))
                 elif i == 'Household spending':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()['hh spending'],
-                        name = i
+                        y = self.economy.get_consumption_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(255,140,0)'},
+                        legendgroup = 'Households',
                     ))
                 elif i == 'Household savings':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_financial_cycle_data()['hh savings'],
-                        name = i
+                        y = self.economy.get_financial_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(255,255,0)'},
+                        legendgroup = 'Households',
                     ))
             for i in firm_lines_checklist:
                 if i == 'Firm production':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_production_cycle_data()['firm production'],
-                        name = i
+                        y = self.economy.get_production_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(0,255,255)'},
+                        legendgroup = 'Firms',
                     ))
                 elif i == 'Firm inventory':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_production_cycle_data()['firm inventory'],
-                        name = i
+                        y = self.economy.get_production_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(100,149,237)'},
+                        legendgroup = 'Firms',
                     ))
                 elif i == 'Firm revenue':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()['firm revenue'],
-                        name = i
+                        y = self.economy.get_consumption_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(128,0,128)'},
+                        legendgroup = 'Firms',
+
                     ))
                 elif i == 'Firm debt':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_financial_cycle_data()['firm debt'],
-                        name = i
+                        y = self.economy.get_financial_cycle_data()[i],
+                        name = i,
+                        line = {'color':'rgb(25,25,112)'},
+                        legendgroup = 'Firms',
                     ))
             for i in government_lines_checklist:
                 if i == 'Government revenue':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()['govt revenue'],
+                        y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
+                        line = {'color':'rgb(0,100,0)'},
+                        legendgroup = 'Government',
+
                     ))
                 elif i == 'Government expenditure':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()['govt expenditure'],
+                        y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
+                        line = {'color':'rgb(124,252,0)'},
+                        legendgroup = 'Government',
                     ))
                 elif i == 'Government debt':
                     graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()['govt debt'],
+                        y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
+                        line = {'color':'rgb(152,251,152)'},
+                        legendgroup = 'Government',
                     ))
             for i in macro_lines_checklist:
                 if i == 'CPI (R)':
@@ -251,27 +273,31 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['CPI'],
                         name = i,
-                        yaxis = 'y2'
+                        yaxis = 'y2',
+                        legendgroup = 'Macro',
                     ))
                 elif i == 'Interest rate (R)':
                     graph_data.append(go.Scatter(
                         x = self.index,
                         y = (self.economy.get_consumption_cycle_data()['Interest rate']-1)*100,
                         name = i,
-                        yaxis = 'y2'
+                        yaxis = 'y2',
+                        legendgroup = 'Macro',
                     ))
             return [{
                 'data':graph_data,
                 'layout':
                     go.Layout(
                         xaxis={'title':'Year'},
-                        yaxis={'title':'$','automargin':True,},
+                        yaxis={'title':'$'},
                         yaxis2={'title':'Index',
-                                'overlaying':'y',
-                                'side':'right',
-                                'showgrid':False,
-                                'automargin':True,
-                                },
-                        legend=dict(orientation="h")
+                            'overlaying':'y',
+                            'side':'right',
+                            'showgrid':False,
+                            'automargin':True,
+                        },
+                        legend={'orientation':'h',
+                            'y':-0.3}
+
                     )
             },'']
