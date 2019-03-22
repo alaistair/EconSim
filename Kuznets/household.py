@@ -5,7 +5,7 @@ class Household():
 
     def __init__(self, settings):
         self.people = 2 # labour endowment
-        self.human_capital = settings.init_human_capital # productive capacity, init = 100
+        self.human_capital = random.choice(settings.init_human_capital)
 
         self.wages = 0 # income from working for one cycle
         self.savings = settings.init_hh_savings # stock of savings
@@ -21,7 +21,7 @@ class Household():
             wages = 0
             print("Error: negative wages")
         self.wages = wages
-        return self.wages
+        return self.human_capital
 
     # Decide how much to spend and how much to save
     def household_consumption(self):

@@ -77,7 +77,8 @@ class App():
             ], style={'padding-top':'0%'}),
 
             html.Div(dcc.Graph(id='economy',config={'displayModeBar': False},
-                style={'height':'40%',})),
+                style={'height':'45%','margin-top':'0%'})),
+
             html.H2('Display settings'),
             html.Div([
                 html.P('Households', style={'display':'inline-block', 'width':'25%'}),
@@ -284,6 +285,14 @@ class App():
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))
+                elif i == 'Unemployment rate (R)':
+                    graph_data.append(go.Scatter(
+                        x = self.index,
+                        y = self.economy.get_consumption_cycle_data()['Unemployment rate']*100,
+                        name = i,
+                        yaxis = 'y2',
+                        legendgroup = 'Macro',
+                    ))
             return [{
                 'data':graph_data,
                 'layout':
@@ -297,7 +306,8 @@ class App():
                             'automargin':True,
                         },
                         legend={'orientation':'h',
-                            'y':-0.3}
+                            'y':-0.3},
+                        autosize=True
 
                     )
             },'']

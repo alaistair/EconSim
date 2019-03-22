@@ -84,6 +84,8 @@ class Economy():
         # unemployed
         unemployed = total_population.pop()
         self.government.unemployed[unemployed] = self.households[unemployed]
+        unemployed = total_population.pop()
+        self.government.unemployed[unemployed] = self.households[unemployed]
 
         # allocate remaining workers
         for worker in total_population:
@@ -160,6 +162,8 @@ class Economy():
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
+
+
 
     def income_tax(self):
         self.government.expenditure = 0
