@@ -1,0 +1,111 @@
+@import url("https://fonts.googleapis.com/css?family=Montserrat");
+@import url('https://fonts.googleapis.com/css?family=Libre+Baskerville');
+
+._dash-undo-redo {
+  display: none;
+}
+
+html {font-family:'Avenir-Book','Montserrat'; font-size:100%; height:100%}
+body {background:rgb(255,255,255); line-height:1.88889;
+  margin-top:0px; color:rgb(50,50,50)}
+canvas {margin:auto; display:block}
+p {text-align:justify; font-size:0.9em}
+h1 {font-family:'Libre Baskerville'; font-size:1.2em; font-weight:normal; margin-bottom:0%}/*homepage title header*/
+h2 {font-family:'Libre Baskerville'; font-size:1em; font-weight:normal; margin-bottom:0%}/*front story|projects link*/
+h3 {font-family:'Libre Baskerville'; font-size:1.2em; font-weight:normal; white-space: nowrap}/*page title header*/
+h4 {font-family:'Libre Baskerville'; font-size:1em; font-weight:normal;margin-top:5%; margin-bottom:5%} /*project text titles*/
+h5 {font-size:0.67em; font-weight:normal} /*bottom copyright info */
+a {color:rgb(50,50,50)}
+a:hover, a:active {color:rgb(0,0,0)}
+img {border:0px; padding:3%; max-width:100%; max-height:100%}
+hr {border:0px solid black; height:1px; color:rgb(80,80,80);
+  background:rgb(150,150,150); margin-left:16.5%; margin-right:16.5%; clear:both}
+table {table-layout:auto; border-collapse:collapse; width:100%; margin-left:3%}
+.page {max-width:600px; margin:auto; position:relative}
+.top {height:5%}
+.mail:hover {color:rgb(221,75,57)}
+.linkedin:hover {color:rgb(0,123,182)}
+.facebook:hover {color:rgb(59,89,152)}
+.twitter:hover {color:rgb(30,161,242)}
+.home:hover {color:rgb(0,0,0)}
+.projects:hover {color:rgb(0,0,0)}
+.up:hover {color:rgb(0,0,0)}
+.nounderline:link {text-decoration:none}
+.alignleft {float:left}
+.alignright {float:right}
+.aligncenter {text-align:center}
+.row:after {content:""; display:table; clear:both}
+.project {float:left; margin-bottom:5%}
+.text {width:56%; margin-left:3%; margin-right:1%}
+.photo {width:38%; margin-top:2%; margin-left:2%; margin-right:0%}
+.bottom {margin-top:6%; padding-bottom:6%}
+.copyright {float:left; margin-left:3%}
+.links {float:right; margin-top:2.2%; font-size:0.9em}
+
+@media (max-width:600px) { /*phone display*/
+  img {padding:2%}
+  table {width:94%}
+  .project {width:94%; margin-bottom:0%}
+  .text {margin-left:3%; margin-right:0%}
+  .photo {margin-top:0%; margin-bottom:5%; margin-left:1%; margin-right:1%}
+  .copyright {width:100%; text-align:center; margin-left:0%}
+  .links {width:100%; text-align:center; margin-top:5%}
+}
+
+/* Buttons –––––––––––––––––––––––––––––––––––––––––––––––––– */
+.button,
+button,
+input[type="submit"],
+input[type="reset"],
+input[type="button"] {
+  display: inline-block;
+  height: 38px;
+  padding: 0 30px;
+  color: #555;
+  text-align: center;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 38px;
+  letter-spacing: .1rem;
+  text-transform: uppercase;
+  text-decoration: none;
+  white-space: nowrap;
+  background-color: transparent;
+  border-radius: 4px;
+  border: 1px solid #bbb;
+  cursor: pointer;
+  box-sizing: border-box; }
+.button:hover,
+button:hover,
+input[type="submit"]:hover,
+input[type="reset"]:hover,
+input[type="button"]:hover,
+.button:focus,
+button:focus,
+input[type="submit"]:focus,
+input[type="reset"]:focus,
+input[type="button"]:focus {
+  color: #333;
+  border-color: #888;
+  outline: 0; }
+.button.button-primary,
+button.button-primary,
+input[type="submit"].button-primary,
+input[type="reset"].button-primary,
+input[type="button"].button-primary {
+  color: #FFF;
+  background-color: #33C3F0;
+  border-color: #33C3F0; }
+.button.button-primary:hover,
+button.button-primary:hover,
+input[type="submit"].button-primary:hover,
+input[type="reset"].button-primary:hover,
+input[type="button"].button-primary:hover,
+.button.button-primary:focus,
+button.button-primary:focus,
+input[type="submit"].button-primary:focus,
+input[type="reset"].button-primary:focus,
+input[type="button"].button-primary:focus {
+  color: #FFF;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
