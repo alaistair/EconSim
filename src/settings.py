@@ -11,7 +11,7 @@ class Settings():
         # Initial household settings
         self.init_hh_savings = 20
         self.init_MPC = 0.95
-        self.init_human_capital = [90,100,110] # range of potential labour outputs
+        self.init_human_capital = [10,20,30] # range of potential labour outputs
 
         # Initial firm settings
         self.init_production = int(100) # 10 * self.init_households

@@ -19,7 +19,7 @@ class Firm():
         self.workers = {} # hhID, worker dictionary
         self.owners = {} # hhID, owner dictionary
 
-    def expected_production(self):
+    def firm_expected_production(self):
         # Update firm's expected revenue based on sales
         if self.inventory == 0: # Ran out of inventory
             self.product_price *= 1.1
@@ -34,7 +34,7 @@ class Firm():
         expected_labour_cost = self.expected_production/self.labour_productivity
         return expected_labour_cost
 
-    def production(self):
+    def firm_production(self):
 
         if self.product_price < 0: self.product_price = 0.01
 

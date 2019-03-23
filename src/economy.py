@@ -30,7 +30,8 @@ class Economy():
         # Initialise dataframe for household data
         self.households_data = pd.DataFrame({'income':[0.],
                                 'savings':[0.],
-                                'spending':[0.]
+                                'spending':[0.],
+                                'human capital':[0.],
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'hhID']))
 
         # Initialise firms
@@ -112,7 +113,8 @@ class Economy():
             self.households_data.loc[(self.time, 'p', hhID)] = {
                                 'income':household.wages,
                                 'savings':household.savings,
-                                'spending':household.spending,}
+                                'spending':household.spending,
+                                'human capital':household.human_capital}
 
         for firmID, firm in self.firms.items():
             self.firms_data.loc[(self.time, 'p', firmID)] = {
@@ -158,11 +160,15 @@ class Economy():
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
-            expected_labour_cost = firm.expected_production()
+            expected_labour_cost = firm.firm_expected_production()
+            expected_production = firm.expected_production
+            # Firm's goal is to approximate expected_production, while keeping
+            # labour costs at or below expectations
+            # Worker's goal is to maximise wages over and above their human capital
+            # endowments
+            
 
-
-
-            labour_cost = firm.production()
+            labour_cost = firm.firm_production()
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
@@ -247,7 +253,8 @@ class Economy():
             self.households_data = pd.concat([self.households_data,
                                     pd.DataFrame({'income':household.wages,
                                         'savings':household.savings,
-                                        'spending':household.spending},
+                                        'spending':household.spending,
+                                        'human capital':household.human_capital,},
                                         index = [(self.time, cycle, hhID)])])
 
         for firmID, firm in self.firms.items():
@@ -301,6 +308,7 @@ class Economy():
             self.financial_market()
             self.update_economy_data('f')
             if self.slow: time.sleep(100)
+            self.status()
         self.print_all()
 
     def get_production_cycle_data(self):
