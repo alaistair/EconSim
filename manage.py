@@ -1,4 +1,3 @@
-import flask
 from src.app import App
 
 
