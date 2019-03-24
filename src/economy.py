@@ -1,8 +1,8 @@
 from __future__ import division
 from collections import defaultdict
-from household import Household
-from firm import Firm
-from government import Government
+from src.household import Household
+from src.firm import Firm
+from src.government import Government
 import random
 import numpy as np
 import pandas as pd
