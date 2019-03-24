@@ -160,15 +160,16 @@ class Economy():
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
-            expected_labour_cost = firm.firm_expected_production()
-            expected_production = firm.expected_production
+            expected_labour_cost = firm.update_expected_production()
             # Firm's goal is to approximate expected_production, while keeping
             # labour costs at or below expectations
             # Worker's goal is to maximise wages over and above their human capital
             # endowments
-            
+            while firm.production < firm.expected_production:
+                for hhID, worker in firm.workers.items():
+                    pass
 
-            labour_cost = firm.firm_production()
+            labour_cost = firm.update_production()
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
                 self.households[hhID].household_production(wages_per_worker)
@@ -206,10 +207,8 @@ class Economy():
             for household_product in household.spending_basket:
                 spending = household.spending * household_product['Proportion']
                 random.shuffle(self.products[household_product['Name']])
-                count = 0
                 total_sales += spending
                 while spending > 0:
-                    count += 1
                     # Cycle though list of firms that makes product
                     for firmID in self.products[household_product['Name']]:
                         if household_product['Price'] >= self.firms[firmID].product_price:

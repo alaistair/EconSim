@@ -6,6 +6,7 @@ from settings import Settings
 import numpy as np
 import pandas as pd
 
+import flask
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
@@ -16,8 +17,10 @@ import plotly.graph_objs as go
 
 class App():
     def __init__(self):
-        self.app = dash.Dash(__name__)
+        self.server = flask.Flask(__name__)
+        self.app = dash.Dash(__name__, server=self.server)
         self.app.title = 'Kuznets'
+
         self.last_cycle_click = 0 # used for cycle check
         self.last_reset_click = 0 # used for reset check
         self.settings = Settings()
