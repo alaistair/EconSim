@@ -1,1 +1,1 @@
-web: gunicorn manage:Kuznets
+web: gunicorn manage:Kuznets.server
