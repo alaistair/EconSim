@@ -80,7 +80,7 @@ print(econ1.economy_data.to_string())
 #test2 = econ1.households_data.xs(1901) # return everything at time 1901
 #test = econ1.households_data.iloc[econ1.households_data.index.get_level_values('hhID') == 5] # return all values for hhID == 5
 
-def app():
+def run():
     print('Hello world!')
 
 if __name__ == '__main__':
