@@ -7,6 +7,7 @@ class Household():
         self.people = 2 # labour endowment
         self.human_capital = random.choice(settings.init_human_capital) #[10,20,30]
 
+        self.expected_wages = self.human_capital
         self.wages = 0 # income from working for one cycle
         self.savings = settings.init_hh_savings # stock of savings
         self.MPC = settings.init_MPC # 0.95

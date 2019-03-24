@@ -165,10 +165,10 @@ class Economy():
             # labour costs at or below expectations
             # Worker's goal is to maximise wages over and above their human capital
             # endowments
-            while firm.production < firm.expected_production:
+            """while firm.production < firm.expected_production:
                 for hhID, worker in firm.workers.items():
                     pass
-
+                    """
             labour_cost = firm.update_production()
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
