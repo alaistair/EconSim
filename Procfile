@@ -1,1 +1,1 @@
-web: gunicorn manage:server
+web: gunicorn manage:run_server
