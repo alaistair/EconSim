@@ -32,3 +32,22 @@ The platform is named in honour of Simon Kuznets, an economist who, among other 
 # About me
 
 I graduated from The University of Western Australia with degrees in Economics (Hons) and Computer Science. While at UWA I tutored Macroeconomics 101 and Monetary Economics 210. I am a Senior Analyst at the Reserve Bank of Australia.
+
+
+"""
+
+Todo:
+Household enter/exit
+Firm enter/exit
+Household consumption function
+Firm production function
+Asset market
+Housing market
+Human capital
+Government
+International trade
+
+Front end
+User login
+
+"""

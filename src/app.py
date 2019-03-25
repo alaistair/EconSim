@@ -10,10 +10,7 @@ import flask
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
-#import dash_daq as daq
 import plotly.graph_objs as go
-
-#external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
 class App():
     def __init__(self):
@@ -83,7 +80,6 @@ class App():
             html.Div(dcc.Graph(id='economy',config={'displayModeBar': False},
                 style={'height':'45%','margin-top':'0%'})),
 
-            html.H2('Display settings'),
             html.Div([
                 html.P('Households', style={'display':'inline-block', 'width':'25%'}),
                 html.P('Firms', style={'display':'inline-block', 'width':'25%'}),
@@ -94,9 +90,9 @@ class App():
                 html.P(dcc.Checklist(
                     id='household-lines-checklist',
                     options=[
-                        {'label': 'Total household income', 'value': 'Household income'},
-                        {'label': 'Total household savings', 'value': 'Household savings'},
-                        {'label': 'Total household spending', 'value': 'Household spending'},
+                        {'label': 'Income', 'value': 'Household income'},
+                        {'label': 'Savings', 'value': 'Household savings'},
+                        {'label': 'Spending', 'value': 'Household spending'},
                     ],
                     values=['Household savings', 'Household spending'],
                     labelStyle={'display':'block'}),
@@ -104,10 +100,10 @@ class App():
                 html.P(dcc.Checklist(
                     id='firm-lines-checklist',
                     options=[
-                        {'label': 'Total firm inventory', 'value': 'Firm inventory'},
-                        {'label': 'Total firm production', 'value': 'Firm production'},
-                        {'label': 'Total firm revenue', 'value': 'Firm revenue'},
-                        {'label': 'Total firm debt', 'value': 'Firm debt'},
+                        {'label': 'Inventory', 'value': 'Firm inventory'},
+                        {'label': 'Production', 'value': 'Firm production'},
+                        {'label': 'Revenue', 'value': 'Firm revenue'},
+                        {'label': 'Debt', 'value': 'Firm debt'},
                     ],
                     values=[],
                     labelStyle={'display':'block'}),
@@ -115,9 +111,9 @@ class App():
                 html.P(dcc.Checklist(
                     id='government-lines-checklist',
                     options=[
-                        {'label': 'Government revenue', 'value': 'Government revenue'},
-                        {'label': 'Government expenditure', 'value': 'Government expenditure'},
-                        {'label': 'Government debt', 'value': 'Government debt'},
+                        {'label': 'Revenue', 'value': 'Government revenue'},
+                        {'label': 'Spending', 'value': 'Government expenditure'},
+                        {'label': 'Debt', 'value': 'Government debt'},
                     ],
                     values=[],
                     labelStyle={'display':'block'}),
