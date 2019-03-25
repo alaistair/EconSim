@@ -30,19 +30,15 @@ class Firm():
         else:
             self.product_price *= 1.02
             self.expected_production *= 1.02
+        if self.product_price < 0: self.product_price = 0.01
 
         expected_labour_cost = self.expected_production/self.labour_productivity
         return expected_labour_cost
 
-    def update_production(self):
-
-        if self.product_price < 0: self.product_price = 0.01
-
-        self.production = self.expected_production
-
-        labour_cost = self.production/self.labour_productivity # $
+    def update_production(self, labour_cost):
+        self.production += labour_cost * self.labour_productivity
         self.debt += labour_cost + self.capital_investment
-        return labour_cost
+        return 1
 
     # Adds sales to firm's revenue.
     # Returns sales fulfilled

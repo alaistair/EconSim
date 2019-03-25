@@ -157,22 +157,34 @@ class Economy():
         self.update_economy_data('f')
 
     def production_market(self):
+        # All households are unemployed at start of cycle
+        for hhID, household in self.households.items():
+            self.government.unemployed[household] = self.households[hhID]
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
-            expected_labour_cost = firm.update_expected_production()
             # Firm's goal is to approximate expected_production, while keeping
             # labour costs at or below expectations
             # Worker's goal is to maximise wages over and above their human capital
             # endowments
-            """while firm.production < firm.expected_production:
-                for hhID, worker in firm.workers.items():
-                    pass
-                    """
-            labour_cost = firm.update_production()
-            wages_per_worker = labour_cost/len(firm.workers)
-            for hhID, worker in firm.workers.items():
-                self.households[hhID].household_production(wages_per_worker)
+
+            # Get how much each firm expecting to pay
+            expected_labour_spending = firm.update_expected_production()
+            firm.workers = {}
+
+            # Cycle through available workers
+            while expected_labour_spending > 0:
+                if len(self.government.unemployed) == 0:
+                    break
+                else:
+                    hhID, household = random.choice(list(self.government.unemployed.items()))
+                    if household.household_production(household.expected_wages):
+                        expected_labour_spending -= household.expected_wages
+                        firm.update_production(household.expected_wages)
+                        del self.government.unemployed[hhID]
+
+        for hhID, household in self.government.unemployed.items():
+            household.expected_wages *= 0.98
 
 
 
@@ -185,9 +197,12 @@ class Economy():
     def welfare(self):
         self.government.expenditure = self.government.revenue * 2.4
         total_unemployed = len(self.government.unemployed.keys())
-        spending = self.government.expenditure/total_unemployed
-        for hhID, household in self.government.unemployed.items():
-            household.wages = spending
+        if total_unemployed == 0:
+            pass
+        else:
+            spending = self.government.expenditure/total_unemployed
+            for hhID, household in self.government.unemployed.items():
+                household.wages = spending
 
     def move_production_to_inventory(self):
         for firm in self.firms.values():

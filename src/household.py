@@ -19,10 +19,16 @@ class Household():
 
     def household_production(self, wages):
         if wages < 0:
-            wages = 0
-            print("Error: negative wages")
-        self.wages = wages
-        return self.human_capital
+            return False
+        if wages >= self.expected_wages:
+            self.wages = wages
+            self.expected_wages *= 1.04
+            return True
+        elif wages < self.expected_wages:
+            if random.random() < 0.5:
+                return False
+            else:
+                return True
 
     # Decide how much to spend and how much to save
     def household_consumption(self):
