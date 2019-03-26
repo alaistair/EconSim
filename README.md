@@ -1,9 +1,9 @@
 # Kuznets
 Kuznets is an interactive economics tutor. It is an economics-focused MOOC with a realistically specified economic model that students can play with instead of just watching video lectures. The core of Kuznets is an economic simulation where individual households and firms cooperate, along with government, financial markets, and international economies. See what I've built so far at  [kuznets.herokuapp.com](http://kuznets.herokuapp.com)
 
-Different concepts are revealed as the student progresses. In the early stages it is made clear that economic growth is the result of people creating things that other people want. In later stages they can change monetary policy and see the effect on inflation, economic activity, and asset prices, and observe the effects of the changes versus, say, following the Taylor rule. Tax policy changes will affect hiring decisions and working decisions, as well as the distribution of income.
+As the student progresses, different economic concepts can be revealed. In the early stages it is made clear that economic growth is the result of people creating things that other people want. In later stages they can change monetary policy and see the effect on inflation, economic activity, and asset prices, and observe the effects of the changes versus, say, following the Taylor rule. Tax policy changes will affect hiring decisions and working decisions, as well as the distribution of income.
 
-As the student uses the simulation the data generated can be used to illustrate various relationships. Okun's law can be seen by plotting unemployment and GDP growth. The effects of interest rate changes can be plotted on an IS-LM curve. Kuznets handles all the data work so that the charts can be drawn at will (or when the student is at an appropriate level), which speeds up the intuition.
+Kuznets will also use the data generated from the simulation to illustrate various relationships. Okun's law can be seen by plotting unemployment and GDP growth. The effects of interest rate changes can be plotted on an IS-LM curve. Kuznets handles all the data work so that the charts can be drawn at will (or when the student is at an appropriate level), which speeds up the intuition.
 
 # Why Kuznets
 
@@ -21,6 +21,4 @@ The platform is named in honour of Simon Kuznets, an economist who, among other 
 
 # About me
 
-I graduated from The University of Western Australia with degrees in Economics (Hons) and Computer Science. While at UWA I tutored Macroeconomics 101 and Monetary Economics 210. I am a Senior Analyst at the Reserve Bank of Australia.
-
-I have tinkered with various toy economic models in the past, and in high school I created a circular flow of income in Visual Basic to explain how the economy works.
+I graduated from The University of Western Australia with degrees in Economics (Hons) and Computer Science. While at UWA I tutored Macroeconomics 101 and Monetary Economics 210. As an economist I helped build macroeconomic models for stress testing banks' portfolios.
