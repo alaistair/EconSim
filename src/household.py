@@ -9,7 +9,7 @@ class Household():
 
         self.expected_wages = self.human_capital
         self.wages = 0 # income from working for one cycle
-        self.savings = settings.init_hh_savings # stock of savings
+        self.savings = settings.init_household_savings # stock of savings
         self.MPC = settings.init_MPC # 0.95
 
         self.spending = 0 # spending for one cycle

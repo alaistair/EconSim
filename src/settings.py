@@ -10,7 +10,7 @@ class Settings():
         self.init_unemployment_rate = 0.1
 
         # Initial household settings
-        self.init_hh_savings = 20
+        self.init_household_savings = 20
         self.init_MPC = 0.95
         self.init_human_capital = [10,20,30] # range of potential labour outputs
 

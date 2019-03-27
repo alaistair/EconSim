@@ -28,14 +28,15 @@ class App():
 
         self.app.layout = html.Div(children=[
             html.Div([
-                html.H1('Kuznets demo', style={'display':'inline-block'}),
+                html.H1('Kuznets demo', style={'display':'inline-block',}),
                 html.A('About Kuznets', href='https://www.alaistairchan.com/kuznets.html',
                     style={'display':'inline-block',
                         'margin-top':'1em',
                         'float':'right',
                         'margin-right':'5%',
-                        'text-decoration': 'none'}),
-            ]),
+                        'text-decoration': 'none',}),
+            ],style={}),
+            html.Hr(style={'margin-bottom':'3%'}),
             html.Div([
                 html.H2('Simulation settings'),
                 html.P('Households: 20'
@@ -197,7 +198,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_production_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(128,0,0)'},
+                        line = {'color':'rgb(255,255,0)'},
                         legendgroup = 'Households',
                     ))
                 elif i == 'Household spending':
@@ -213,7 +214,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(255,255,0)'},
+                        line = {'color':'rgb(128,0,0)'},
                         legendgroup = 'Households',
                     ))
             for i in firm_lines_checklist:
@@ -282,6 +283,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['CPI'],
                         name = i,
+                        line = {},
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))
