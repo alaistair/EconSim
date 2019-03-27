@@ -38,7 +38,7 @@ class App():
             ]),
             html.Div([
                 html.H2('Simulation settings'),
-                html.P('Households: 20' 
+                html.P('Households: 20'
                     + ' Firms: 3'),
             ]),
             html.Div([
@@ -138,8 +138,8 @@ class App():
                     style={'display':'inline-block','width':'25%','vertical-align':'top','margin-top':'0%'}),
             ]),
             html.Div([
-                html.H2('Looking deeper'),
-                html.P('Interest rate')
+                html.H2(' '),
+                html.P(' ')
             ]),
             html.Table(
 
