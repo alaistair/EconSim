@@ -27,13 +27,19 @@ class App():
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
 
         self.app.layout = html.Div(children=[
-            html.H1(['Kuznets demo ', html.A('Link', href='www.alaistairchan.com')]),
-            html.A('About', href='https://www.alaistairchan.com/kuznets/about.html'),
-
+            html.Div([
+                html.H1('Kuznets demo', style={'display':'inline-block'}),
+                html.A('About Kuznets', href='https://www.alaistairchan.com/kuznets.html',
+                    style={'display':'inline-block',
+                        'margin-top':'1em',
+                        'float':'right',
+                        'margin-right':'5%',
+                        'text-decoration': 'none'}),
+            ]),
             html.Div([
                 html.H2('Simulation settings'),
-                html.P('Households: ' + str(self.last_cycle_click)
-                    + ' Firms: ' + str(self.last_cycle_click)),
+                html.P('Households: 20' 
+                    + ' Firms: 3'),
             ]),
             html.Div([
                 html.H2('Policy settings'),
@@ -46,7 +52,7 @@ class App():
                     value=(self.economy.interest_rate-1)*100,
                     marks={i:'{}'.format(i) for i in range(11)}
                 )
-            ], style={'width':'30%', 'margin-bottom':'5%'}),
+            ], style={'width':'40%', 'margin-bottom':'5%'}),
             html.Div([
                 html.P('Run simulation for ',
                     style={'display':'inline-block','vertical-align': 'middle', 'margin-right':'0.8%', 'padding-top':'2%'}),
@@ -87,7 +93,7 @@ class App():
                 html.P('Firms', style={'display':'inline-block', 'width':'25%'}),
                 html.P('Government', style={'display':'inline-block', 'width':'25%'}),
                 html.P('Macro', style={'display':'inline-block', 'width':'25%'}),
-            ], style={'font-size':'1.2em', 'margin-bottom':'-3%'}),
+            ], style={'font-size':'1.2em', }),
             html.Div([
                 html.P(dcc.Checklist(
                     id='household-lines-checklist',
@@ -129,7 +135,7 @@ class App():
                     ],
                     values=[],
                     labelStyle={'display':'block'}),
-                    style={'display':'inline-block','width':'25%','vertical-align':'top'}),
+                    style={'display':'inline-block','width':'25%','vertical-align':'top','margin-top':'0%'}),
             ]),
             html.Div([
                 html.H2('Looking deeper'),

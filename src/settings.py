@@ -7,6 +7,7 @@ class Settings():
         self.init_households = 20
         self.init_firms = 3
         self.init_interest_rate = 1.01
+        self.init_unemployment_rate = 0.1
 
         # Initial household settings
         self.init_hh_savings = 20

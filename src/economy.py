@@ -20,6 +20,7 @@ class Economy():
         self.government = Government(settings)
         self.CPI = 1
         self.slow = 0
+        self.unemployment_rate = settings.init_unemployment_rate
 
         # Initialise households
         tuples = [] # index (time, cycle, hhID) for household dataframe
@@ -56,9 +57,6 @@ class Economy():
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
         # Initialise dataframe for economy data
-        #tuples = []
-        #tuples.append((self.time, 'p'))
-
         self.economy_data = pd.DataFrame({'Household income':[0.],
                                         'Household savings':[0.],
                                         'Household spending':[0.],
@@ -74,24 +72,28 @@ class Economy():
                                         'Unemployment rate':[0.],
                         }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
-        # Who works where
-        # Every firm gets at least on worker
-        total_population = list(self.households.keys())
+        # Initialise labour market
+        # All households are unemployed at start of cycle
+        for hhID, household in self.households.items():
+            self.government.unemployed[hhID] = household
+
+        # Every firm gets at least one worker
         for firmID, firm in self.firms.items():
-            i = random.choice(total_population)
-            firm.workers[i] = self.households[i]
-            total_population.remove(i)
+            i = random.choice(list(self.government.unemployed.keys()))
+            firm.workers[i] = self.government.unemployed[i]
+            del self.government.unemployed[i]
 
-        # unemployed
-        unemployed = total_population.pop()
-        self.government.unemployed[unemployed] = self.households[unemployed]
-        unemployed = total_population.pop()
-        self.government.unemployed[unemployed] = self.households[unemployed]
+        # Allocate remaining workers until ~ unemployment rate. At least one
+        # household will be unemployed.
+        while float(len(self.government.unemployed)/len(self.households)) > self.unemployment_rate:
+            if len(self.government.unemployed) == 1:
+                break
+            i = random.choice(list(self.government.unemployed.keys()))
+            j = random.choice(list(self.firms.keys()))
+            self.firms[j].workers[i] = self.households[i]
+            del self.government.unemployed[i]
 
-        # allocate remaining workers
-        for worker in total_population:
-            i = random.choice(list(self.firms.keys()))
-            self.firms[i].workers[worker] = self.households[worker]
+
 
         # allocate firms to product
         for firmID, firm in self.firms.items():
@@ -155,11 +157,17 @@ class Economy():
         self.update_economy_data('c')
         self.financial_market()
         self.update_economy_data('f')
+        self.print_labour_market()
 
     def production_market(self):
         # All households are unemployed at start of cycle
         for hhID, household in self.households.items():
-            self.government.unemployed[household] = self.households[hhID]
+            self.government.unemployed[hhID] = household
+        for firmID, firm in self.firms.items():
+            firm.workers = {}
+
+        print("make everyone unemployed")
+        self.print_labour_market()
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
@@ -174,19 +182,20 @@ class Economy():
 
             # Cycle through available workers
             while expected_labour_spending > 0:
-                if len(self.government.unemployed) == 0:
+                if len(self.government.unemployed.keys()) <= 1:
                     break
                 else:
                     hhID, household = random.choice(list(self.government.unemployed.items()))
                     if household.household_production(household.expected_wages):
+                        firm.workers[hhID] = household
                         expected_labour_spending -= household.expected_wages
                         firm.update_production(household.expected_wages)
                         del self.government.unemployed[hhID]
 
         for hhID, household in self.government.unemployed.items():
             household.expected_wages *= 0.98
-
-
+        print('new labour market')
+        self.print_labour_market()
 
     def income_tax(self):
         self.government.expenditure = 0
@@ -323,6 +332,7 @@ class Economy():
             self.update_economy_data('f')
             if self.slow: time.sleep(100)
             self.status()
+            self.print_labour_market()
         self.print_all()
 
     def get_production_cycle_data(self):
@@ -360,10 +370,10 @@ class Economy():
         print(self.government_data.loc[(time,):(time,)])
 
     def print_labour_market(self):
+        print("Labour market allocation to firms:")
         for firmID, firm in self.firms.items():
-            print(str(firmID) + " " + str(firm.workers.keys()))
-        for hhID in self.government.unemployed.keys():
-            print("Unemp: " + str(hhID))
+            print("Firm ID: " + str(firmID) + " " + str(firm.workers.keys()))
+        print("Unemployed: " + str(self.government.unemployed.keys()))
 
     def update_time(self):
         self.time += 1
