@@ -27,7 +27,9 @@ class App():
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
 
         self.app.layout = html.Div(children=[
-            html.H1(children='Kuznets demo'),
+            html.H1(['Kuznets demo ', html.A('Link', href='www.alaistairchan.com')]),
+            html.A('About', href='https://www.alaistairchan.com/kuznets/about.html'),
+
             html.Div([
                 html.H2('Simulation settings'),
                 html.P('Households: ' + str(self.last_cycle_click)

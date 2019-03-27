@@ -7,7 +7,7 @@ Kuznets will also use the data generated from the simulation to illustrate vario
 
 # Why Kuznets
 
-Australia is seeing a precipitous decline in the study of economics. Enrolment in Yr 12 Economics has fallen by 70 per cent over the past 25 years, with even steeper declines seen in the enrolment of females and of public school students. Declining interest in economics has been observed in other countries, including the United States and United Kingdom.
+Australia is seeing a [precipitous decline](https://www.rba.gov.au/speeches/2018/sp-so-2018-05-26.html) in the study of economics. Enrolment in Yr 12 Economics has fallen by 70 per cent over the past 25 years, with even steeper declines seen in the enrolment of females and of public school students. Declining interest in economics has been observed in other countries, including the United States and United Kingdom.
 
 Economist Tyler Cowen, in his book Stubborn Attachments, makes a strong case for the pursuit of 'wealth plus', broadly defined as GDP as well as leisure, household production, and environmental amenities. Public policy, and individual decisions, should be made in light of maximising wealth plus, Cowen argues, taking into account human rights and morality.
 
