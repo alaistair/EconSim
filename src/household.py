@@ -17,21 +17,15 @@ class Household():
                             'Price': 1 + (random.random() - 0.5) * 0.1,
                             'Proportion': 1}] # proportion = % spending
 
-    def household_production(self, wages):
-        if wages < 0:
-            return False
-        if wages >= self.expected_wages:
-            self.wages = wages
-            self.expected_wages *= 1.04
-            return True
-        elif wages < self.expected_wages:
-            if random.random() < 0.5:
-                return False
-            else:
-                return True
+    def update_production(self, wages, CPI):
+        self.wages = wages
+        if CPI > 1:
+            self.expected_wages = wages * CPI
+        else:
+            self.expected_wages = wages
 
     # Decide how much to spend and how much to save
-    def household_consumption(self):
+    def update_consumption(self):
         if self.savings < 0.3 * self.wages:
             self.MPC = 0.8
             self.spending = self.wages * self.MPC
@@ -55,7 +49,7 @@ class Household():
 
         return self.spending_basket
 
-    def household_financial(self, interest_rate):
+    def update_financial(self, interest_rate):
         self.savings *= interest_rate
         self.savings += self.wages
         self.wages = 0

@@ -19,7 +19,7 @@ class Firm():
         self.workers = {} # hhID, worker dictionary
         self.owners = {} # hhID, owner dictionary
 
-    def update_expected_production(self):
+    def update_hiring_intentions(self):
         # Update firm's expected revenue based on sales
         if self.inventory == 0: # Ran out of inventory
             self.product_price *= 1.1
@@ -32,8 +32,25 @@ class Firm():
             self.expected_production *= 1.02
         if self.product_price < 0: self.product_price = 0.01
 
-        expected_labour_cost = self.expected_production/self.labour_productivity
-        return expected_labour_cost
+        expected_revenue = self.expected_production * self.product_price
+        expected_production_spending = expected_revenue - self.debt * 0.05
+        expected_labour_spending = expected_production_spending/self.labour_productivity
+        expected_additional_labour_spending = expected_labour_spending
+        for hhID, household in self.workers.items():
+            expected_additional_labour_spending -= household.expected_wages
+
+        if expected_additional_labour_spending < 0:
+            return 0
+        else:
+            return expected_additional_labour_spending
+
+    def hire_labour(self, household):
+        worker_productivity = household.human_capital/household.expected_wages
+
+        if household.expected_wages < self.labour_productivity:
+            return True
+        else:
+            return False
 
     def update_production(self, labour_cost):
         self.production += labour_cost * self.labour_productivity
@@ -42,7 +59,7 @@ class Firm():
 
     # Adds sales to firm's revenue.
     # Returns sales fulfilled
-    def firm_revenue(self, sales):
+    def update_revenue(self, sales):
         quantity = sales/self.product_price
         if self.inventory > quantity: # firm fulfils all sales
             self.inventory -= quantity
@@ -56,7 +73,7 @@ class Firm():
         elif self.inventory == 0: # firm out of stock, return sales
             return 0
 
-    def firm_financial(self, interest_rate):
+    def update_financial(self, interest_rate):
         self.debt *= interest_rate
         self.debt -= self.revenue
         self.revenue = 0

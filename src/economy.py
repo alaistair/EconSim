@@ -105,7 +105,7 @@ class Economy():
             firm.debt += labour_cost
             wages_per_worker = labour_cost/len(firm.workers)
             for hhID, worker in firm.workers.items():
-                self.households[hhID].household_production(wages_per_worker)
+                self.households[hhID].update_production(wages_per_worker, self.CPI)
 
         self.income_tax()
         self.welfare()
@@ -160,48 +160,72 @@ class Economy():
         self.print_labour_market()
 
     def production_market(self):
-        # All households are unemployed at start of cycle
-        for hhID, household in self.households.items():
-            self.government.unemployed[hhID] = household
         for firmID, firm in self.firms.items():
-            firm.workers = {}
+            if bool(firm.workers):
+                # randomly fire one person
+                hhID, household = random.choice(list(firm.workers.items()))
+                del firm.workers[hhID]
+                self.government.unemployed[hhID] = household
+            if bool(firm.workers):
+                # also fire least productive worker
+                lowest_productive_hhID = next(iter(firm.workers))
+                lowest_productive = firm.workers[lowest_productive_hhID].human_capital/firm.workers[lowest_productive_hhID].expected_wages
+                for hhID, household in firm.workers.items():
+                    hh_productivity = household.human_capital/household.expected_wages
+                    if hh_productivity < lowest_productive:
+                        lowest_productive = hh_productivity
+                        lowest_productive_hhID = hhID
+                del firm.workers[lowest_productive_hhID]
+            # most underpaid person quits
 
-        print("make everyone unemployed")
+
+        print("make unemployed:")
         self.print_labour_market()
         # Cycle through each firm's production
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
-            # Firm's goal is to approximate expected_production, while keeping
-            # labour costs at or below expectations
-            # Worker's goal is to maximise wages over and above their human capital
-            # endowments
 
-            # Get how much each firm expecting to pay
-            expected_labour_spending = firm.update_expected_production()
-            firm.workers = {}
+            # Get how much more each firm expecting to spend on labour
+            expected_additional_labour_spending = firm.update_hiring_intentions()
+            print(str(firmID) + " " + str(expected_additional_labour_spending))
+            #firm.workers = {}
 
+            if len(self.government.unemployed.keys()) <= 1:
+                break # already at lowest rate of unemployment
             # Cycle through available workers
-            while expected_labour_spending > 0:
-                if len(self.government.unemployed.keys()) <= 1:
+            employed = {}
+            for hhID, household in self.government.unemployed.items():
+                if expected_additional_labour_spending == 0:
                     break
+                if expected_additional_labour_spending < household.expected_wages:
+                    continue
+                if firm.hire_labour(household):
+                    firm.workers[hhID] = household
+                    expected_additional_labour_spending -= household.expected_wages
+                    employed[hhID] = household
                 else:
-                    hhID, household = random.choice(list(self.government.unemployed.items()))
-                    if household.household_production(household.expected_wages):
-                        firm.workers[hhID] = household
-                        expected_labour_spending -= household.expected_wages
-                        firm.update_production(household.expected_wages)
-                        del self.government.unemployed[hhID]
+                    household.expected_wages *= 0.99
+            for hhID in employed.keys():
+                del self.government.unemployed[hhID]
+
 
         for hhID, household in self.government.unemployed.items():
             household.expected_wages *= 0.98
-        print('new labour market')
+        print('new labour market:')
         self.print_labour_market()
+
+        # production
+        for firmID, firm in self.firms.items():
+            for hhID, household in firm.workers.items():
+                household.update_production(household.expected_wages, self.CPI)
+                household.human_capital *= 1.01
+                firm.update_production(household.expected_wages)
 
     def income_tax(self):
         self.government.expenditure = 0
-        for hhID, worker in self.households.items():
-            self.government.revenue += worker.wages * self.government.income_tax
-            worker.wages *= (1-self.government.income_tax)
+        for h in self.households.values():
+            self.government.revenue += h.wages * self.government.income_tax
+            h.wages *= (1-self.government.income_tax)
 
     def welfare(self):
         self.government.expenditure = self.government.revenue * 2.4
@@ -214,9 +238,9 @@ class Economy():
                 household.wages = spending
 
     def move_production_to_inventory(self):
-        for firm in self.firms.values():
-            firm.inventory += firm.production
-            firm.production = 0
+        for f in self.firms.values():
+            f.inventory += f.production
+            f.production = 0
 
     def consumption_market(self):
         # Cycle through every household's spending.
@@ -225,7 +249,7 @@ class Economy():
         total_quantity = 0
         total_sales = 0
         for hhID, household in self.households.items():
-            household.household_consumption()
+            household.update_consumption()
 
             # Cycle through each product in household's spending basket
             for household_product in household.spending_basket:
@@ -237,7 +261,7 @@ class Economy():
                     for firmID in self.products[household_product['Name']]:
                         if household_product['Price'] >= self.firms[firmID].product_price:
                             total_quantity += spending/self.firms[firmID].product_price
-                            spending -= self.firms[firmID].firm_revenue(spending) # return fulfilled sales
+                            spending -= self.firms[firmID].update_revenue(spending) # return fulfilled sales
                             total_quantity -= spending/self.firms[firmID].product_price
 
                         if spending == 0:
@@ -267,9 +291,9 @@ class Economy():
         self.government.govt_financial(self.interest_rate)
         for h in self.households.values():
             h.savings *= self.government.seigniorage
-            h.household_financial(self.interest_rate)
+            h.update_financial(self.interest_rate)
         for f in self.firms.values():
-            f.firm_financial(self.interest_rate)
+            f.update_financial(self.interest_rate)
 
     def update_economy_data(self, cycle):
         for hhID, household in self.households.items():
@@ -320,6 +344,7 @@ class Economy():
     def cycle(self, number = 1):
         for i in range(number):
             self.update_time()
+
             self.production_market()
             self.income_tax()
             self.welfare()

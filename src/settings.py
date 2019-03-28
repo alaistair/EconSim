@@ -15,7 +15,7 @@ class Settings():
         self.init_human_capital = [10,20,30] # range of potential labour outputs
 
         # Initial firm settings
-        self.init_production = int(100) # 10 * self.init_households
+        self.init_production = int(10 * self.init_households)
         self.init_labour_productivity = 1.3 # output per labour input
 
         # Initial government settings
