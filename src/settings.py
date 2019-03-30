@@ -4,7 +4,7 @@ class Settings():
     def __init__(self):
 
         # Initial economy settings. Households >= firms
-        self.init_households = 30
+        self.init_households = 10
         self.init_firms = 3
         self.init_interest_rate = 1.01
         self.init_unemployment_rate = 0.1
@@ -16,7 +16,7 @@ class Settings():
 
         # Initial firm settings
         self.init_production = int(10 * self.init_households)
-        self.init_labour_productivity = 1.3 # output per labour input
+        self.init_labour_productivity = 1.1 # output per labour input
 
         # Initial government settings
         self.init_govt_revenue = 0

@@ -145,6 +145,20 @@ class App():
             html.Table(
 
             ),
+            html.Hr(style={'margin-top':'5%','margin-bottom':'-3%'}),
+            html.Div([
+                html.Div(
+                    html.H5('© Alaistair Chan'),
+                    className='copyright'),
+                html.Div([
+                    html.A('Back to homepage', href='https://www.alaistairchan.com',
+                        className='fa-layers fa-fw home fas fa-home'),
+                    html.A('  ', href=' ',style={
+                        'text-decoration': 'none',}),
+                    html.A('Email me', href='mailto:alaistair@gmail.com'),
+                ], className='links')
+            ], className='bottom'),
+
         ], style={'padding-left':'5%', 'padding-right':'5%'})
 
         @self.app.callback(

@@ -100,14 +100,7 @@ class Economy():
         for firmID, firm in self.firms.items():
             self.products[firm.product_name].append(firmID)
 
-        # Initial production
-        for firmID, firm in self.firms.items():
-            for hhID, worker in firm.workers.items():
-                firm.production += worker.human_capital
-                self.households[hhID].update_production(worker.expected_wages, self.CPI)
-                firm.debt += worker.expected_wages
-            firm.expected_production = firm.production
-
+        self.production_market()
         self.income_tax()
         self.welfare()
 
@@ -168,7 +161,9 @@ class Economy():
                 # randomly fire one person
                 hhID, household = random.choice(list(firm.workers.items()))
                 self.government.unemployed[hhID] = household
+                print('fire ' + str(hhID))
                 del firm.workers[hhID]
+
             if bool(firm.workers):
                 # also fire least productive worker
                 lowest_productive_hhID = next(iter(firm.workers))
@@ -179,6 +174,7 @@ class Economy():
                         lowest_productive = hh_productivity
                         lowest_productive_hhID = hhID
                 self.government.unemployed[lowest_productive_hhID] = firm.workers[lowest_productive_hhID]
+                print('fire ' + str(hhID))
                 del firm.workers[lowest_productive_hhID]
             # most underpaid person quits
 
@@ -193,20 +189,22 @@ class Economy():
 
             # Get how much more each firm expecting to spend on labour
             expected_additional_labour_spending = firm.update_hiring_intentions()
-
+            print('firm ' + str(firmID) + 'expected spending' + str(expected_additional_labour_spending))
             # Firm uses '37% rule' to hire, ie picks best candidate from random
             # 37% subset of candidates
-            employed = {}
+
             while expected_additional_labour_spending > 0:
                 candidates = int(0.37 * len(self.government.unemployed))
-                if candidates < 1: candidates = 1
+                if candidates < 1: candidates = 1 # at least one candidate in consideration
                 print('candidates: ' + str(candidates))
                 candidate_list = {}
                 for i in range(0, candidates):
                     candidate = random.choice(list(self.government.unemployed.keys()))
                     candidate_list[candidate] = self.government.unemployed[candidate]
 
-                print('candidate list: ' + str(candidate_list))
+                for hhID, household in candidate_list.items():
+                    print('candidate list: ' + str(hhID) + " ex wage:" + str(household.expected_wages))
+
                 best_candidate = 0 # hhID
                 best_candidate_productivity = -100
                 for hhID, household in candidate_list.items():
@@ -214,8 +212,11 @@ class Economy():
                         print('break')
                         break
                     if expected_additional_labour_spending < household.expected_wages:
-                        print('continue')
-                        continue
+                        if bool(firm.workers): # firm has workers
+                            print('continue')
+                            continue
+                        else:
+                            expected_additional_labour_spending *= 1.05
                     worker_productivity = household.human_capital/household.expected_wages
                     print('worker productivity: ' + str(worker_productivity) + " best candidate: " + str(best_candidate))
                     if worker_productivity > best_candidate_productivity:
@@ -229,15 +230,12 @@ class Economy():
                     print('best_candidate: ' + str(best_candidate))
                     firm.workers[best_candidate] = self.government.unemployed[best_candidate]
                     expected_additional_labour_spending -= household.expected_wages
-                    employed[hhID] = household
                     del candidate_list[best_candidate]
-
+                    del self.government.unemployed[best_candidate]
                     # everyone else who did not get hired lowers their standards a little bit
                     #for hhID, household in candidate_list.items():
                         #household.expected_wages *= 0.99
 
-            for hhID in employed.keys():
-                del self.government.unemployed[hhID]
 
         for hhID, household in self.government.unemployed.items():
             household.expected_wages *= 0.98
