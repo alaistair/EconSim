@@ -29,31 +29,44 @@ class App():
         self.app.layout = html.Div(children=[
             html.Div([
                 html.H1('Kuznets demo', style={'display':'inline-block',}),
-                html.A('About Kuznets', href='https://www.alaistairchan.com/kuznets.html',
+                html.A('Contact', href='mailto:alaistair@gmail.com',
                     style={'display':'inline-block',
                         'margin-top':'1em',
                         'float':'right',
-                        'margin-right':'5%',
-                        'text-decoration': 'none',}),
+                        'text-decoration':'none',
+                        'padding-left':'1%'}),
+                html.P('|',
+                    style={'display':'inline-block',
+                        'margin-top':'1em',
+                        'float':'right',
+                        'font-size':'1em'}),
+                html.A('About', href='https://www.alaistairchan.com/kuznets.html',
+                    style={'display':'inline-block',
+                        'margin-top':'1em',
+                        'float':'right',
+                        'text-decoration':'none',
+                        'padding-right':'1%'}),
             ],style={}),
             html.Hr(style={'margin-bottom':'3%'}),
             html.Div([
-                html.H2('Simulation settings'),
-                html.P('Households: 20'
-                    + ' Firms: 3'),
-            ]),
-            html.Div([
-                html.H2('Policy settings'),
-                html.P('Interest rate (%)'),
-                dcc.Slider(
-                    id='interest-rate',
-                    min=0,
-                    max=10,
-                    step=0.25,
-                    value=(self.economy.interest_rate-1)*100,
-                    marks={i:'{}'.format(i) for i in range(11)}
-                )
-            ], style={'width':'40%', 'margin-bottom':'5%'}),
+                html.Div([
+                    html.H2('Simulation settings'),
+                    html.P('Households: ' + str(len(self.economy.households))
+                        + ' Firms: ' + str(len(self.economy.firms))),
+                ], style={'display':'inline-block','width':'50%', }),
+                html.Div([
+                    html.H2('Policy settings'),
+                    html.P('Interest rate (%)'),
+                    dcc.Slider(
+                        id='interest-rate',
+                        min=0,
+                        max=10,
+                        step=0.25,
+                        value=(self.economy.interest_rate-1)*100,
+                        marks={i:'{}'.format(i) for i in range(11)}
+                    )
+                ], style={'display':'inline-block', 'width':'50%', }),
+                ], style={'margin-bottom':'5%', 'padding-left':'3%', 'padding-right':'3%'}),
             html.Div([
                 html.P('Run simulation for ',
                     style={'display':'inline-block','vertical-align': 'middle', 'margin-right':'0.8%', 'padding-top':'2%'}),
@@ -84,17 +97,17 @@ class App():
                     children=[html.Div(id='loading-output-1')],
                     type='dot',),
                     style={'width':'10%', 'display':'inline-block','vertical-align': 'middle', 'height':'1%'})
-            ], style={'padding-top':'0%'}),
+            ], style={'padding-top':'0%','padding-left':'3%', 'padding-right':'3%'}),
 
             html.Div(dcc.Graph(id='economy',config={'displayModeBar': False},
-                style={'height':'45%','margin-top':'0%'})),
+                style={'height':'45%','margin-top':'0%', 'padding-left':'3%', 'padding-right':'3%'})),
 
             html.Div([
                 html.P('Households', style={'display':'inline-block', 'width':'25%'}),
                 html.P('Firms', style={'display':'inline-block', 'width':'25%'}),
                 html.P('Government', style={'display':'inline-block', 'width':'25%'}),
                 html.P('Macro', style={'display':'inline-block', 'width':'25%'}),
-            ], style={'font-size':'1.2em', }),
+            ], style={'font-size':'1.2em', 'padding-left':'8%', 'padding-right':'8%'}),
             html.Div([
                 html.P(dcc.Checklist(
                     id='household-lines-checklist',
@@ -136,8 +149,8 @@ class App():
                     ],
                     values=[],
                     labelStyle={'display':'block'}),
-                    style={'display':'inline-block','width':'25%','vertical-align':'top','margin-top':'0%'}),
-            ]),
+                    style={'display':'inline-block','width':'25%','vertical-align':'top'}),
+            ], style={'padding-left':'8%', 'padding-right':'8%'}),
             html.Div([
                 html.H2(' '),
                 html.P(' ')
@@ -150,16 +163,9 @@ class App():
                 html.Div(
                     html.H5('© Alaistair Chan'),
                     className='copyright'),
-                html.Div([
-                    html.A('Back to homepage', href='https://www.alaistairchan.com',
-                        className='fa-layers fa-fw home fas fa-home'),
-                    html.A('  ', href=' ',style={
-                        'text-decoration': 'none',}),
-                    html.A('Email me', href='mailto:alaistair@gmail.com'),
-                ], className='links')
             ], className='bottom'),
 
-        ], style={'padding-left':'5%', 'padding-right':'5%'})
+        ], style={'padding-left':'3%', 'padding-right':'3%'})
 
         @self.app.callback(
             [dash.dependencies.Output('economy', 'figure'),

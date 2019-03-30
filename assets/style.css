@@ -40,7 +40,7 @@ table {table-layout:auto; border-collapse:collapse; width:100%; margin-left:3%}
 .photo {width:38%; margin-top:2%; margin-left:2%; margin-right:0%}
 .bottom {margin-top:6%; padding-bottom:6%}
 .copyright {float:left; margin-left:3%}
-.links {float:right; margin-top:2.2%; font-size:0.9em}
+.links {float:right; font-size:0.9em}
 
 @media (max-width:600px) { /*phone display*/
   img {padding:2%}
@@ -103,6 +103,10 @@ input[type="reset"].button-primary:hover,
 input[type="button"].button-primary:hover,
 .button.button-primary:focus,
 button.button-primary:focus,
+input[type="run"].button-primary:focus {
+  color: #1EAEDB;
+  background-color: #1EAEDB;
+  border-color: #1EAEDB; }
 input[type="submit"].button-primary:focus,
 input[type="reset"].button-primary:focus,
 input[type="button"].button-primary:focus {

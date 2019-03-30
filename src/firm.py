@@ -5,7 +5,7 @@ class Firm():
 
     def __init__(self, settings):
         self.product_name = 'A'
-        self.inventory = int(0) # stock of inventory (units of output)
+        self.inventory = int(1) # stock of inventory (units of output)
         self.expected_production = settings.init_production
         self.production = 0#self.expected_production # flow of production (one cycle)
 
@@ -39,22 +39,15 @@ class Firm():
         for hhID, household in self.workers.items():
             expected_additional_labour_spending -= household.expected_wages
 
+        print('updated expected_additional_labour_spending ' + str(round(expected_additional_labour_spending,2)))
         if expected_additional_labour_spending < 0:
             return 0
         else:
             return expected_additional_labour_spending
 
-    def hire_labour(self, household):
-        worker_productivity = household.human_capital/household.expected_wages
-
-        if household.expected_wages < self.labour_productivity:
-            return True
-        else:
-            return False
-
     def update_production(self, labour_cost):
         self.production += labour_cost * self.labour_productivity
-        self.debt += labour_cost + self.capital_investment
+        self.debt += labour_cost #+ self.capital_investment
         return 1
 
     # Adds sales to firm's revenue.
@@ -74,8 +67,8 @@ class Firm():
             return 0
 
     def update_financial(self, interest_rate):
-        self.debt *= interest_rate
         self.debt -= self.revenue
+        self.debt *= interest_rate
         self.revenue = 0
 
         return 0
