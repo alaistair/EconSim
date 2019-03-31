@@ -160,11 +160,8 @@ class App():
                                 {'label': 'Phillip\'s curve', 'value': 'Phillip'}], style={'width':'100%','float':'right'}),
                             style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
                         html.Div([
-                            html.Div(dcc.Markdown('''**Okun\'s law** describes a relationship between **unemployment** and **GDP growth**.
-                                Arthur Okun in 1962 found that when GDP growth increases by 2%, the unemployment rate falls by 1%.
-                                Although this relationship was found for the U.S., the negative relationship between changes in unemployment and GDP
-                                growth
-                                '''),
+                            html.Div(id='relationships-text',
+                                children=['init'],
                                 style={'display':'inline-block','width':'40%','padding-top':'6%'}),
                             dcc.Graph(id='relationships-graph',config={'displayModeBar': False},
                                 style={'display':'inline-block','width':'50%','height':'45%','margin-top':'0%','margin-right':'0%','float':'right'}),
@@ -357,8 +354,8 @@ class App():
                     mode='markers'
                 ))
                 relationships_graph_layout = go.Layout(
-                    xaxis={'title':'Change in unemployment rate'},
-                    yaxis={'title':'Change in GDP growth'},
+                    xaxis={'title':'Inflation rate'},
+                    yaxis={'title':'Unemployment rate'},
                 )
             else:
                 relationships_graph_data.append(go.Scatter(
@@ -391,3 +388,22 @@ class App():
                 'data':relationships_graph_data, # relationships graph
                 'layout':relationships_graph_layout
                 }]
+
+        @self.app.callback(
+            dash.dependencies.Output('relationships-text', 'children'),
+            [dash.dependencies.Input('relationships-dropdown', 'value')])
+        def relationships_text(value_1):
+            if value_1 == 'Okun':
+                return(dcc.Markdown('''**Okun\'s law** describes a relationship between **unemployment** and **GDP growth**.
+                    Arthur Okun in 1962 found that when GDP growth increases by 2%, the unemployment rate falls by 1%.
+                    Although those numbers work for the U.S., the negative relationship between changes in unemployment and GDP
+                    growth can be seen everywhere.
+                    '''))
+            elif value_1 == 'Phillip':
+                return(dcc.Markdown('''When William Phillips graphed inflation and unemployment for the UK economy in 1958 he found
+                    an inverse relationship between the two. The **Phillips curve** shows that **lower unemployment** generally leads to **higher
+                    inflation**, and vice versa. Over the years, and especially in the 1970s, this relationship began to break down. It
+                    was found that the Phillips curve only worked in the short run, and that monetary factors drove inflation in the
+                    longer term.'''))
+            else:
+                return(dcc.Markdown('''Choose an economic relationship from the dropdown menu above to see it recreated by the Kuznets simulation.'''))
