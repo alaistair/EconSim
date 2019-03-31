@@ -4,7 +4,7 @@ class Settings():
     def __init__(self):
 
         # Initial economy settings. Households >= firms
-        self.init_households = 100
+        self.init_households = 80
         self.init_firms = 3
         self.init_interest_rate = 1.02
         self.init_unemployment_rate = 0.1

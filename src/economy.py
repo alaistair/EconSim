@@ -95,7 +95,6 @@ class Economy():
             self.firms[j].workers[i] = self.households[i]
             del self.government.unemployed[i]
 
-
         # allocate firms to product
         for firmID, firm in self.firms.items():
             self.products[firm.product_name].append(firmID)
@@ -366,19 +365,32 @@ class Economy():
         return 1
 
     def cycle(self, number = 1):
+        start = time.time()
         for i in range(number):
             self.update_time()
+            print('update time: ' + str(time.time() - start))
             self.labour_market()
+            print('labour market: ' + str(time.time() - start))
             self.production_market()
+            print('production market: ' + str(time.time() - start))
             self.income_tax()
+            print('income tax: ' + str(time.time() - start))
             self.welfare()
+            print('welfare: ' + str(time.time() - start))
             self.update_economy_data('p')
+            print('update economy data p: ' + str(time.time() - start))
             self.move_production_to_inventory()
+            print('move production to inventory: ' + str(time.time() - start))
             self.consumption_market()
+            print('consumption market: ' + str(time.time() - start))
             self.company_tax()
+            print('company tax: ' + str(time.time() - start))
             self.update_economy_data('c')
+            print('update economy data c: ' + str(time.time() - start))
             self.financial_market()
+            print('financial market: ' + str(time.time() - start))
             self.update_economy_data('f')
+            print('update economy data f: ' + str(time.time() - start))
             #self.status()
             #self.print_labour_market()
         self.print_all()
