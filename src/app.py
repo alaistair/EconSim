@@ -99,65 +99,80 @@ class App():
                     style={'width':'10%', 'display':'inline-block','vertical-align': 'middle', 'height':'1%'})
             ], style={'padding-top':'0%','padding-left':'3%', 'padding-right':'3%'}),
 
-            html.Div(dcc.Graph(id='economy',config={'displayModeBar': False},
-                style={'height':'45%','margin-top':'0%', 'padding-left':'3%', 'padding-right':'3%'})),
+            html.Div([
+                dcc.Tabs(id='tabs',value='tab-1',children=[
+                    dcc.Tab(label='Main graph',children=[
+                        html.Div(dcc.Graph(id='main-graph',config={'displayModeBar': False},
+                            style={'height':'45%','margin-top':'0%', 'padding-left':'3%', 'padding-right':'3%'})),
+                        html.Div([
+                            html.P('Households', style={'display':'inline-block', 'width':'25%'}),
+                            html.P('Firms', style={'display':'inline-block', 'width':'25%'}),
+                            html.P('Government', style={'display':'inline-block', 'width':'25%'}),
+                            html.P('Macro', style={'display':'inline-block', 'width':'25%'}),
+                        ], style={'font-size':'1.2em', 'padding-left':'10%', 'padding-right':'10%', 'margin-bottom':'-2%'}),
+                        html.Div([
+                            html.P(dcc.Checklist(
+                                id='household-lines-checklist',
+                                options=[
+                                    {'label': 'Income', 'value': 'Household income'},
+                                    {'label': 'Savings', 'value': 'Household savings'},
+                                    {'label': 'Spending', 'value': 'Household spending'},
+                                ],
+                                values=['Household savings', 'Household spending'],
+                                labelStyle={'display':'block'}),
+                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
+                            html.P(dcc.Checklist(
+                                id='firm-lines-checklist',
+                                options=[
+                                    {'label': 'Inventory', 'value': 'Firm inventory'},
+                                    {'label': 'Revenue', 'value': 'Firm revenue'},
+                                    {'label': 'Debt', 'value': 'Firm debt'},
+                                ],
+                                values=[],
+                                labelStyle={'display':'block'}),
+                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
+                            html.P(dcc.Checklist(
+                                id='government-lines-checklist',
+                                options=[
+                                    {'label': 'Tax revenue', 'value': 'Government revenue'},
+                                    {'label': 'Spending', 'value': 'Government expenditure'},
+                                    {'label': 'Debt', 'value': 'Government debt'},
+                                ],
+                                values=[],
+                                labelStyle={'display':'block'}),
+                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
+                            html.P(dcc.Checklist(
+                                id='macro-lines-checklist',
+                                options=[
+                                    {'label': 'Inflation', 'value': 'CPI (R)'},
+                                    {'label': 'Interest rate', 'value': 'Interest rate (R)'},
+                                    {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
+                                ],
+                                values=[],
+                                labelStyle={'display':'block'}),
+                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
+                        ], style={'padding-left':'10%', 'padding-right':'10%'}),
+                    ]),
+                    dcc.Tab(label='Looking deeper',children=[
+                        html.Div(dcc.Dropdown(id='relationships-dropdown',
+                            options=[
+                                {'label': 'Okun\'s Law', 'value': 'Okun'},
+                                {'label': 'Phillip\'s curve', 'value': 'Phillip'}], style={'width':'100%','float':'right'}),
+                            style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
+                        html.Div([
+                            html.Div(dcc.Markdown('''**Okun\'s law** describes a relationship between **unemployment** and **GDP growth**.
+                                Arthur Okun in 1962 found that when GDP growth increases by 2%, the unemployment rate falls by 1%.
+                                Although this relationship was found for the U.S., the negative relationship between changes in unemployment and GDP
+                                growth
+                                '''),
+                                style={'display':'inline-block','width':'40%','padding-top':'6%'}),
+                            dcc.Graph(id='relationships-graph',config={'displayModeBar': False},
+                                style={'display':'inline-block','width':'50%','height':'45%','margin-top':'0%','margin-right':'0%','float':'right'}),
+                        ], style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'})
+                    ]),
+                ]),
+            ], style={'margin-top':'4%','padding-left':'3%', 'padding-right':'3%'}),
 
-            html.Div([
-                html.P('Households', style={'display':'inline-block', 'width':'25%'}),
-                html.P('Firms', style={'display':'inline-block', 'width':'25%'}),
-                html.P('Government', style={'display':'inline-block', 'width':'25%'}),
-                html.P('Macro', style={'display':'inline-block', 'width':'25%'}),
-            ], style={'font-size':'1.2em', 'padding-left':'8%', 'padding-right':'8%'}),
-            html.Div([
-                html.P(dcc.Checklist(
-                    id='household-lines-checklist',
-                    options=[
-                        {'label': 'Income', 'value': 'Household income'},
-                        {'label': 'Savings', 'value': 'Household savings'},
-                        {'label': 'Spending', 'value': 'Household spending'},
-                    ],
-                    values=['Household savings', 'Household spending'],
-                    labelStyle={'display':'block'}),
-                    style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                html.P(dcc.Checklist(
-                    id='firm-lines-checklist',
-                    options=[
-                        {'label': 'Inventory', 'value': 'Firm inventory'},
-                        {'label': 'Production', 'value': 'Firm production'},
-                        {'label': 'Revenue', 'value': 'Firm revenue'},
-                        {'label': 'Debt', 'value': 'Firm debt'},
-                    ],
-                    values=[],
-                    labelStyle={'display':'block'}),
-                    style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                html.P(dcc.Checklist(
-                    id='government-lines-checklist',
-                    options=[
-                        {'label': 'Revenue', 'value': 'Government revenue'},
-                        {'label': 'Spending', 'value': 'Government expenditure'},
-                        {'label': 'Debt', 'value': 'Government debt'},
-                    ],
-                    values=[],
-                    labelStyle={'display':'block'}),
-                    style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                html.P(dcc.Checklist(
-                    id='macro-lines-checklist',
-                    options=[
-                        {'label': 'CPI', 'value': 'CPI (R)'},
-                        {'label': 'Interest rate', 'value': 'Interest rate (R)'},
-                        {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
-                    ],
-                    values=[],
-                    labelStyle={'display':'block'}),
-                    style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-            ], style={'padding-left':'8%', 'padding-right':'8%'}),
-            html.Div([
-                html.H2(' '),
-                html.P(' ')
-            ]),
-            html.Table(
-
-            ),
             html.Hr(style={'margin-top':'5%','margin-bottom':'-3%'}),
             html.Div([
                 html.Div(
@@ -168,20 +183,23 @@ class App():
         ], style={'padding-left':'3%', 'padding-right':'3%'})
 
         @self.app.callback(
-            [dash.dependencies.Output('economy', 'figure'),
-            dash.dependencies.Output('loading-output-1', 'children')],
+            [dash.dependencies.Output('main-graph', 'figure'),
+            dash.dependencies.Output('loading-output-1', 'children'),
+            dash.dependencies.Output('relationships-graph', 'figure')],
             [dash.dependencies.Input('household-lines-checklist', 'values'),
             dash.dependencies.Input('firm-lines-checklist', 'values'),
             dash.dependencies.Input('government-lines-checklist', 'values'),
             dash.dependencies.Input('macro-lines-checklist', 'values'),
             dash.dependencies.Input('cycle-update-button', 'n_clicks_timestamp'),
-            dash.dependencies.Input('reset-button', 'n_clicks_timestamp')],
+            dash.dependencies.Input('reset-button', 'n_clicks_timestamp'),
+            dash.dependencies.Input('relationships-dropdown', 'value')],
             [dash.dependencies.State('cycle-update-box', 'value'),
             dash.dependencies.State('interest-rate', 'value')
             ])
-        def update_graph(household_lines_checklist, firm_lines_checklist,
+        def update_main_graph(household_lines_checklist, firm_lines_checklist,
             government_lines_checklist, macro_lines_checklist,
-            n_clicks_timestamp_1, n_clicks_timestamp_2, value_1, value_2):
+            n_clicks_timestamp_1, n_clicks_timestamp_2, relationships_dropdown, value_1, value_2):
+
 
             if n_clicks_timestamp_1 is not None: # run simulation
                 if n_clicks_timestamp_1 > self.last_cycle_click: # update cycle
@@ -194,7 +212,6 @@ class App():
                 if n_clicks_timestamp_2 > self.last_reset_click:
                     self.settings = Settings()
                     self.economy = Economy(self.settings)
-
                     self.index = self.economy.economy_data.index.get_level_values(0).unique()
                     self.last_reset_click = n_clicks_timestamp_2
                     return [{
@@ -207,14 +224,21 @@ class App():
                                         'overlaying':'y',
                                         'side':'right',
                                         'showgrid':False}
-                            )
-                    },'']
+                            )},'',{
+                        'data':[],
+                        'layout':
+                            go.Layout(
+                                xaxis={'title':''},
+                                yaxis={'title':''},
+                            )}]
 
-            graph_data = []
+            main_graph_data = []
+            relationships_graph_data = []
+            relationships_graph_layout = []
 
             for i in household_lines_checklist:
                 if i == 'Household income':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_production_cycle_data()[i],
                         name = i,
@@ -222,7 +246,7 @@ class App():
                         legendgroup = 'Households',
                     ))
                 elif i == 'Household spending':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
@@ -230,7 +254,7 @@ class App():
                         legendgroup = 'Households',
                     ))
                 elif i == 'Household savings':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i,
@@ -238,16 +262,8 @@ class App():
                         legendgroup = 'Households',
                     ))
             for i in firm_lines_checklist:
-                if i == 'Firm production':
-                    graph_data.append(go.Scatter(
-                        x = self.index,
-                        y = self.economy.get_production_cycle_data()[i],
-                        name = i,
-                        line = {'color':'rgb(0,255,255)'},
-                        legendgroup = 'Firms',
-                    ))
-                elif i == 'Firm inventory':
-                    graph_data.append(go.Scatter(
+                if i == 'Firm inventory':
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_production_cycle_data()[i],
                         name = i,
@@ -255,7 +271,7 @@ class App():
                         legendgroup = 'Firms',
                     ))
                 elif i == 'Firm revenue':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
@@ -264,7 +280,7 @@ class App():
 
                     ))
                 elif i == 'Firm debt':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i,
@@ -273,16 +289,15 @@ class App():
                     ))
             for i in government_lines_checklist:
                 if i == 'Government revenue':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
                         line = {'color':'rgb(0,100,0)'},
                         legendgroup = 'Government',
-
                     ))
                 elif i == 'Government expenditure':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
@@ -290,7 +305,7 @@ class App():
                         legendgroup = 'Government',
                     ))
                 elif i == 'Government debt':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
@@ -299,7 +314,7 @@ class App():
                     ))
             for i in macro_lines_checklist:
                 if i == 'CPI (R)':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['CPI'],
                         name = i,
@@ -308,7 +323,7 @@ class App():
                         legendgroup = 'Macro',
                     ))
                 elif i == 'Interest rate (R)':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = (self.economy.get_consumption_cycle_data()['Interest rate']-1)*100,
                         name = i,
@@ -316,15 +331,49 @@ class App():
                         legendgroup = 'Macro',
                     ))
                 elif i == 'Unemployment rate (R)':
-                    graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['Unemployment rate']*100,
                         name = i,
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))
+            if relationships_dropdown == 'Okun':
+                relationships_graph_data.append(go.Scatter(
+                    x = self.economy.get_consumption_cycle_data()['Unemployment rate'].diff()*100,
+                    y = self.economy.get_production_cycle_data()['Firm production'].pct_change()*100,
+                    name = 'Okun',
+                    mode='markers'
+                ))
+                relationships_graph_layout = go.Layout(
+                    xaxis={'title':'Change in unemployment rate'},
+                    yaxis={'title':'Change in GDP growth'},
+                )
+            elif relationships_dropdown == 'Phillip':
+                relationships_graph_data.append(go.Scatter(
+                    x = self.economy.get_consumption_cycle_data()['CPI'].pct_change()*100,
+                    y = self.economy.get_production_cycle_data()['Unemployment rate']*100,
+                    name = 'Phillip',
+                    mode='markers'
+                ))
+                relationships_graph_layout = go.Layout(
+                    xaxis={'title':'Change in unemployment rate'},
+                    yaxis={'title':'Change in GDP growth'},
+                )
+            else:
+                relationships_graph_data.append(go.Scatter(
+                    x = [0],
+                    y = [0],
+                    name = '',
+                    mode='markers'
+                ))
+                relationships_graph_layout = go.Layout(
+                    xaxis={'title':''},
+                    yaxis={'title':''},
+                )
+
             return [{
-                'data':graph_data,
+                'data':main_graph_data, # main graph
                 'layout':
                     go.Layout(
                         xaxis={'title':'Year'},
@@ -338,6 +387,7 @@ class App():
                         legend={'orientation':'h',
                             'y':-0.3},
                         autosize=True
-
-                    )
-            },'']
+                    )},'',{
+                'data':relationships_graph_data, # relationships graph
+                'layout':relationships_graph_layout
+                }]

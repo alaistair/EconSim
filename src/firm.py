@@ -39,7 +39,6 @@ class Firm():
         for hhID, household in self.workers.items():
             expected_additional_labour_spending -= household.expected_wages
 
-        print('updated expected_additional_labour_spending ' + str(round(expected_additional_labour_spending,2)))
         if expected_additional_labour_spending < 0:
             return 0
         else:

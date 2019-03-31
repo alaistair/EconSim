@@ -164,7 +164,6 @@ class Economy():
             if bool(firm.workers):
                 hhID, household = random.choice(list(firm.workers.items()))
                 self.government.unemployed[hhID] = household
-                print('fire ' + str(hhID))
                 del firm.workers[hhID]
 
             # Also fire least productive worker
@@ -177,7 +176,6 @@ class Economy():
                         lowest_productive = hh_productivity
                         lowest_productive_hhID = hhID
                 self.government.unemployed[lowest_productive_hhID] = firm.workers[lowest_productive_hhID]
-                print('fire ' + str(hhID))
                 del firm.workers[lowest_productive_hhID]
 
             # Most underpaid person quits
@@ -209,11 +207,9 @@ class Economy():
                 best_candidate_productivity = -100
                 for hhID, household in candidate_list.items():
                     if expected_additional_labour_spending == 0:
-                        print('break')
                         break
                     if expected_additional_labour_spending < household.expected_wages:
                         if bool(firm.workers): # firm has workers
-                            print('continue')
                             continue
                         else:
                             expected_additional_labour_spending *= 1.05
@@ -223,10 +219,8 @@ class Economy():
                         best_candidate_productivity = worker_productivity
 
                 if best_candidate == -1:
-                    print(str(firmID) + ' no hiring')
                     expected_additional_labour_spending = 0
                 else:
-                    print('hire candidate: ' + str(best_candidate))
                     firm.workers[best_candidate] = self.government.unemployed[best_candidate]
                     expected_additional_labour_spending -= household.expected_wages
                     del candidate_list[best_candidate]
@@ -385,8 +379,8 @@ class Economy():
             self.update_economy_data('c')
             self.financial_market()
             self.update_economy_data('f')
-            self.status()
-            self.print_labour_market()
+            #self.status()
+            #self.print_labour_market()
         self.print_all()
 
     def get_production_cycle_data(self):
