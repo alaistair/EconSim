@@ -316,24 +316,25 @@ class Economy():
             f.update_financial(self.interest_rate + 0.02)
 
     def update_economy_data(self, cycle):
-        for hhID, household in self.households.items():
-            self.households_data = pd.concat([self.households_data,
-                                    pd.DataFrame({'income':household.wages,
-                                        'savings':household.savings,
-                                        'spending':household.spending,
-                                        'expected income':household.expected_wages,
-                                        'human capital':household.human_capital,},
-                                        index = [(self.time, cycle, hhID)])])
 
-        for firmID, firm in self.firms.items():
-            self.firms_data = pd.concat([self.firms_data,
-                                pd.DataFrame({'inventory':firm.inventory,
-                                    'production':firm.production,
-                                    'price':firm.product_price,
-                                    'revenue':firm.revenue,
-                                    'expected production':firm.expected_production,
-                                    'debt':firm.debt},
-                                    index = [(self.time, cycle, firmID)])], sort=True)
+        new_households_data = [self.households_data] + [pd.DataFrame({'income':household.wages,
+            'savings':household.savings,
+            'spending':household.spending,
+            'expected income':household.expected_wages,
+            'human capital':household.human_capital,},
+            index = [(self.time, cycle, hhID)]) for hhID, household in self.households.items()]
+
+        self.households_data = pd.concat(new_households_data)
+
+        new_firms_data = [self.firms_data] + [pd.DataFrame({'inventory':firm.inventory,
+            'production':firm.production,
+            'price':firm.product_price,
+            'revenue':firm.revenue,
+            'expected production':firm.expected_production,
+            'debt':firm.debt},
+            index = [(self.time, cycle, firmID)]) for firmID, firm in self.firms.items()]
+
+        self.firms_data = pd.concat(new_firms_data, sort=True)
 
         self.government_data = pd.concat([self.government_data,
                             pd.DataFrame({'revenue':float(self.government.revenue),
@@ -362,35 +363,21 @@ class Economy():
                             },
                             index = [(self.time, cycle)])
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
-        return 1
 
     def cycle(self, number = 1):
-        start = time.time()
         for i in range(number):
             self.update_time()
-            #print('update time: ' + str(time.time() - start))
             self.labour_market()
-            #print('labour market: ' + str(time.time() - start))
             self.production_market()
-            #print('production market: ' + str(time.time() - start))
             self.income_tax()
-            #print('income tax: ' + str(time.time() - start))
             self.welfare()
-            #print('welfare: ' + str(time.time() - start))
             self.update_economy_data('p')
-            #print('update economy data p: ' + str(time.time() - start))
             self.move_production_to_inventory()
-            #print('move production to inventory: ' + str(time.time() - start))
             self.consumption_market()
-            #print('consumption market: ' + str(time.time() - start))
             self.company_tax()
-            #print('company tax: ' + str(time.time() - start))
             self.update_economy_data('c')
-            #print('update economy data c: ' + str(time.time() - start))
             self.financial_market()
-            #print('financial market: ' + str(time.time() - start))
             self.update_economy_data('f')
-            #print('update economy data f: ' + str(time.time() - start))
             #self.status()
             #self.print_labour_market()
         self.print_all()

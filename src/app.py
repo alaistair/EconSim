@@ -275,7 +275,7 @@ class App():
                 if i == 'CPI (R)':
                     main_graph_data.append(go.Scatter(
                         x = self.index,
-                        y = self.economy.get_consumption_cycle_data()['CPI'],
+                        y = self.economy.get_consumption_cycle_data()['CPI'].pct_change()*100,
                         name = i,
                         line = {},
                         yaxis = 'y2',
