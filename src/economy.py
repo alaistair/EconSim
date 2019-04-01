@@ -186,7 +186,7 @@ class Economy():
         for firmID, firm in self.firms.items():
             # Get how much more each firm expecting to spend on labour
             expected_additional_labour_spending = firm.update_hiring_intentions()
-            print('firm ' + str(firmID) + ' expected spending ' + str(expected_additional_labour_spending))
+            #print('firm ' + str(firmID) + ' expected spending ' + str(expected_additional_labour_spending))
 
             # Firm uses '37% rule' to hire, ie picks best candidate from random
             # 37% subset of candidates
@@ -228,8 +228,8 @@ class Economy():
         for hhID, household in self.government.unemployed.items():
             household.expected_wages *= 0.99
             household.human_capital *= 0.995
-        print('new labour market:')
-        self.print_labour_market()
+        #print('new labour market:')
+        #self.print_labour_market()
 
     def production_market(self):
         for firmID, firm in self.firms.items():
@@ -368,29 +368,29 @@ class Economy():
         start = time.time()
         for i in range(number):
             self.update_time()
-            print('update time: ' + str(time.time() - start))
+            #print('update time: ' + str(time.time() - start))
             self.labour_market()
-            print('labour market: ' + str(time.time() - start))
+            #print('labour market: ' + str(time.time() - start))
             self.production_market()
-            print('production market: ' + str(time.time() - start))
+            #print('production market: ' + str(time.time() - start))
             self.income_tax()
-            print('income tax: ' + str(time.time() - start))
+            #print('income tax: ' + str(time.time() - start))
             self.welfare()
-            print('welfare: ' + str(time.time() - start))
+            #print('welfare: ' + str(time.time() - start))
             self.update_economy_data('p')
-            print('update economy data p: ' + str(time.time() - start))
+            #print('update economy data p: ' + str(time.time() - start))
             self.move_production_to_inventory()
-            print('move production to inventory: ' + str(time.time() - start))
+            #print('move production to inventory: ' + str(time.time() - start))
             self.consumption_market()
-            print('consumption market: ' + str(time.time() - start))
+            #print('consumption market: ' + str(time.time() - start))
             self.company_tax()
-            print('company tax: ' + str(time.time() - start))
+            #print('company tax: ' + str(time.time() - start))
             self.update_economy_data('c')
-            print('update economy data c: ' + str(time.time() - start))
+            #print('update economy data c: ' + str(time.time() - start))
             self.financial_market()
-            print('financial market: ' + str(time.time() - start))
+            #print('financial market: ' + str(time.time() - start))
             self.update_economy_data('f')
-            print('update economy data f: ' + str(time.time() - start))
+            #print('update economy data f: ' + str(time.time() - start))
             #self.status()
             #self.print_labour_market()
         self.print_all()

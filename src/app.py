@@ -25,6 +25,7 @@ class App():
         self.economy = Economy(self.settings)
 
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
+        self.cycles = 10
 
         self.app.layout = html.Div(children=[
             html.Div([
@@ -68,11 +69,11 @@ class App():
                         disabled=True,
                         marks={i:'{}'.format(i) for i in range(11)}
                     )
-                ], style={'display':'inline-block', 'width':'50%', }),
-                ], style={'margin-bottom':'5%', 'padding-left':'3%', 'padding-right':'3%'}),
+                ], style={'display':'inline-block','width':'50%', }),
+                ], style={'margin-bottom':'5%','padding-left':'3%','padding-right':'3%'}),
             html.Div([
                 html.P('Run simulation for ',
-                    style={'display':'inline-block','vertical-align': 'middle', 'margin-right':'0.8%', 'padding-top':'2%'}),
+                    style={'display':'inline-block','vertical-align':'middle','margin-right':'0.8%','padding-top':'2%'}),
                 html.P(dcc.RadioItems(
                     id='cycle-update-box',
                     options=[
@@ -81,80 +82,64 @@ class App():
                         {'label': '20 ', 'value': '20'}
                     ],
                     value='5'),
-                    style={'display':'inline-block','vertical-align': 'middle', 'padding-top':'2%'}),
+                    style={'display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
                 html.P('cycles ',
-                    style={'display':'inline-block','vertical-align': 'middle', 'margin-left':'0.8%','margin-right':'2%', 'padding-top':'2%'}),
+                    style={'display':'inline-block','vertical-align':'middle','margin-left':'0.8%','margin-right':'2%','padding-top':'2%'}),
                 html.Div(html.Button(
                     'Run',
                     id='cycle-update-button',
-                    n_clicks=0,
-                    value = '0'),
-                    style={'width':'10%', 'display':'inline-block','vertical-align': 'middle', 'padding-top':'2%'}),
+                    n_clicks=0),
+                    style={'width':'10%','display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
                 html.Div(html.Button(
                     'reset',
                     id='reset-button',
                     n_clicks=0),
-                    style={'width':'10%', 'display':'inline-block','vertical-align': 'middle', 'padding-top':'2%'}),
+                    style={'width':'10%','display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
                 html.Div(dcc.Loading(
                     id='loading-1',
                     children=[html.Div(id='loading-output-1')],
                     type='dot',),
-                    style={'width':'10%', 'display':'inline-block','vertical-align': 'middle', 'height':'1%'})
-            ], style={'padding-top':'0%','padding-left':'3%', 'padding-right':'3%'}),
+                    style={'width':'10%','display':'inline-block','vertical-align':'middle','height':'1%'}),
+            ], style={'padding-top':'0%','padding-left':'3%','padding-right':'3%'}),
 
             html.Div([
                 dcc.Tabs(id='tabs',value='tab-1',children=[
                     dcc.Tab(label='Main graph',children=[
-                        html.Div(dcc.Graph(id='main-graph',config={'displayModeBar': False},
-                            style={'height':'45%','margin-top':'0%', 'padding-left':'3%', 'padding-right':'3%'})),
-                        html.Div([
-                            html.P('Households', style={'display':'inline-block', 'width':'25%'}),
-                            html.P('Firms', style={'display':'inline-block', 'width':'25%'}),
-                            html.P('Government', style={'display':'inline-block', 'width':'25%'}),
-                            html.P('Macro', style={'display':'inline-block', 'width':'25%'}),
-                        ], style={'font-size':'1.2em', 'padding-left':'10%', 'padding-right':'10%', 'margin-bottom':'-2%'}),
-                        html.Div([
-                            html.P(dcc.Checklist(
-                                id='household-lines-checklist',
-                                options=[
-                                    {'label': 'Income', 'value': 'Household income'},
-                                    {'label': 'Savings', 'value': 'Household savings'},
-                                    {'label': 'Spending', 'value': 'Household spending'},
-                                ],
-                                values=['Household savings', 'Household spending'],
-                                labelStyle={'display':'block'}),
-                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                            html.P(dcc.Checklist(
-                                id='firm-lines-checklist',
-                                options=[
-                                    {'label': 'Inventory', 'value': 'Firm inventory'},
-                                    {'label': 'Revenue', 'value': 'Firm revenue'},
-                                    {'label': 'Debt', 'value': 'Firm debt'},
-                                ],
-                                values=[],
-                                labelStyle={'display':'block'}),
-                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                            html.P(dcc.Checklist(
-                                id='government-lines-checklist',
-                                options=[
-                                    {'label': 'Tax revenue', 'value': 'Government revenue'},
-                                    {'label': 'Spending', 'value': 'Government expenditure'},
-                                    {'label': 'Debt', 'value': 'Government debt'},
-                                ],
-                                values=[],
-                                labelStyle={'display':'block'}),
-                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                            html.P(dcc.Checklist(
-                                id='macro-lines-checklist',
-                                options=[
-                                    {'label': 'Inflation', 'value': 'CPI (R)'},
-                                    {'label': 'Interest rate', 'value': 'Interest rate (R)'},
-                                    {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
-                                ],
-                                values=[],
-                                labelStyle={'display':'block'}),
-                                style={'display':'inline-block','width':'25%','vertical-align':'top'}),
-                        ], style={'padding-left':'10%', 'padding-right':'10%'}),
+                        html.Div([dcc.Graph(id='main-graph',config={'displayModeBar': False},
+                            style={'display':'inline-block','width':'80%'}),
+                            html.Div([
+                                html.P('Plot display:', style={'font-weight':'bold'}),
+                                html.P('Households', style={'margin-bottom':'0%'}),
+                                dcc.Checklist(
+                                    id='household-lines-checklist',
+                                    options=[
+                                        {'label': 'Income', 'value': 'Household income'},
+                                        {'label': 'Savings', 'value': 'Household savings'},
+                                        {'label': 'Spending', 'value': 'Household spending'},
+                                    ],
+                                    values=['Household savings', 'Household spending'],
+                                    labelStyle={'display':'block','font-size':'0.8em'}),
+                                html.P('Firms', style={'margin-bottom':'0%'}),
+                                dcc.Checklist(
+                                    id='firm-lines-checklist',
+                                    options=[
+                                        {'label': 'Inventory', 'value': 'Firm inventory'},
+                                        {'label': 'Revenue', 'value': 'Firm revenue'},
+                                        {'label': 'Debt', 'value': 'Firm debt'},
+                                    ],
+                                    values=[],
+                                    labelStyle={'display':'block','font-size':'0.8em'}),
+                                html.P('Macro', style={'margin-bottom':'0%'}),
+                                dcc.Checklist(
+                                    id='macro-lines-checklist',
+                                    options=[
+                                        {'label': 'Inflation', 'value': 'CPI (R)'},
+                                        {'label': 'Interest rate', 'value': 'Interest rate (R)'},
+                                        {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
+                                    ],
+                                    values=[],
+                                    labelStyle={'display':'block','font-size':'0.8em'}),
+                            ], style={'display':'inline-block','width':'16%','padding-left':'4%','padding-top':'3%','float':'right'})]),
                     ]),
                     dcc.Tab(label='Looking deeper',children=[
                         html.Div(dcc.Dropdown(id='relationships-dropdown',
@@ -164,14 +149,14 @@ class App():
                             style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
                         html.Div([
                             html.Div(id='relationships-text',
-                                children=['init'],
+                                children=[''],
                                 style={'display':'inline-block','width':'40%','padding-top':'6%'}),
                             dcc.Graph(id='relationships-graph',config={'displayModeBar': False},
                                 style={'display':'inline-block','width':'50%','height':'45%','margin-top':'0%','margin-right':'0%','float':'right'}),
                         ], style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'})
                     ]),
                 ]),
-            ], style={'margin-top':'4%','padding-left':'3%', 'padding-right':'3%'}),
+            ], style={'margin-top':'4%','padding-left':'3%','padding-right':'3%'}),
 
             html.Hr(style={'margin-top':'5%','margin-bottom':'-3%'}),
             html.Div([
@@ -180,7 +165,7 @@ class App():
                     className='copyright'),
             ], className='bottom'),
 
-        ], style={'padding-left':'3%', 'padding-right':'3%'})
+        ], style={'padding-left':'3%','padding-right':'3%'})
 
         @self.app.callback(
             [dash.dependencies.Output('main-graph', 'figure'),
@@ -188,7 +173,6 @@ class App():
             dash.dependencies.Output('relationships-graph', 'figure')],
             [dash.dependencies.Input('household-lines-checklist', 'values'),
             dash.dependencies.Input('firm-lines-checklist', 'values'),
-            dash.dependencies.Input('government-lines-checklist', 'values'),
             dash.dependencies.Input('macro-lines-checklist', 'values'),
             dash.dependencies.Input('cycle-update-button', 'n_clicks_timestamp'),
             dash.dependencies.Input('reset-button', 'n_clicks_timestamp'),
@@ -197,13 +181,13 @@ class App():
             dash.dependencies.State('interest-rate', 'value')
             ])
         def update_main_graph(household_lines_checklist, firm_lines_checklist,
-            government_lines_checklist, macro_lines_checklist,
-            n_clicks_timestamp_1, n_clicks_timestamp_2, relationships_dropdown, value_1, value_2):
-
+            macro_lines_checklist, n_clicks_timestamp_1, n_clicks_timestamp_2,
+            relationships_dropdown, value_1, value_2):
 
             if n_clicks_timestamp_1 is not None: # run simulation
                 if n_clicks_timestamp_1 > self.last_cycle_click: # update cycle
                     self.economy.interest_rate = 1 + value_2/100
+                    self.cycles += 1
                     self.economy.cycle(int(value_1))
                     self.index = self.economy.economy_data.index.get_level_values(0).unique()
                     self.last_cycle_click = n_clicks_timestamp_1
@@ -286,31 +270,6 @@ class App():
                         name = i,
                         line = {'color':'rgb(25,25,112)'},
                         legendgroup = 'Firms',
-                    ))
-            for i in government_lines_checklist:
-                if i == 'Government revenue':
-                    main_graph_data.append(go.Scatter(
-                        x = self.index,
-                        y = self.economy.get_consumption_cycle_data()[i],
-                        name = i,
-                        line = {'color':'rgb(0,100,0)'},
-                        legendgroup = 'Government',
-                    ))
-                elif i == 'Government expenditure':
-                    main_graph_data.append(go.Scatter(
-                        x = self.index,
-                        y = self.economy.get_consumption_cycle_data()[i],
-                        name = i,
-                        line = {'color':'rgb(124,252,0)'},
-                        legendgroup = 'Government',
-                    ))
-                elif i == 'Government debt':
-                    main_graph_data.append(go.Scatter(
-                        x = self.index,
-                        y = self.economy.get_consumption_cycle_data()[i],
-                        name = i,
-                        line = {'color':'rgb(152,251,152)'},
-                        legendgroup = 'Government',
                     ))
             for i in macro_lines_checklist:
                 if i == 'CPI (R)':
@@ -405,8 +364,7 @@ class App():
             elif value_1 == 'Phillip':
                 return(dcc.Markdown('''When William Phillips graphed inflation and unemployment for the UK economy in 1958 he found
                     an inverse relationship between the two. The **Phillips curve** shows that **lower unemployment** generally leads to **higher
-                    inflation**, and vice versa. Over the years, and especially in the 1970s, this relationship began to break down. It
-                    was found that the Phillips curve only worked in the short run, and that monetary factors drove inflation in the
-                    longer term.'''))
+                    inflation**, and vice versa. Over the years however, and especially in the 1970s, this relationship broke down. Turns out
+                    the Phillips curve only works in the short run, and monetary factors drive inflation over the long term.'''))
             else:
                 return(dcc.Markdown('''Choose an economic relationship from the dropdown menu above to see it recreated by the Kuznets simulation.'''))
