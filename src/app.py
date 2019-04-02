@@ -79,7 +79,7 @@ class App():
                     options=[
                         {'label': '1 ', 'value': '1'},
                         {'label': '5 ', 'value': '5'},
-                        {'label': '100 ', 'value': '100'}
+                        {'label': '20 ', 'value': '20'}
                     ],
                     value='5'),
                     style={'display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
