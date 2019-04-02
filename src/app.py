@@ -79,7 +79,7 @@ class App():
                     options=[
                         {'label': '1 ', 'value': '1'},
                         {'label': '5 ', 'value': '5'},
-                        {'label': '20 ', 'value': '20'}
+                        {'label': '100 ', 'value': '100'}
                     ],
                     value='5'),
                     style={'display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
@@ -98,7 +98,8 @@ class App():
                 html.Div(dcc.Loading(
                     id='loading-1',
                     children=[html.Div(id='loading-output-1')],
-                    type='dot',),
+                    type='dot',
+                    fullscreen=True),
                     style={'width':'10%','display':'inline-block','vertical-align':'middle','height':'1%'}),
             ], style={'padding-top':'0%','padding-left':'3%','padding-right':'3%'}),
 
@@ -161,7 +162,7 @@ class App():
             html.Hr(style={'margin-top':'5%','margin-bottom':'-3%'}),
             html.Div([
                 html.Div(
-                    html.H5('© Alaistair Chan'),
+                    html.H5('This demo of Kuznets\' core economic model was written in Python and the data are visualised in Dash. Hosted on Heroku.'),
                     className='copyright'),
             ], className='bottom'),
 
@@ -305,8 +306,12 @@ class App():
                     mode='markers'
                 ))
                 relationships_graph_layout = go.Layout(
-                    xaxis={'title':'Change in unemployment rate'},
-                    yaxis={'title':'Change in GDP growth'},
+                    xaxis={'title':'Change in unemployment rate',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
+                    yaxis={'title':'Change in GDP growth',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
                 )
             elif relationships_dropdown == 'Phillip':
                 relationships_graph_data.append(go.Scatter(
@@ -316,8 +321,12 @@ class App():
                     mode='markers'
                 ))
                 relationships_graph_layout = go.Layout(
-                    xaxis={'title':'Inflation rate'},
-                    yaxis={'title':'Unemployment rate'},
+                    xaxis={'title':'Inflation rate',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
+                    yaxis={'title':'Unemployment rate',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
                 )
             else:
                 relationships_graph_data.append(go.Scatter(
@@ -327,24 +336,36 @@ class App():
                     mode='markers'
                 ))
                 relationships_graph_layout = go.Layout(
-                    xaxis={'title':''},
-                    yaxis={'title':''},
+                    xaxis={'title':'',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
+                    yaxis={'title':'',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
                 )
 
             return [{
                 'data':main_graph_data, # main graph
                 'layout':
                     go.Layout(
-                        xaxis={'title':'Year'},
-                        yaxis={'title':'$'},
+                        xaxis={'title':'Year',
+                            'titlefont':{'family':'Avenir-Book, Montserrat'},
+                            'tickfont':{'family':'Avenir-Book, Montserrat'}},
+                        yaxis={'title':'$',
+                            'titlefont':{'family':'Avenir-Book, Montserrat'},
+                            'tickfont':{'family':'Avenir-Book, Montserrat'},
+                            },
                         yaxis2={'title':'Index',
+                            'titlefont':{'family':'Avenir-Book, Montserrat'},
+                            'tickfont':{'family':'Avenir-Book, Montserrat'},
                             'overlaying':'y',
                             'side':'right',
                             'showgrid':False,
                             'automargin':True,
                         },
                         legend={'orientation':'h',
-                            'y':-0.3},
+                            'y':-0.3,
+                            'font':{'family':'Avenir-Book, Montserrat'}},
                         autosize=True
                     )},'',{
                 'data':relationships_graph_data, # relationships graph
