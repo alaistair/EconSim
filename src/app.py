@@ -29,7 +29,7 @@ class App():
 
         self.app.layout = html.Div(children=[
             html.Div([
-                html.H1('Kuznets demo', style={'display':'inline-block',}),
+                html.H1('Kuznets core model demo', style={'display':'inline-block',}),
                 html.A('Contact', href='mailto:alaistair@gmail.com',
                     style={'display':'inline-block',
                         'margin-top':'1em',
