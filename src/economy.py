@@ -12,7 +12,6 @@ from statistics import mean
 class Economy():
 
     def __init__(self, settings):
-        self.timer = {'new households data':[], 'households data concat':[], 'new firms data':[], 'firms data concat':[], 'govt data concat':[], 'group household firm govt data':[],'sum economy data':[],'economy data concat':[]}
         self.time = 0
         self.interest_rate = settings.init_interest_rate
         self.households = {} # dictionary of households
@@ -315,7 +314,6 @@ class Economy():
             f.update_financial(self.interest_rate + 0.02)
 
     def update_economy_data(self, cycle):
-
         new_households_data = [self.households_data] + [pd.DataFrame({'income':household.wages,
             'savings':household.savings,
             'spending':household.spending,
@@ -385,7 +383,7 @@ class Economy():
             #self.status()
             #self.print_labour_market()
         self.print_all()
-        self.status()
+        #self.status()
 
     def get_production_cycle_data(self):
         return self.economy_data.iloc[::3,]
