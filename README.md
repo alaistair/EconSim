@@ -6,9 +6,9 @@ As the student progresses, different concepts can be revealed. In the early stag
 Kuznets will also use the data generated from the simulation to illustrate various relationships. Okun's law can be seen by plotting unemployment and GDP growth. The effects of interest rate changes can be plotted on an IS-LM curve. Kuznets handles all the data work so that the charts can be drawn at will (or when the student is at an appropriate level), which speeds up the intuition.
 
 # Kuznets.co demo
-Kuznets so far consists of a core economic model, which is written in Python. It is an agent-based economic simulation, where individual households work and spend money at individual firms. The relationships between, say, household spending and unemployment or firm inventories and GDP growth perform as you would expect, although there is some work to do in calibrating the sensitivities to match a real economy. Eventually it will incorporate government policy, as well as international trade and asset markets.
+Kuznets so far consists of a core economic model written in Python. It is an agent-based economic model, where individual households work and spend money at individual firms. The relationships between, say, household spending and unemployment or firm inventories and GDP growth perform as you would expect, although there is some work to do in calibrating the sensitivities to match a real economy. Eventually it will incorporate government policy, as well as international trade and asset markets.
 
-The graphs in the demo are displayed using Dash (based on Plotly). The app runs on a Flask server and is hosted on Heroku. See a demo of the core model at [kuznets.herokuapp.com](http://kuznets.herokuapp.com). You can run the simulation for a number of cycles and toggle various graphs. The 'looking deeper' tab displays some interesting real-world economic relationships that the simulation can reproduce.
+See a demo of the core model at [kuznets.herokuapp.com](http://kuznets.herokuapp.com). The graphs in the demo are displayed using Dash (based on Plotly). The app runs on a Flask server and is hosted on Heroku. You can run the simulation for a number of cycles and toggle various graphs. The 'Looking deeper' tab displays some interesting real-world economic relationships that the simulation can reproduce.
 
 # Why Kuznets
 
