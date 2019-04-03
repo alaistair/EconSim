@@ -145,8 +145,10 @@ class App():
                     dcc.Tab(label='Looking deeper',children=[
                         html.Div(dcc.Dropdown(id='relationships-dropdown',
                             options=[
-                                {'label': 'Okun\'s Law', 'value': 'Okun'},
-                                {'label': 'Phillip\'s curve', 'value': 'Phillip'}], style={'width':'100%','float':'right'}),
+                                {'label':'Okun\'s Law','value':'Okun'},
+                                {'label':'Phillip\'s curve','value':'Phillip'},
+                                {'label':'test','value':'test'},
+                                ], style={'width':'100%','float':'right'}),
                             style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
                         html.Div([
                             html.Div(id='relationships-text',
@@ -309,7 +311,7 @@ class App():
                     xaxis={'title':'Change in unemployment rate',
                         'titlefont':{'family':'Avenir-Book, Montserrat'},
                         'tickfont':{'family':'Avenir-Book, Montserrat'}},
-                    yaxis={'title':'Change in GDP growth',
+                    yaxis={'title':'GDP growth',
                         'titlefont':{'family':'Avenir-Book, Montserrat'},
                         'tickfont':{'family':'Avenir-Book, Montserrat'}},
                 )
@@ -325,6 +327,21 @@ class App():
                         'titlefont':{'family':'Avenir-Book, Montserrat'},
                         'tickfont':{'family':'Avenir-Book, Montserrat'}},
                     yaxis={'title':'Unemployment rate',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
+                )
+            elif relationships_dropdown == 'test':
+                relationships_graph_data.append(go.Scatter(
+                    x = self.economy.get_production_cycle_data()['Firm production'].pct_change()*100,
+                    y = self.economy.get_production_cycle_data()['Firm inventory'],
+                    name = 'Phillip',
+                    mode='markers'
+                ))
+                relationships_graph_layout = go.Layout(
+                    xaxis={'title':'GDP growth',
+                        'titlefont':{'family':'Avenir-Book, Montserrat'},
+                        'tickfont':{'family':'Avenir-Book, Montserrat'}},
+                    yaxis={'title':'Inventories',
                         'titlefont':{'family':'Avenir-Book, Montserrat'},
                         'tickfont':{'family':'Avenir-Book, Montserrat'}},
                 )
@@ -387,5 +404,7 @@ class App():
                     an inverse relationship between the two. The **Phillips curve** shows that **lower unemployment** generally leads to **higher
                     inflation**, and vice versa. Over the years however, and especially in the 1970s, this relationship broke down. Turns out
                     the Phillips curve only works in the short run, and monetary factors drive inflation over the long term.'''))
+            elif value_1 == 'test':
+                return(dcc.Markdown('''test'''))
             else:
                 return(dcc.Markdown('''Choose an economic relationship from the dropdown menu above to see it recreated by the Kuznets simulation.'''))

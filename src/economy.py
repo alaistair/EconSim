@@ -343,7 +343,7 @@ class Economy():
         self.timer['new firms data'].append(end - start)
 
         start = time.time()
-        self.firms_data = pd.concat(new_firms_data, sort=True)
+        self.firms_data = pd.concat(new_firms_data, sort=False)
         end = time.time()
         self.timer['firms data concat'].append(end - start)
 

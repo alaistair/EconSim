@@ -15,7 +15,11 @@ These are all great points but the declining interest in economics among young p
 
 I personally think it would be great if our grandchildren look back in sadness at our time of relative poverty, and see how resource constraints meant that for example many of our own grandparents suffered for decades because we did not have the resources to pay for Alzheimers research. The way to make this happen of course is to ensure that our grandchildren inherit a much wealthier economy.
 
-# Kuznets.co
+# Kuznets.co demo
+
+The core economic model in Kuznets is written in Python. It is an agent-based economic simulation, where individual households work and spend money at individual firms. The relationships between, say, household spending and unemployment or firm inventories and GDP growth perform as you would expect, although there is some work to do in calibrating the sensitivities to match a real economy. Eventually it will incorporate government policy, as well as international trade and asset markets.
+
+The graphs in the demo are displayed using Dash (based on Plotly). The app runs on a Flask server and is hosted on Heroku
 
 The platform is named in honour of Simon Kuznets, an economist who, among other things, helped create the concept of Gross National Product, devised measures to compute it, won a Nobel Prize for his work on economic growth and how countries at similar stages of development are nonetheless different, and discovered a relationship between income inequality and economic growth.
 

@@ -5,16 +5,18 @@ class Firm():
 
     def __init__(self, settings):
         self.product_name = 'A'
-        self.inventory = int(1) # stock of inventory (units of output)
-        self.expected_production = settings.init_production
-        self.production = 0#self.expected_production # flow of production (one cycle)
 
+        self.expected_production = settings.init_production
+        self.production = 0 # flow of production (one cycle)
         self.product_price = 1 + (random.random() - 0.5) * 0.2
+        self.inventory = int(0) # stock of inventory (units of output)
+        self.revenue = 0 # flow of revenue (one cycle)
 
         self.labour_productivity = settings.init_labour_productivity # output per labour input
-        self.capital_investment = 0.1 * settings.init_production
-        self.debt = self.capital_investment
-        self.revenue = 0 # flow of revenue (one cycle)
+        self.capital_stock = 0.1 * settings.init_production
+        self.capital_investment = 0
+        self.debt = self.capital_stock
+        self.capital_depreciation = settings.init_capital_depreciation # 0.04 (4%)
 
         self.workers = {} # hhID, worker dictionary
         self.owners = {} # hhID, owner dictionary
@@ -33,7 +35,7 @@ class Firm():
         if self.product_price < 0: self.product_price = 0.01
 
         expected_revenue = self.expected_production * self.product_price
-        expected_production_spending = expected_revenue - self.debt * 0.05
+        expected_production_spending = expected_revenue - self.debt * 0.05 - self.capital_investment
         expected_labour_spending = expected_production_spending/self.labour_productivity
         expected_additional_labour_spending = expected_labour_spending
         for hhID, household in self.workers.items():
@@ -46,7 +48,7 @@ class Firm():
 
     def update_production(self, labour_cost):
         self.production += labour_cost * self.labour_productivity
-        self.debt += labour_cost #+ self.capital_investment
+        self.debt += labour_cost #+ self.capital_stock
         return 1
 
     # Adds sales to firm's revenue.
@@ -57,19 +59,25 @@ class Firm():
             self.inventory -= quantity
             self.revenue += sales
             return sales
-        elif self.inventory > 0: # firm partially fulfils order, returns unfilled amount
+        elif self.inventory > 0: # firm partially fulfils order
             sales = self.inventory * self.product_price
             self.revenue += sales
             self.inventory = 0
             return sales
-        elif self.inventory == 0: # firm out of stock, return sales
+        elif self.inventory == 0: # firm out of stock, no sales
             return 0
 
     def update_financial(self, interest_rate):
         self.debt -= self.revenue
-        self.debt *= interest_rate
         self.revenue = 0
 
+        self.capital_investment = self.capital_stock * self.capital_depreciation
+        self.capital_stock *= 1-self.capital_depreciation
+        
+        self.debt += self.capital_investment
+        self.capital_stock += self.capital_investment
+
+        self.debt *= interest_rate
         return 0
 
     def status(self):

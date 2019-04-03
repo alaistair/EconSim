@@ -16,7 +16,8 @@ class Settings():
 
         # Initial firm settings
         self.init_production = int(15 * self.init_households / self.init_firms)
-        self.init_labour_productivity = 1.1 # output per labour input
+        self.init_labour_productivity = 1.05 # output per labour input
+        self.init_capital_depreciation = 0.03 # capital stock depreciation per cycle
 
         # Initial government settings
         self.init_govt_revenue = 0
