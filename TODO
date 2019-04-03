@@ -1,7 +1,12 @@
 Household enter/exit
+ - household aging
+ - intertemporal budgeting
 Firm enter/exit
 Asset market
-Housing market
+ - Housing market
+ - stock market
 Government debt
+ - bond market
 International trade
 Cython dataframe concat
+update economy data - refactor into one method

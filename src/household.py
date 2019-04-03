@@ -5,6 +5,7 @@ class Household():
 
     def __init__(self, settings):
         self.people = 2 # labour endowment
+        self.age = 18
         self.human_capital = random.choice(settings.init_human_capital) #[10,20,30]
 
         self.expected_wages = self.human_capital

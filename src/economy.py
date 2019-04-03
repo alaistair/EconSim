@@ -316,22 +316,15 @@ class Economy():
 
     def update_economy_data(self, cycle):
 
-        start = time.time()
         new_households_data = [self.households_data] + [pd.DataFrame({'income':household.wages,
             'savings':household.savings,
             'spending':household.spending,
             'expected income':household.expected_wages,
             'human capital':household.human_capital,},
             index = [(self.time, cycle, hhID)]) for hhID, household in self.households.items()]
-        end = time.time()
-        self.timer['new households data'].append(end - start)
 
-        start = time.time()
         self.households_data = pd.concat(new_households_data)
-        end = time.time()
-        self.timer['households data concat'].append(end - start)
 
-        start = time.time()
         new_firms_data = [self.firms_data] + [pd.DataFrame({'inventory':firm.inventory,
             'production':firm.production,
             'price':firm.product_price,
@@ -339,31 +332,19 @@ class Economy():
             'expected production':firm.expected_production,
             'debt':firm.debt},
             index = [(self.time, cycle, firmID)]) for firmID, firm in self.firms.items()]
-        end = time.time()
-        self.timer['new firms data'].append(end - start)
 
-        start = time.time()
         self.firms_data = pd.concat(new_firms_data, sort=False)
-        end = time.time()
-        self.timer['firms data concat'].append(end - start)
 
-        start = time.time()
         self.government_data = pd.concat([self.government_data,
                             pd.DataFrame({'revenue':float(self.government.revenue),
                                         'expenditure':float(self.government.expenditure),
                                         'debt':float(self.government.debt)},
                                         index = [(self.time, cycle)])])
-        end = time.time()
-        self.timer['govt data concat'].append(end - start)
 
-        start = time.time()
         df1 = self.households_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
         df2 = self.firms_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
         df3 = self.government_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
-        end = time.time()
-        self.timer['group household firm govt data'].append(end - start)
 
-        start = time.time()
         sum = pd.DataFrame({'Household income': float(df1['income']),
                             'Household savings': '{0:f}'.format(df1['savings']),
                             'Household spending': float(df1['spending']),
@@ -380,17 +361,13 @@ class Economy():
                             'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
                             },
                             index = [(self.time, cycle)])
-        end = time.time()
-        self.timer['sum economy data'].append(end - start)
 
-        start = time.time()
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
-        end = time.time()
-        self.timer['economy data concat'].append(end - start)
 
     def cycle(self, number = 1):
 
         for i in range(number):
+            start = time.time()
             self.update_time()
             self.labour_market()
             self.production_market()
@@ -403,19 +380,12 @@ class Economy():
             self.update_economy_data('c')
             self.financial_market()
             self.update_economy_data('f')
-
+            end = time.time()
+            print('time ' + str(round(end - start,2)))
             #self.status()
             #self.print_labour_market()
         self.print_all()
         self.status()
-
-        total = 0
-        for key, value in self.timer.items():
-            total += mean(value)
-            print(key + ' ' + str(mean(value)))
-
-        for key, value in self.timer.items():
-            print(key + ' ' + str(mean(value)/total*100))
 
     def get_production_cycle_data(self):
         return self.economy_data.iloc[::3,]

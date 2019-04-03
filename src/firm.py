@@ -48,7 +48,7 @@ class Firm():
 
     def update_production(self, labour_cost):
         self.production += labour_cost * self.labour_productivity
-        self.debt += labour_cost #+ self.capital_stock
+        self.debt += labour_cost
         return 1
 
     # Adds sales to firm's revenue.
@@ -73,7 +73,7 @@ class Firm():
 
         self.capital_investment = self.capital_stock * self.capital_depreciation
         self.capital_stock *= 1-self.capital_depreciation
-        
+
         self.debt += self.capital_investment
         self.capital_stock += self.capital_investment
 

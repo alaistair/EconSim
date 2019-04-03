@@ -66,7 +66,7 @@ class App():
                         max=10,
                         step=0.25,
                         value=(self.economy.interest_rate-1)*100,
-                        disabled=True,
+                        disabled=False,
                         marks={i:'{}'.format(i) for i in range(11)}
                     )
                 ], style={'display':'inline-block','width':'50%', }),
