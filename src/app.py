@@ -148,6 +148,8 @@ class App():
                                 {'label':'Okun\'s Law','value':'Okun'},
                                 {'label':'Phillip\'s curve','value':'Phillip'},
                                 {'label':'test','value':'test'},
+                                {'label':'___________________','value':'-','disabled': True},
+                                {'label':'Cobb-Douglas','value':'Cobb-Douglas'},
                                 ], style={'width':'100%','float':'right'}),
                             style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
                         html.Div([

@@ -7,27 +7,21 @@ import random
 import numpy as np
 import pandas as pd
 import time
-from statistics import mean
 
 class Economy():
 
     def __init__(self, settings):
         self.time = 0
         self.interest_rate = settings.init_interest_rate
-        self.households = {} # dictionary of households
-        self.firms = {} # dictionary of firms
         self.products = defaultdict(list)
-        self.government = Government(settings)
         self.CPI = 1
         self.unemployment_rate = settings.init_unemployment_rate # 10%
 
-        # Initialise households
-        tuples = [] # index (time, cycle, hhID) for household dataframe
-        for i in range(0, settings.init_households):
-            self.households[i] = Household(settings)
-            tuples.append((self.time, 'p', i))
+        # Initialise dictionary of households
+        self.households = {i:Household(settings) for i in range(settings.init_households)}
 
         # Initialise dataframe for household data
+        tuples = [(self.time, 'p', i) for i in range(settings.init_households)]
         self.households_data = pd.DataFrame({'income':[0.],
                                 'savings':[0.],
                                 'spending':[0.],
@@ -35,20 +29,23 @@ class Economy():
                                 'human capital':[0.],
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'hhID']))
 
-        # Initialise firms
-        tuples = [] # index (time, cycle, firmID) for firm dataframe
-        for i in range(0, settings.init_firms):
-            self.firms[i] = Firm(settings)
-            tuples.append((self.time, 'p', i))
+        # Initialise dictionary of firms
+        self.firms = {i:Firm(settings) for i in range(settings.init_firms)} # dictionary of firms
 
         # Initialise dataframe for firm data
+        tuples = [(self.time, 'p', i) for i in range(settings.init_firms)]
         self.firms_data = pd.DataFrame({'inventory':[0.],
                                 'production':[0.],
                                 'price':[0.],
                                 'revenue':[0.],
                                 'expected production':[0.],
+                                'capital investment':[0.],
+                                'capital stock':[0.],
                                 'debt':[0.]
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
+
+        # Initialise government
+        self.government = Government(settings)
 
         # Initialise dataframe for government data
         tuples = [(self.time, 'p')]
@@ -106,10 +103,10 @@ class Economy():
         # update economy dataframe
         for hhID, household in self.households.items():
             self.households_data.loc[(self.time, 'p', hhID)] = {
-                                'income':household.wages,
+                                'income':household.income,
                                 'savings':household.savings,
                                 'spending':household.spending,
-                                'expected income':household.expected_wages,
+                                'expected income':np.mean(household.expected_income),
                                 'human capital':household.human_capital}
 
         for firmID, firm in self.firms.items():
@@ -119,6 +116,8 @@ class Economy():
                                 'price':firm.product_price,
                                 'revenue':firm.revenue,
                                 'expected production':firm.expected_production,
+                                'capital investment':firm.capital_investment,
+                                'capital stock':firm.capital_stock,
                                 'debt':firm.debt,}
 
         self.government_data = pd.DataFrame({'revenue':[0.],
@@ -168,9 +167,9 @@ class Economy():
             # Also fire least productive worker
             if bool(firm.workers):
                 lowest_productive_hhID = next(iter(firm.workers))
-                lowest_productive = firm.workers[lowest_productive_hhID].human_capital/firm.workers[lowest_productive_hhID].expected_wages
+                lowest_productive = firm.workers[lowest_productive_hhID].human_capital/np.mean(firm.workers[lowest_productive_hhID].expected_income)
                 for hhID, household in firm.workers.items():
-                    hh_productivity = household.human_capital/household.expected_wages
+                    hh_productivity = household.human_capital/np.mean(household.expected_income)
                     if hh_productivity < lowest_productive:
                         lowest_productive = hh_productivity
                         lowest_productive_hhID = hhID
@@ -185,8 +184,7 @@ class Economy():
         # Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
             # Get how much more each firm expecting to spend on labour
-            expected_additional_labour_spending = firm.update_hiring_intentions()
-            #print('firm ' + str(firmID) + ' expected spending ' + str(expected_additional_labour_spending))
+            expected_additional_labour_spending = firm.update_hiring_intentions(self.interest_rate)
 
             # Firm uses '37% rule' to hire, ie picks best candidate from random
             # 37% subset of candidates
@@ -207,12 +205,12 @@ class Economy():
                 for hhID, household in candidate_list.items():
                     if expected_additional_labour_spending == 0:
                         break
-                    if expected_additional_labour_spending < household.expected_wages:
+                    if expected_additional_labour_spending < np.mean(household.expected_income):
                         if bool(firm.workers): # firm has workers
                             continue
                         else:
                             expected_additional_labour_spending *= 1.05
-                    worker_productivity = household.human_capital/household.expected_wages
+                    worker_productivity = household.human_capital/np.mean(household.expected_income)
                     if worker_productivity > best_candidate_productivity:
                         best_candidate = hhID
                         best_candidate_productivity = worker_productivity
@@ -221,27 +219,26 @@ class Economy():
                     expected_additional_labour_spending = 0
                 else:
                     firm.workers[best_candidate] = self.government.unemployed[best_candidate]
-                    expected_additional_labour_spending -= household.expected_wages
+                    expected_additional_labour_spending -= np.mean(household.expected_income)
                     del candidate_list[best_candidate]
                     del self.government.unemployed[best_candidate]
 
         for hhID, household in self.government.unemployed.items():
-            household.expected_wages *= 0.99
+            household.expected_income = [income * 0.99 for income in household.expected_income]
             household.human_capital *= 0.995
-
 
     def production_market(self):
         for firmID, firm in self.firms.items():
             for hhID, household in firm.workers.items():
-                household.update_production(household.expected_wages, self.growth_rate(self.economy_data['CPI']))
-                firm.update_production(household.expected_wages)
+                household.update_production(np.mean(household.expected_income), self.growth_rate(self.economy_data['CPI']))
+                firm.update_production(np.mean(household.expected_income))
                 household.human_capital *= firm.labour_productivity
 
     def income_tax(self):
         self.government.expenditure = 0
         for h in self.households.values():
-            self.government.revenue += h.wages * self.government.income_tax
-            h.wages *= (1-self.government.income_tax)
+            self.government.revenue += h.income * self.government.income_tax
+            h.income *= (1-self.government.income_tax)
 
     def welfare(self):
         self.government.expenditure = self.government.revenue * 2.4
@@ -251,7 +248,7 @@ class Economy():
         else:
             spending = self.government.expenditure/total_unemployed
             for hhID, household in self.government.unemployed.items():
-                household.wages = spending
+                household.income = spending
 
     def move_production_to_inventory(self):
         for f in self.firms.values():
@@ -310,14 +307,15 @@ class Economy():
         self.government.govt_financial(self.interest_rate)
         for h in self.households.values():
             h.update_financial(self.interest_rate)
-        for f in self.firms.values():
-            f.update_financial(self.interest_rate + 0.02)
+        for firmID, f in self.firms.items():
+            profit = f.update_financial(self.interest_rate + 0.02, self.growth_rate(self.economy_data['CPI']))
+            print(str(firmID) + ' profit ' + str(round(profit,2)))
 
     def update_economy_data(self, cycle):
-        new_households_data = [self.households_data] + [pd.DataFrame({'income':household.wages,
+        new_households_data = [self.households_data] + [pd.DataFrame({'income':household.income,
             'savings':household.savings,
             'spending':household.spending,
-            'expected income':household.expected_wages,
+            'expected income':np.mean(household.expected_income),
             'human capital':household.human_capital,},
             index = [(self.time, cycle, hhID)]) for hhID, household in self.households.items()]
 
@@ -328,7 +326,9 @@ class Economy():
             'price':firm.product_price,
             'revenue':firm.revenue,
             'expected production':firm.expected_production,
-            'debt':firm.debt},
+            'capital investment':firm.capital_investment,
+            'capital stock':firm.capital_stock,
+            'debt':firm.debt,},
             index = [(self.time, cycle, firmID)]) for firmID, firm in self.firms.items()]
 
         self.firms_data = pd.concat(new_firms_data, sort=False)
@@ -363,7 +363,6 @@ class Economy():
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
 
     def cycle(self, number = 1):
-
         for i in range(number):
             start = time.time()
             self.update_time()
@@ -379,9 +378,9 @@ class Economy():
             self.financial_market()
             self.update_economy_data('f')
             end = time.time()
-            print('time ' + str(round(end - start,2)))
-            #self.status()
-            #self.print_labour_market()
+            #print('time ' + str(round(end - start,2)))
+            self.print_firms_data(self.time)
+            self.print_households_data(self.time)
         self.print_all()
         #self.status()
 
@@ -430,10 +429,13 @@ class Economy():
         print("Time is: " + str(self.time))
 
     def growth_rate(self, series):
+        if self.time == 0:
+            return 0
         try:
             return series[-1]/series[-4]
         except IndexError:
             return 0
+
 
     def status(self):
         self.print_economy_data(self.time)

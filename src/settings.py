@@ -1,3 +1,5 @@
+import numpy as np
+
 class Settings():
     """ A class to store all settings for EconSim"""
 
@@ -7,7 +9,7 @@ class Settings():
         self.init_households = 200
         self.init_firms = 5
         self.init_interest_rate = 1.02
-        self.init_unemployment_rate = 0.1
+        self.init_unemployment_rate = 0.2
 
         # Initial household settings
         self.init_household_savings = 20
@@ -15,7 +17,9 @@ class Settings():
         self.init_human_capital = [10,20,30] # range of potential labour outputs
 
         # Initial firm settings
-        self.init_production = int(15 * self.init_households / self.init_firms)
+        self.init_production = self.init_households * (1-self.init_unemployment_rate) * np.mean(self.init_human_capital) / self.init_firms
+
+
         self.init_labour_productivity = 1.05 # output per labour input
         self.init_capital_depreciation = 0.03 # capital stock depreciation per cycle
 
