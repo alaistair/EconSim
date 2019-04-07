@@ -10,3 +10,4 @@ Government debt
 International trade
 Cython dataframe concat
 update economy data - refactor into one method
+https://pandas.pydata.org/pandas-docs/stable/user_guide/enhancingperf.html

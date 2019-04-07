@@ -363,8 +363,8 @@ class Economy():
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
 
     def cycle(self, number = 1):
+        start = time.time()
         for i in range(number):
-            start = time.time()
             self.update_time()
             self.labour_market()
             self.production_market()
@@ -378,10 +378,10 @@ class Economy():
             self.financial_market()
             self.update_economy_data('f')
             end = time.time()
-            #print('time ' + str(round(end - start,2)))
-            self.print_firms_data(self.time)
-            self.print_households_data(self.time)
+            #self.print_firms_data(self.time)
+            #self.print_households_data(self.time)
         self.print_all()
+        print(str(number) + ' cycles in : ' + str(round(end - start,2)))
         #self.status()
 
     def get_production_cycle_data(self):
