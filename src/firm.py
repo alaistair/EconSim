@@ -76,7 +76,7 @@ class Firm():
         cost_of_capital = self.capital_stock * (interest_rate - CPI + self.capital_depreciation)
         profit_rate = self.revenue - cost_of_capital
 
-        print('cap stock: ' + str(self.capital_stock) + 'cost of capital: ' + str(cost_of_capital))
+        #print('cap stock: ' + str(self.capital_stock) + 'cost of capital: ' + str(cost_of_capital))
 
         if profit_rate <= 0:
             self.capital_investment = 0
@@ -86,7 +86,7 @@ class Firm():
 
         self.capital_stock = self.capital_stock * (1-self.capital_depreciation) + self.capital_investment
         self.debt = (self.debt + self.capital_investment - self.revenue) * interest_rate
-        print(str(round(profit_rate,2)) + ' ' + str(round(profit_rate/self.revenue,2)))
+        #print(str(round(profit_rate,2)) + ' ' + str(round(profit_rate/self.revenue,2)))
         self.revenue = 0
 
         return profit_rate

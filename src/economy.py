@@ -8,10 +8,14 @@ import numpy as np
 import pandas as pd
 import time
 
+import src.src.helloworld
+
+import src.src.updatehouseholddata as updatehouseholddata
+
 class Economy():
 
     def __init__(self, settings):
-        self.time = 0
+        self.time = int(0)
         self.interest_rate = settings.init_interest_rate
         self.products = defaultdict(list)
         self.CPI = 1
@@ -309,17 +313,26 @@ class Economy():
             h.update_financial(self.interest_rate)
         for firmID, f in self.firms.items():
             profit = f.update_financial(self.interest_rate + 0.02, self.growth_rate(self.economy_data['CPI']))
-            print(str(firmID) + ' profit ' + str(round(profit,2)))
+            #print(str(firmID) + ' profit ' + str(round(profit,2)))
 
-    def update_economy_data(self, cycle):
-        new_households_data = [self.households_data] + [pd.DataFrame({'income':household.income,
+    def update_household_data(self, households_data, households, time, cycle):
+        new_data = [pd.DataFrame({'income':household.income,
             'savings':household.savings,
             'spending':household.spending,
             'expected income':np.mean(household.expected_income),
             'human capital':household.human_capital,},
-            index = [(self.time, cycle, hhID)]) for hhID, household in self.households.items()]
+            index = [(time, cycle, hhID)]) for hhID, household in households.items()]
+        new_households_data = np.ndarray([households_data]+ new_data)
 
-        self.households_data = pd.concat(new_households_data)
+        return new_households_data
+
+        #return pd.concat(new_households_data)
+
+    def update_economy_data(self, cycle):
+
+        #print(updatehouseholddata.update_household_data(self.households_data, self.households, self.time, cycle))
+        #self.households_data = pd.concat(updatehouseholddata.update_household_data(self.households_data, self.households, self.time, cycle))
+        self.households_data = pd.concat(self.update_household_data(self.households_data, self.households, self.time, cycle))
 
         new_firms_data = [self.firms_data] + [pd.DataFrame({'inventory':firm.inventory,
             'production':firm.production,
