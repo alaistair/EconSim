@@ -322,7 +322,7 @@ class Economy():
             'expected income':np.mean(household.expected_income),
             'human capital':household.human_capital,},
             index = [(time, cycle, hhID)]) for hhID, household in households.items()]
-        new_households_data = np.ndarray([households_data]+ new_data)
+        new_households_data = [households_data]+ new_data
 
         return new_households_data
 
