@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import time
 
-import src.src.helloworld
+#import src.src.helloworld
 
-import src.src.updatehouseholddata as updatehouseholddata
+#import src.src.updatehouseholddata as updatehouseholddata
 
 class Economy():
 
