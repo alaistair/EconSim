@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import time
 
-#import src.src.helloworld
+import src.src.helloworld
 
-#import src.src.updatehouseholddata as updatehouseholddata
+import src.src.updatehouseholddata as updatehouseholddata
 
 class Economy():
 
@@ -124,9 +124,9 @@ class Economy():
                                 'capital stock':firm.capital_stock,
                                 'debt':firm.debt,}
 
-        self.government_data = pd.DataFrame({'revenue':[0.],
-                                'expenditure':[0.],
-                                'debt':[0.]
+        self.government_data = pd.DataFrame({'revenue':self.government.revenue,
+                                'expenditure':self.government.expenditure,
+                                'debt':self.government.debt,
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
         df1 = self.households_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
@@ -156,7 +156,7 @@ class Economy():
         self.update_economy_data('c')
         self.financial_market()
         self.update_economy_data('f')
-        self.print_labour_market()
+        self.status()
 
     def labour_market(self):
         # Workforce seperations
@@ -239,13 +239,13 @@ class Economy():
                 household.human_capital *= firm.labour_productivity
 
     def income_tax(self):
-        self.government.expenditure = 0
         for h in self.households.values():
             self.government.revenue += h.income * self.government.income_tax
             h.income *= (1-self.government.income_tax)
 
     def welfare(self):
         self.government.expenditure = self.government.revenue * 2.4
+
         total_unemployed = len(self.government.unemployed.keys())
         if total_unemployed == 0:
             pass
@@ -311,30 +311,23 @@ class Economy():
         self.government.govt_financial(self.interest_rate)
         for h in self.households.values():
             h.update_financial(self.interest_rate)
-        for firmID, f in self.firms.items():
+        for f in self.firms.values():
             profit = f.update_financial(self.interest_rate + 0.02, self.growth_rate(self.economy_data['CPI']))
             #print(str(firmID) + ' profit ' + str(round(profit,2)))
 
-    def update_household_data(self, households_data, households, time, cycle):
+    '''def update_households_data(self, households_data, households, time, cycle):
         new_data = [pd.DataFrame({'income':household.income,
             'savings':household.savings,
             'spending':household.spending,
             'expected income':np.mean(household.expected_income),
             'human capital':household.human_capital,},
             index = [(time, cycle, hhID)]) for hhID, household in households.items()]
-        new_households_data = [households_data]+ new_data
+        new_households_data = [households_data] + new_data
 
         return new_households_data
 
-        #return pd.concat(new_households_data)
-
-    def update_economy_data(self, cycle):
-
-        #print(updatehouseholddata.update_household_data(self.households_data, self.households, self.time, cycle))
-        #self.households_data = pd.concat(updatehouseholddata.update_household_data(self.households_data, self.households, self.time, cycle))
-        self.households_data = pd.concat(self.update_household_data(self.households_data, self.households, self.time, cycle))
-
-        new_firms_data = [self.firms_data] + [pd.DataFrame({'inventory':firm.inventory,
+    def update_firms_data(self, firms_data, firms, time, cycle):
+        new_firms_data = [pd.DataFrame({'inventory':firm.inventory,
             'production':firm.production,
             'price':firm.product_price,
             'revenue':firm.revenue,
@@ -344,7 +337,17 @@ class Economy():
             'debt':firm.debt,},
             index = [(self.time, cycle, firmID)]) for firmID, firm in self.firms.items()]
 
-        self.firms_data = pd.concat(new_firms_data, sort=False)
+        new_firms_data = [firms_data] + new_data
+        return new_firms_data
+        '''
+
+    def update_economy_data(self, cycle):
+
+        self.households_data = pd.concat(updatehouseholddata.update_households_data(self.households_data, self.households, self.time, cycle))
+        #self.households_data = pd.concat(self.update_household_data(self.households_data, self.households, self.time, cycle))
+
+        self.firms_data = pd.concat(updatehouseholddata.update_firms_data(self.firms_data, self.firms, self.time, cycle))
+        #self.firms_data = pd.concat(self.update_firms_data(self.firms_data, self.firms, self.time, cycle))
 
         self.government_data = pd.concat([self.government_data,
                             pd.DataFrame({'revenue':float(self.government.revenue),
@@ -376,7 +379,6 @@ class Economy():
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
 
     def cycle(self, number = 1):
-
         start = time.time()
         for i in range(number):
             self.update_time()
@@ -391,11 +393,11 @@ class Economy():
             self.update_economy_data('c')
             self.financial_market()
             self.update_economy_data('f')
-            end = time.time()
+            self.status()
+
+        end = time.time()
 
         print('time ' + str(round(end - start,2)))
-        #self.print_firms_data(self.time)
-        #self.print_households_data(self.time)
         self.print_all()
         #self.status()
 
@@ -451,11 +453,11 @@ class Economy():
         except IndexError:
             return 0
 
-
     def status(self):
         self.print_economy_data(self.time)
         self.print_households_data(self.time)
         self.print_firms_data(self.time)
+        self.print_government_data(self.time)
 
     def print_all(self):
         print(self.economy_data)

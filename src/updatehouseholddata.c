@@ -896,56 +896,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
 #define __Pyx_PyObject_GetAttrStr(o,n) PyObject_GetAttr(o,n)
 #endif
 
-/* GetBuiltinName.proto */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name);
-
-/* PyDictVersioning.proto */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-#define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
-#define __PYX_GET_DICT_VERSION(dict)  (((PyDictObject*)(dict))->ma_version_tag)
-#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)\
-    (version_var) = __PYX_GET_DICT_VERSION(dict);\
-    (cache_var) = (value);
-#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP) {\
-    static PY_UINT64_T __pyx_dict_version = 0;\
-    static PyObject *__pyx_dict_cached_value = NULL;\
-    if (likely(__PYX_GET_DICT_VERSION(DICT) == __pyx_dict_version)) {\
-        (VAR) = __pyx_dict_cached_value;\
-    } else {\
-        (VAR) = __pyx_dict_cached_value = (LOOKUP);\
-        __pyx_dict_version = __PYX_GET_DICT_VERSION(DICT);\
-    }\
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj);
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj);
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version);
-#else
-#define __PYX_GET_DICT_VERSION(dict)  (0)
-#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)
-#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP)  (VAR) = (LOOKUP);
-#endif
-
-/* GetModuleGlobalName.proto */
-#if CYTHON_USE_DICT_VERSIONS
-#define __Pyx_GetModuleGlobalName(var, name)  {\
-    static PY_UINT64_T __pyx_dict_version = 0;\
-    static PyObject *__pyx_dict_cached_value = NULL;\
-    (var) = (likely(__pyx_dict_version == __PYX_GET_DICT_VERSION(__pyx_d))) ?\
-        (likely(__pyx_dict_cached_value) ? __Pyx_NewRef(__pyx_dict_cached_value) : __Pyx_GetBuiltinName(name)) :\
-        __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
-}
-#define __Pyx_GetModuleGlobalNameUncached(var, name)  {\
-    PY_UINT64_T __pyx_dict_version;\
-    PyObject *__pyx_dict_cached_value;\
-    (var) = __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
-}
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value);
-#else
-#define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
-#define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
-#endif
-
 /* PyFunctionFastCall.proto */
 #if CYTHON_FAST_PYCALL
 #define __Pyx_PyFunction_FastCall(func, args, nargs)\
@@ -1025,6 +975,56 @@ static CYTHON_INLINE int __Pyx_ListComp_Append(PyObject* list, PyObject* x) {
 }
 #else
 #define __Pyx_ListComp_Append(L,x) PyList_Append(L,x)
+#endif
+
+/* GetBuiltinName.proto */
+static PyObject *__Pyx_GetBuiltinName(PyObject *name);
+
+/* PyDictVersioning.proto */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+#define __PYX_DICT_VERSION_INIT  ((PY_UINT64_T) -1)
+#define __PYX_GET_DICT_VERSION(dict)  (((PyDictObject*)(dict))->ma_version_tag)
+#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)\
+    (version_var) = __PYX_GET_DICT_VERSION(dict);\
+    (cache_var) = (value);
+#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP) {\
+    static PY_UINT64_T __pyx_dict_version = 0;\
+    static PyObject *__pyx_dict_cached_value = NULL;\
+    if (likely(__PYX_GET_DICT_VERSION(DICT) == __pyx_dict_version)) {\
+        (VAR) = __pyx_dict_cached_value;\
+    } else {\
+        (VAR) = __pyx_dict_cached_value = (LOOKUP);\
+        __pyx_dict_version = __PYX_GET_DICT_VERSION(DICT);\
+    }\
+}
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj);
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj);
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version);
+#else
+#define __PYX_GET_DICT_VERSION(dict)  (0)
+#define __PYX_UPDATE_DICT_CACHE(dict, value, cache_var, version_var)
+#define __PYX_PY_DICT_LOOKUP_IF_MODIFIED(VAR, DICT, LOOKUP)  (VAR) = (LOOKUP);
+#endif
+
+/* GetModuleGlobalName.proto */
+#if CYTHON_USE_DICT_VERSIONS
+#define __Pyx_GetModuleGlobalName(var, name)  {\
+    static PY_UINT64_T __pyx_dict_version = 0;\
+    static PyObject *__pyx_dict_cached_value = NULL;\
+    (var) = (likely(__pyx_dict_version == __PYX_GET_DICT_VERSION(__pyx_d))) ?\
+        (likely(__pyx_dict_cached_value) ? __Pyx_NewRef(__pyx_dict_cached_value) : __Pyx_GetBuiltinName(name)) :\
+        __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
+}
+#define __Pyx_GetModuleGlobalNameUncached(var, name)  {\
+    PY_UINT64_T __pyx_dict_version;\
+    PyObject *__pyx_dict_cached_value;\
+    (var) = __Pyx__GetModuleGlobalName(name, &__pyx_dict_version, &__pyx_dict_cached_value);\
+}
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value);
+#else
+#define __Pyx_GetModuleGlobalName(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
+#define __Pyx_GetModuleGlobalNameUncached(var, name)  (var) = __Pyx__GetModuleGlobalName(name)
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name);
 #endif
 
 /* PyObjectCall2Args.proto */
@@ -1361,7 +1361,8 @@ static PyTypeObject *__pyx_ptype_7cpython_5array_array = 0;
 static CYTHON_INLINE int __pyx_f_7cpython_5array_extend_buffer(arrayobject *, char *, Py_ssize_t); /*proto*/
 
 /* Module declarations from 'src.updatehouseholddata' */
-static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_household_data(PyObject *, PyObject *, int, PyObject *); /*proto*/
+static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_households_data(PyObject *, PyObject *, int, PyObject *); /*proto*/
+static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_firms_data(PyObject *, PyObject *, int, PyObject *); /*proto*/
 #define __Pyx_MODULE_NAME "src.updatehouseholddata"
 extern int __pyx_module_is_main_src__updatehouseholddata;
 int __pyx_module_is_main_src__updatehouseholddata = 0;
@@ -1370,40 +1371,62 @@ int __pyx_module_is_main_src__updatehouseholddata = 0;
 static PyObject *__pyx_builtin_MemoryError;
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_pd[] = "pd";
+static const char __pyx_k_debt[] = "debt";
 static const char __pyx_k_main[] = "__main__";
 static const char __pyx_k_mean[] = "mean";
 static const char __pyx_k_name[] = "__name__";
 static const char __pyx_k_test[] = "__test__";
 static const char __pyx_k_time[] = "time";
-static const char __pyx_k_array[] = "array";
 static const char __pyx_k_cycle[] = "cycle";
+static const char __pyx_k_firms[] = "firms";
 static const char __pyx_k_index[] = "index";
 static const char __pyx_k_items[] = "items";
 static const char __pyx_k_numpy[] = "numpy";
+static const char __pyx_k_price[] = "price";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_income[] = "income";
 static const char __pyx_k_pandas[] = "pandas";
+static const char __pyx_k_revenue[] = "revenue";
 static const char __pyx_k_savings[] = "savings";
 static const char __pyx_k_spending[] = "spending";
 static const char __pyx_k_DataFrame[] = "DataFrame";
+static const char __pyx_k_inventory[] = "inventory";
+static const char __pyx_k_firms_data[] = "firms_data";
 static const char __pyx_k_households[] = "households";
+static const char __pyx_k_production[] = "production";
 static const char __pyx_k_MemoryError[] = "MemoryError";
+static const char __pyx_k_capital_stock[] = "capital stock";
 static const char __pyx_k_human_capital[] = "human capital";
+static const char __pyx_k_product_price[] = "product_price";
+static const char __pyx_k_capital_stock_2[] = "capital_stock";
 static const char __pyx_k_expected_income[] = "expected income";
 static const char __pyx_k_households_data[] = "households_data";
 static const char __pyx_k_human_capital_2[] = "human_capital";
 static const char __pyx_k_expected_income_2[] = "expected_income";
+static const char __pyx_k_update_firms_data[] = "update_firms_data";
+static const char __pyx_k_capital_investment[] = "capital investment";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_update_household_data[] = "update_household_data";
+static const char __pyx_k_expected_production[] = "expected production";
+static const char __pyx_k_capital_investment_2[] = "capital_investment";
+static const char __pyx_k_expected_production_2[] = "expected_production";
+static const char __pyx_k_update_households_data[] = "update_households_data";
 static const char __pyx_k_src_updatehouseholddata[] = "src.updatehouseholddata";
 static const char __pyx_k_updatehouseholddata_pyx[] = "updatehouseholddata.pyx";
 static PyObject *__pyx_n_s_DataFrame;
 static PyObject *__pyx_n_s_MemoryError;
-static PyObject *__pyx_n_s_array;
+static PyObject *__pyx_kp_s_capital_investment;
+static PyObject *__pyx_n_s_capital_investment_2;
+static PyObject *__pyx_kp_s_capital_stock;
+static PyObject *__pyx_n_s_capital_stock_2;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_cycle;
+static PyObject *__pyx_n_s_debt;
 static PyObject *__pyx_kp_s_expected_income;
 static PyObject *__pyx_n_s_expected_income_2;
+static PyObject *__pyx_kp_s_expected_production;
+static PyObject *__pyx_n_s_expected_production_2;
+static PyObject *__pyx_n_s_firms;
+static PyObject *__pyx_n_s_firms_data;
 static PyObject *__pyx_n_s_households;
 static PyObject *__pyx_n_s_households_data;
 static PyObject *__pyx_kp_s_human_capital;
@@ -1411,6 +1434,7 @@ static PyObject *__pyx_n_s_human_capital_2;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_income;
 static PyObject *__pyx_n_s_index;
+static PyObject *__pyx_n_s_inventory;
 static PyObject *__pyx_n_s_items;
 static PyObject *__pyx_n_s_main;
 static PyObject *__pyx_n_s_mean;
@@ -1419,29 +1443,37 @@ static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_pandas;
 static PyObject *__pyx_n_s_pd;
+static PyObject *__pyx_n_s_price;
+static PyObject *__pyx_n_s_product_price;
+static PyObject *__pyx_n_s_production;
+static PyObject *__pyx_n_s_revenue;
 static PyObject *__pyx_n_s_savings;
 static PyObject *__pyx_n_s_spending;
 static PyObject *__pyx_n_s_src_updatehouseholddata;
 static PyObject *__pyx_n_s_test;
 static PyObject *__pyx_n_s_time;
-static PyObject *__pyx_n_s_update_household_data;
+static PyObject *__pyx_n_s_update_firms_data;
+static PyObject *__pyx_n_s_update_households_data;
 static PyObject *__pyx_kp_s_updatehouseholddata_pyx;
-static PyObject *__pyx_pf_3src_19updatehouseholddata_update_household_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle); /* proto */
+static PyObject *__pyx_pf_3src_19updatehouseholddata_update_households_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle); /* proto */
+static PyObject *__pyx_pf_3src_19updatehouseholddata_2update_firms_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_firms_data, PyObject *__pyx_v_firms, int __pyx_v_time, PyObject *__pyx_v_cycle); /* proto */
 static int __pyx_pf_7cpython_5array_5array___getbuffer__(arrayobject *__pyx_v_self, Py_buffer *__pyx_v_info, CYTHON_UNUSED int __pyx_v_flags); /* proto */
 static void __pyx_pf_7cpython_5array_5array_2__releasebuffer__(CYTHON_UNUSED arrayobject *__pyx_v_self, Py_buffer *__pyx_v_info); /* proto */
 static PyObject *__pyx_tuple_;
+static PyObject *__pyx_tuple__3;
 static PyObject *__pyx_codeobj__2;
+static PyObject *__pyx_codeobj__4;
 /* Late includes */
 
 /* "src/updatehouseholddata.pyx":5
  * import pandas as pd
  * 
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
+ *     'savings':float(household.savings),
  */
 
-static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_household_data(PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle) {
+static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_households_data(PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle) {
   PyObject *__pyx_v_new_households_data = NULL;
   PyObject *__pyx_v_hhID = NULL;
   PyObject *__pyx_v_household = NULL;
@@ -1452,378 +1484,333 @@ static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_household_data(PyObj
   PyObject *__pyx_t_3 = NULL;
   PyObject *__pyx_t_4 = NULL;
   PyObject *__pyx_t_5 = NULL;
-  PyObject *__pyx_t_6 = NULL;
-  PyObject *__pyx_t_7 = NULL;
-  Py_ssize_t __pyx_t_8;
-  PyObject *(*__pyx_t_9)(PyObject *);
-  PyObject *__pyx_t_10 = NULL;
+  Py_ssize_t __pyx_t_6;
+  PyObject *(*__pyx_t_7)(PyObject *);
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *(*__pyx_t_10)(PyObject *);
   PyObject *__pyx_t_11 = NULL;
-  PyObject *(*__pyx_t_12)(PyObject *);
-  PyObject *__pyx_t_13 = NULL;
-  PyObject *__pyx_t_14 = NULL;
-  int __pyx_t_15;
-  __Pyx_RefNannySetupContext("cupdate_household_data", 0);
+  PyObject *__pyx_t_12 = NULL;
+  __Pyx_RefNannySetupContext("cupdate_households_data", 0);
 
-  /* "src/updatehouseholddata.pyx":7
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):
+  /* "src/updatehouseholddata.pyx":6
  * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *         'savings':float(household.savings),
- *         'spending':float(household.spending),
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),
  */
-  __Pyx_GetModuleGlobalName(__pyx_t_2, __pyx_n_s_np); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
-  __pyx_t_3 = __Pyx_PyObject_GetAttrStr(__pyx_t_2, __pyx_n_s_array); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_3);
-  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-  __pyx_t_2 = PyList_New(1); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_2);
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
   __Pyx_INCREF(__pyx_v_households_data);
   __Pyx_GIVEREF(__pyx_v_households_data);
-  PyList_SET_ITEM(__pyx_t_2, 0, __pyx_v_households_data);
-  __pyx_t_4 = PyList_New(0); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 7, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_4);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_v_households_data);
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
 
-  /* "src/updatehouseholddata.pyx":12
- *         'expected income':np.mean(household.expected_income),
- *         'human capital':float(household.human_capital),},
- *         index = [(time, cycle, hhID)]) for hhID, household in households.items()])             # <<<<<<<<<<<<<<
+  /* "src/updatehouseholddata.pyx":11
+ *     'expected income':np.mean(household.expected_income),
+ *     'human capital':float(household.human_capital),},
+ *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
  * 
- *     return new_households_data
+ *   return new_households_data
  */
-  __pyx_t_6 = __Pyx_PyObject_GetAttrStr(__pyx_v_households, __pyx_n_s_items); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_6);
-  __pyx_t_7 = NULL;
-  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_6))) {
-    __pyx_t_7 = PyMethod_GET_SELF(__pyx_t_6);
-    if (likely(__pyx_t_7)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_6);
-      __Pyx_INCREF(__pyx_t_7);
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_households, __pyx_n_s_items); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_5 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+    if (likely(__pyx_t_5)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_5);
       __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_6, function);
+      __Pyx_DECREF_SET(__pyx_t_4, function);
     }
   }
-  __pyx_t_5 = (__pyx_t_7) ? __Pyx_PyObject_CallOneArg(__pyx_t_6, __pyx_t_7) : __Pyx_PyObject_CallNoArg(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7); __pyx_t_7 = 0;
-  if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 12, __pyx_L1_error)
-  __Pyx_GOTREF(__pyx_t_5);
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  if (likely(PyList_CheckExact(__pyx_t_5)) || PyTuple_CheckExact(__pyx_t_5)) {
-    __pyx_t_6 = __pyx_t_5; __Pyx_INCREF(__pyx_t_6); __pyx_t_8 = 0;
-    __pyx_t_9 = NULL;
+  __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 11, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
+    __pyx_t_4 = __pyx_t_3; __Pyx_INCREF(__pyx_t_4); __pyx_t_6 = 0;
+    __pyx_t_7 = NULL;
   } else {
-    __pyx_t_8 = -1; __pyx_t_6 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_6)) __PYX_ERR(0, 12, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_6);
-    __pyx_t_9 = Py_TYPE(__pyx_t_6)->tp_iternext; if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 12, __pyx_L1_error)
+    __pyx_t_6 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 11, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_7 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 11, __pyx_L1_error)
   }
-  __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
   for (;;) {
-    if (likely(!__pyx_t_9)) {
-      if (likely(PyList_CheckExact(__pyx_t_6))) {
-        if (__pyx_t_8 >= PyList_GET_SIZE(__pyx_t_6)) break;
+    if (likely(!__pyx_t_7)) {
+      if (likely(PyList_CheckExact(__pyx_t_4))) {
+        if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_5 = PyList_GET_ITEM(__pyx_t_6, __pyx_t_8); __Pyx_INCREF(__pyx_t_5); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 12, __pyx_L1_error)
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 11, __pyx_L1_error)
         #else
-        __pyx_t_5 = PySequence_ITEM(__pyx_t_6, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 12, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 11, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
         #endif
       } else {
-        if (__pyx_t_8 >= PyTuple_GET_SIZE(__pyx_t_6)) break;
+        if (__pyx_t_6 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
         #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
-        __pyx_t_5 = PyTuple_GET_ITEM(__pyx_t_6, __pyx_t_8); __Pyx_INCREF(__pyx_t_5); __pyx_t_8++; if (unlikely(0 < 0)) __PYX_ERR(0, 12, __pyx_L1_error)
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 11, __pyx_L1_error)
         #else
-        __pyx_t_5 = PySequence_ITEM(__pyx_t_6, __pyx_t_8); __pyx_t_8++; if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 12, __pyx_L1_error)
-        __Pyx_GOTREF(__pyx_t_5);
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 11, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
         #endif
       }
     } else {
-      __pyx_t_5 = __pyx_t_9(__pyx_t_6);
-      if (unlikely(!__pyx_t_5)) {
+      __pyx_t_3 = __pyx_t_7(__pyx_t_4);
+      if (unlikely(!__pyx_t_3)) {
         PyObject* exc_type = PyErr_Occurred();
         if (exc_type) {
           if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
-          else __PYX_ERR(0, 12, __pyx_L1_error)
+          else __PYX_ERR(0, 11, __pyx_L1_error)
         }
         break;
       }
-      __Pyx_GOTREF(__pyx_t_5);
+      __Pyx_GOTREF(__pyx_t_3);
     }
-    if ((likely(PyTuple_CheckExact(__pyx_t_5))) || (PyList_CheckExact(__pyx_t_5))) {
-      PyObject* sequence = __pyx_t_5;
+    if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
+      PyObject* sequence = __pyx_t_3;
       Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
       if (unlikely(size != 2)) {
         if (size > 2) __Pyx_RaiseTooManyValuesError(2);
         else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
-        __PYX_ERR(0, 12, __pyx_L1_error)
+        __PYX_ERR(0, 11, __pyx_L1_error)
       }
       #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
       if (likely(PyTuple_CheckExact(sequence))) {
-        __pyx_t_7 = PyTuple_GET_ITEM(sequence, 0); 
-        __pyx_t_10 = PyTuple_GET_ITEM(sequence, 1); 
+        __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_8 = PyTuple_GET_ITEM(sequence, 1); 
       } else {
-        __pyx_t_7 = PyList_GET_ITEM(sequence, 0); 
-        __pyx_t_10 = PyList_GET_ITEM(sequence, 1); 
+        __pyx_t_5 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_8 = PyList_GET_ITEM(sequence, 1); 
       }
-      __Pyx_INCREF(__pyx_t_7);
-      __Pyx_INCREF(__pyx_t_10);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(__pyx_t_8);
       #else
-      __pyx_t_7 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 12, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_7);
-      __pyx_t_10 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 12, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_10);
+      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 11, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_8 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 11, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
       #endif
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     } else {
       Py_ssize_t index = -1;
-      __pyx_t_11 = PyObject_GetIter(__pyx_t_5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 12, __pyx_L1_error)
-      __Pyx_GOTREF(__pyx_t_11);
-      __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-      __pyx_t_12 = Py_TYPE(__pyx_t_11)->tp_iternext;
-      index = 0; __pyx_t_7 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_7)) goto __pyx_L5_unpacking_failed;
-      __Pyx_GOTREF(__pyx_t_7);
-      index = 1; __pyx_t_10 = __pyx_t_12(__pyx_t_11); if (unlikely(!__pyx_t_10)) goto __pyx_L5_unpacking_failed;
-      __Pyx_GOTREF(__pyx_t_10);
-      if (__Pyx_IternextUnpackEndCheck(__pyx_t_12(__pyx_t_11), 2) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
-      __pyx_t_12 = NULL;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+      __pyx_t_9 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 11, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_10 = Py_TYPE(__pyx_t_9)->tp_iternext;
+      index = 0; __pyx_t_5 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_5)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_5);
+      index = 1; __pyx_t_8 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_8)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_8);
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 2) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+      __pyx_t_10 = NULL;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
       goto __pyx_L6_unpacking_done;
       __pyx_L5_unpacking_failed:;
-      __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-      __pyx_t_12 = NULL;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_10 = NULL;
       if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
-      __PYX_ERR(0, 12, __pyx_L1_error)
+      __PYX_ERR(0, 11, __pyx_L1_error)
       __pyx_L6_unpacking_done:;
     }
-    __Pyx_XDECREF_SET(__pyx_v_hhID, __pyx_t_7);
-    __pyx_t_7 = 0;
-    __Pyx_XDECREF_SET(__pyx_v_household, __pyx_t_10);
-    __pyx_t_10 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_hhID, __pyx_t_5);
+    __pyx_t_5 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_household, __pyx_t_8);
+    __pyx_t_8 = 0;
+
+    /* "src/updatehouseholddata.pyx":6
+ * 
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_pd); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_DataFrame); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_income); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_income, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updatehouseholddata.pyx":7
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):
- * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *         'savings':float(household.savings),
- *         'spending':float(household.spending),
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
+ *     'savings':float(household.savings),             # <<<<<<<<<<<<<<
+ *     'spending':float(household.spending),
+ *     'expected income':np.mean(household.expected_income),
  */
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_pd); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_savings); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 7, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_10 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_DataFrame); if (unlikely(!__pyx_t_10)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_10);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_savings, __pyx_t_5) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_income); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_11 = __Pyx_PyNumber_Float(__pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_income, __pyx_t_11) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "src/updatehouseholddata.pyx":8
- * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),
- *         'savings':float(household.savings),             # <<<<<<<<<<<<<<
- *         'spending':float(household.spending),
- *         'expected income':np.mean(household.expected_income),
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),             # <<<<<<<<<<<<<<
+ *     'expected income':np.mean(household.expected_income),
+ *     'human capital':float(household.human_capital),},
  */
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_savings); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_7 = __Pyx_PyNumber_Float(__pyx_t_11); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_savings, __pyx_t_7) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_spending); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_spending, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updatehouseholddata.pyx":9
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),
- *         'savings':float(household.savings),
- *         'spending':float(household.spending),             # <<<<<<<<<<<<<<
- *         'expected income':np.mean(household.expected_income),
- *         'human capital':float(household.human_capital),},
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),
+ *     'expected income':np.mean(household.expected_income),             # <<<<<<<<<<<<<<
+ *     'human capital':float(household.human_capital),},
+ *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]
  */
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_spending); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 9, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_11 = __Pyx_PyNumber_Float(__pyx_t_7); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_mean); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 9, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_spending, __pyx_t_11) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-
-    /* "src/updatehouseholddata.pyx":10
- *         'savings':float(household.savings),
- *         'spending':float(household.spending),
- *         'expected income':np.mean(household.expected_income),             # <<<<<<<<<<<<<<
- *         'human capital':float(household.human_capital),},
- *         index = [(time, cycle, hhID)]) for hhID, household in households.items()])
- */
-    __Pyx_GetModuleGlobalName(__pyx_t_7, __pyx_n_s_np); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 10, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_13 = __Pyx_PyObject_GetAttrStr(__pyx_t_7, __pyx_n_s_mean); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 10, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_13);
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    __pyx_t_7 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_expected_income_2); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 10, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __pyx_t_14 = NULL;
-    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_13))) {
-      __pyx_t_14 = PyMethod_GET_SELF(__pyx_t_13);
-      if (likely(__pyx_t_14)) {
-        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_13);
-        __Pyx_INCREF(__pyx_t_14);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_expected_income_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_12 = NULL;
+    if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_11))) {
+      __pyx_t_12 = PyMethod_GET_SELF(__pyx_t_11);
+      if (likely(__pyx_t_12)) {
+        PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_11);
+        __Pyx_INCREF(__pyx_t_12);
         __Pyx_INCREF(function);
-        __Pyx_DECREF_SET(__pyx_t_13, function);
+        __Pyx_DECREF_SET(__pyx_t_11, function);
       }
     }
-    __pyx_t_11 = (__pyx_t_14) ? __Pyx_PyObject_Call2Args(__pyx_t_13, __pyx_t_14, __pyx_t_7) : __Pyx_PyObject_CallOneArg(__pyx_t_13, __pyx_t_7);
-    __Pyx_XDECREF(__pyx_t_14); __pyx_t_14 = 0;
-    __Pyx_DECREF(__pyx_t_7); __pyx_t_7 = 0;
-    if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 10, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-    if (PyDict_SetItem(__pyx_t_5, __pyx_kp_s_expected_income, __pyx_t_11) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
+    __pyx_t_9 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_11, __pyx_t_12, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_t_5);
+    __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_expected_income, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":10
+ *     'spending':float(household.spending),
+ *     'expected income':np.mean(household.expected_income),
+ *     'human capital':float(household.human_capital),},             # <<<<<<<<<<<<<<
+ *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]
+ * 
+ */
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_human_capital_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 10, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_11 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 10, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_human_capital, __pyx_t_11) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+
+    /* "src/updatehouseholddata.pyx":6
+ * 
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),
+ */
+    __pyx_t_11 = PyTuple_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_3);
+    __pyx_t_3 = 0;
 
     /* "src/updatehouseholddata.pyx":11
- *         'spending':float(household.spending),
- *         'expected income':np.mean(household.expected_income),
- *         'human capital':float(household.human_capital),},             # <<<<<<<<<<<<<<
- *         index = [(time, cycle, hhID)]) for hhID, household in households.items()])
+ *     'expected income':np.mean(household.expected_income),
+ *     'human capital':float(household.human_capital),},
+ *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
  * 
+ *   return new_households_data
  */
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_human_capital_2); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 11, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_13 = __Pyx_PyNumber_Float(__pyx_t_11); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 11, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_13);
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (PyDict_SetItem(__pyx_t_5, __pyx_kp_s_human_capital, __pyx_t_13) < 0) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-
-    /* "src/updatehouseholddata.pyx":7
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):
- * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *         'savings':float(household.savings),
- *         'spending':float(household.spending),
- */
-    __pyx_t_13 = PyTuple_New(1); if (unlikely(!__pyx_t_13)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_13);
-    __Pyx_GIVEREF(__pyx_t_5);
-    PyTuple_SET_ITEM(__pyx_t_13, 0, __pyx_t_5);
-    __pyx_t_5 = 0;
-
-    /* "src/updatehouseholddata.pyx":12
- *         'expected income':np.mean(household.expected_income),
- *         'human capital':float(household.human_capital),},
- *         index = [(time, cycle, hhID)]) for hhID, household in households.items()])             # <<<<<<<<<<<<<<
- * 
- *     return new_households_data
- */
-    __pyx_t_5 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 12, __pyx_L1_error)
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 11, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_time); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 11, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = PyTuple_New(3); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 11, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_11 = __Pyx_PyInt_From_int(__pyx_v_time); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 12, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __pyx_t_7 = PyTuple_New(3); if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 12, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_7);
-    __Pyx_GIVEREF(__pyx_t_11);
-    PyTuple_SET_ITEM(__pyx_t_7, 0, __pyx_t_11);
+    __Pyx_GIVEREF(__pyx_t_9);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_9);
     __Pyx_INCREF(__pyx_v_cycle);
     __Pyx_GIVEREF(__pyx_v_cycle);
-    PyTuple_SET_ITEM(__pyx_t_7, 1, __pyx_v_cycle);
+    PyTuple_SET_ITEM(__pyx_t_5, 1, __pyx_v_cycle);
     __Pyx_INCREF(__pyx_v_hhID);
     __Pyx_GIVEREF(__pyx_v_hhID);
-    PyTuple_SET_ITEM(__pyx_t_7, 2, __pyx_v_hhID);
-    __pyx_t_11 = 0;
-    __pyx_t_11 = PyList_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 12, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_GIVEREF(__pyx_t_7);
-    PyList_SET_ITEM(__pyx_t_11, 0, __pyx_t_7);
-    __pyx_t_7 = 0;
-    if (PyDict_SetItem(__pyx_t_5, __pyx_n_s_index, __pyx_t_11) < 0) __PYX_ERR(0, 12, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+    PyTuple_SET_ITEM(__pyx_t_5, 2, __pyx_v_hhID);
+    __pyx_t_9 = 0;
+    __pyx_t_9 = PyList_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 11, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_GIVEREF(__pyx_t_5);
+    PyList_SET_ITEM(__pyx_t_9, 0, __pyx_t_5);
+    __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_index, __pyx_t_9) < 0) __PYX_ERR(0, 11, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "src/updatehouseholddata.pyx":7
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):
+    /* "src/updatehouseholddata.pyx":6
  * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *         'savings':float(household.savings),
- *         'spending':float(household.spending),
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),
  */
-    __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_10, __pyx_t_13, __pyx_t_5); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    __Pyx_DECREF(__pyx_t_10); __pyx_t_10 = 0;
-    __Pyx_DECREF(__pyx_t_13); __pyx_t_13 = 0;
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(__Pyx_ListComp_Append(__pyx_t_4, (PyObject*)__pyx_t_11))) __PYX_ERR(0, 7, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_11, __pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_9))) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
-    /* "src/updatehouseholddata.pyx":12
- *         'expected income':np.mean(household.expected_income),
- *         'human capital':float(household.human_capital),},
- *         index = [(time, cycle, hhID)]) for hhID, household in households.items()])             # <<<<<<<<<<<<<<
+    /* "src/updatehouseholddata.pyx":11
+ *     'expected income':np.mean(household.expected_income),
+ *     'human capital':float(household.human_capital),},
+ *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
  * 
- *     return new_households_data
+ *   return new_households_data
  */
   }
-  __Pyx_DECREF(__pyx_t_6); __pyx_t_6 = 0;
-  __pyx_t_6 = NULL;
-  __pyx_t_15 = 0;
-  if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_3))) {
-    __pyx_t_6 = PyMethod_GET_SELF(__pyx_t_3);
-    if (likely(__pyx_t_6)) {
-      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_3);
-      __Pyx_INCREF(__pyx_t_6);
-      __Pyx_INCREF(function);
-      __Pyx_DECREF_SET(__pyx_t_3, function);
-      __pyx_t_15 = 1;
-    }
-  }
-  #if CYTHON_FAST_PYCALL
-  if (PyFunction_Check(__pyx_t_3)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_2, __pyx_t_4};
-    __pyx_t_1 = __Pyx_PyFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_15, 2+__pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  } else
-  #endif
-  #if CYTHON_FAST_PYCCALL
-  if (__Pyx_PyFastCFunction_Check(__pyx_t_3)) {
-    PyObject *__pyx_temp[3] = {__pyx_t_6, __pyx_t_2, __pyx_t_4};
-    __pyx_t_1 = __Pyx_PyCFunction_FastCall(__pyx_t_3, __pyx_temp+1-__pyx_t_15, 2+__pyx_t_15); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_XDECREF(__pyx_t_6); __pyx_t_6 = 0;
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
-    __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
-  } else
-  #endif
-  {
-    __pyx_t_11 = PyTuple_New(2+__pyx_t_15); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_11);
-    if (__pyx_t_6) {
-      __Pyx_GIVEREF(__pyx_t_6); PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_6); __pyx_t_6 = NULL;
-    }
-    __Pyx_GIVEREF(__pyx_t_2);
-    PyTuple_SET_ITEM(__pyx_t_11, 0+__pyx_t_15, __pyx_t_2);
-    __Pyx_GIVEREF(__pyx_t_4);
-    PyTuple_SET_ITEM(__pyx_t_11, 1+__pyx_t_15, __pyx_t_4);
-    __pyx_t_2 = 0;
-    __pyx_t_4 = 0;
-    __pyx_t_1 = __Pyx_PyObject_Call(__pyx_t_3, __pyx_t_11, NULL); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_1);
-    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-  }
-  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
-  __pyx_v_new_households_data = __pyx_t_1;
-  __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
 
-  /* "src/updatehouseholddata.pyx":14
- *         index = [(time, cycle, hhID)]) for hhID, household in households.items()])
+  /* "src/updatehouseholddata.pyx":6
  * 
- *     return new_households_data             # <<<<<<<<<<<<<<
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
+ *     'savings':float(household.savings),
+ *     'spending':float(household.spending),
+ */
+  __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 6, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_new_households_data = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
+
+  /* "src/updatehouseholddata.pyx":13
+ *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]
  * 
- * def update_household_data(households_data, households, int time, str cycle):
+ *   return new_households_data             # <<<<<<<<<<<<<<
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
  */
   __Pyx_XDECREF(__pyx_r);
   __Pyx_INCREF(__pyx_v_new_households_data);
@@ -1833,9 +1820,9 @@ static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_household_data(PyObj
   /* "src/updatehouseholddata.pyx":5
  * import pandas as pd
  * 
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- * 
- *     new_households_data = np.array([households_data], [pd.DataFrame({'income':float(household.income),
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
+ *     'savings':float(household.savings),
  */
 
   /* function exit code */
@@ -1845,13 +1832,11 @@ static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_household_data(PyObj
   __Pyx_XDECREF(__pyx_t_3);
   __Pyx_XDECREF(__pyx_t_4);
   __Pyx_XDECREF(__pyx_t_5);
-  __Pyx_XDECREF(__pyx_t_6);
-  __Pyx_XDECREF(__pyx_t_7);
-  __Pyx_XDECREF(__pyx_t_10);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
   __Pyx_XDECREF(__pyx_t_11);
-  __Pyx_XDECREF(__pyx_t_13);
-  __Pyx_XDECREF(__pyx_t_14);
-  __Pyx_AddTraceback("src.updatehouseholddata.cupdate_household_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_XDECREF(__pyx_t_12);
+  __Pyx_AddTraceback("src.updatehouseholddata.cupdate_households_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = 0;
   __pyx_L0:;
   __Pyx_XDECREF(__pyx_v_new_households_data);
@@ -1862,24 +1847,432 @@ static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_household_data(PyObj
   return __pyx_r;
 }
 
-/* "src/updatehouseholddata.pyx":16
- *     return new_households_data
+/* "src/updatehouseholddata.pyx":15
+ *   return new_households_data
  * 
- * def update_household_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- *   return cupdate_household_data(households_data, households, time, cycle)
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
+ *     'production':float(firm.production),
+ */
+
+static PyObject *__pyx_f_3src_19updatehouseholddata_cupdate_firms_data(PyObject *__pyx_v_firms_data, PyObject *__pyx_v_firms, int __pyx_v_time, PyObject *__pyx_v_cycle) {
+  PyObject *__pyx_v_new_firms_data = NULL;
+  PyObject *__pyx_v_firmID = NULL;
+  PyObject *__pyx_v_firm = NULL;
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  PyObject *__pyx_t_2 = NULL;
+  PyObject *__pyx_t_3 = NULL;
+  PyObject *__pyx_t_4 = NULL;
+  PyObject *__pyx_t_5 = NULL;
+  Py_ssize_t __pyx_t_6;
+  PyObject *(*__pyx_t_7)(PyObject *);
+  PyObject *__pyx_t_8 = NULL;
+  PyObject *__pyx_t_9 = NULL;
+  PyObject *(*__pyx_t_10)(PyObject *);
+  PyObject *__pyx_t_11 = NULL;
+  __Pyx_RefNannySetupContext("cupdate_firms_data", 0);
+
+  /* "src/updatehouseholddata.pyx":16
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),
+ */
+  __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __Pyx_INCREF(__pyx_v_firms_data);
+  __Pyx_GIVEREF(__pyx_v_firms_data);
+  PyList_SET_ITEM(__pyx_t_1, 0, __pyx_v_firms_data);
+  __pyx_t_2 = PyList_New(0); if (unlikely(!__pyx_t_2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_2);
+
+  /* "src/updatehouseholddata.pyx":24
+ *     'capital stock':float(firm.capital_stock),
+ *     'debt':float(firm.debt),},
+ *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
+ * 
+ *   return new_firms_data
+ */
+  __pyx_t_4 = __Pyx_PyObject_GetAttrStr(__pyx_v_firms, __pyx_n_s_items); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __pyx_t_5 = NULL;
+  if (CYTHON_UNPACK_METHODS && likely(PyMethod_Check(__pyx_t_4))) {
+    __pyx_t_5 = PyMethod_GET_SELF(__pyx_t_4);
+    if (likely(__pyx_t_5)) {
+      PyObject* function = PyMethod_GET_FUNCTION(__pyx_t_4);
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(function);
+      __Pyx_DECREF_SET(__pyx_t_4, function);
+    }
+  }
+  __pyx_t_3 = (__pyx_t_5) ? __Pyx_PyObject_CallOneArg(__pyx_t_4, __pyx_t_5) : __Pyx_PyObject_CallNoArg(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5); __pyx_t_5 = 0;
+  if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_3);
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+  if (likely(PyList_CheckExact(__pyx_t_3)) || PyTuple_CheckExact(__pyx_t_3)) {
+    __pyx_t_4 = __pyx_t_3; __Pyx_INCREF(__pyx_t_4); __pyx_t_6 = 0;
+    __pyx_t_7 = NULL;
+  } else {
+    __pyx_t_6 = -1; __pyx_t_4 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 24, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_4);
+    __pyx_t_7 = Py_TYPE(__pyx_t_4)->tp_iternext; if (unlikely(!__pyx_t_7)) __PYX_ERR(0, 24, __pyx_L1_error)
+  }
+  __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+  for (;;) {
+    if (likely(!__pyx_t_7)) {
+      if (likely(PyList_CheckExact(__pyx_t_4))) {
+        if (__pyx_t_6 >= PyList_GET_SIZE(__pyx_t_4)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_3 = PyList_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 24, __pyx_L1_error)
+        #else
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        #endif
+      } else {
+        if (__pyx_t_6 >= PyTuple_GET_SIZE(__pyx_t_4)) break;
+        #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+        __pyx_t_3 = PyTuple_GET_ITEM(__pyx_t_4, __pyx_t_6); __Pyx_INCREF(__pyx_t_3); __pyx_t_6++; if (unlikely(0 < 0)) __PYX_ERR(0, 24, __pyx_L1_error)
+        #else
+        __pyx_t_3 = PySequence_ITEM(__pyx_t_4, __pyx_t_6); __pyx_t_6++; if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
+        __Pyx_GOTREF(__pyx_t_3);
+        #endif
+      }
+    } else {
+      __pyx_t_3 = __pyx_t_7(__pyx_t_4);
+      if (unlikely(!__pyx_t_3)) {
+        PyObject* exc_type = PyErr_Occurred();
+        if (exc_type) {
+          if (likely(__Pyx_PyErr_GivenExceptionMatches(exc_type, PyExc_StopIteration))) PyErr_Clear();
+          else __PYX_ERR(0, 24, __pyx_L1_error)
+        }
+        break;
+      }
+      __Pyx_GOTREF(__pyx_t_3);
+    }
+    if ((likely(PyTuple_CheckExact(__pyx_t_3))) || (PyList_CheckExact(__pyx_t_3))) {
+      PyObject* sequence = __pyx_t_3;
+      Py_ssize_t size = __Pyx_PySequence_SIZE(sequence);
+      if (unlikely(size != 2)) {
+        if (size > 2) __Pyx_RaiseTooManyValuesError(2);
+        else if (size >= 0) __Pyx_RaiseNeedMoreValuesError(size);
+        __PYX_ERR(0, 24, __pyx_L1_error)
+      }
+      #if CYTHON_ASSUME_SAFE_MACROS && !CYTHON_AVOID_BORROWED_REFS
+      if (likely(PyTuple_CheckExact(sequence))) {
+        __pyx_t_5 = PyTuple_GET_ITEM(sequence, 0); 
+        __pyx_t_8 = PyTuple_GET_ITEM(sequence, 1); 
+      } else {
+        __pyx_t_5 = PyList_GET_ITEM(sequence, 0); 
+        __pyx_t_8 = PyList_GET_ITEM(sequence, 1); 
+      }
+      __Pyx_INCREF(__pyx_t_5);
+      __Pyx_INCREF(__pyx_t_8);
+      #else
+      __pyx_t_5 = PySequence_ITEM(sequence, 0); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 24, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_5);
+      __pyx_t_8 = PySequence_ITEM(sequence, 1); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 24, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_8);
+      #endif
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    } else {
+      Py_ssize_t index = -1;
+      __pyx_t_9 = PyObject_GetIter(__pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 24, __pyx_L1_error)
+      __Pyx_GOTREF(__pyx_t_9);
+      __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+      __pyx_t_10 = Py_TYPE(__pyx_t_9)->tp_iternext;
+      index = 0; __pyx_t_5 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_5)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_5);
+      index = 1; __pyx_t_8 = __pyx_t_10(__pyx_t_9); if (unlikely(!__pyx_t_8)) goto __pyx_L5_unpacking_failed;
+      __Pyx_GOTREF(__pyx_t_8);
+      if (__Pyx_IternextUnpackEndCheck(__pyx_t_10(__pyx_t_9), 2) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
+      __pyx_t_10 = NULL;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      goto __pyx_L6_unpacking_done;
+      __pyx_L5_unpacking_failed:;
+      __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+      __pyx_t_10 = NULL;
+      if (__Pyx_IterFinish() == 0) __Pyx_RaiseNeedMoreValuesError(index);
+      __PYX_ERR(0, 24, __pyx_L1_error)
+      __pyx_L6_unpacking_done:;
+    }
+    __Pyx_XDECREF_SET(__pyx_v_firmID, __pyx_t_5);
+    __pyx_t_5 = 0;
+    __Pyx_XDECREF_SET(__pyx_v_firm, __pyx_t_8);
+    __pyx_t_8 = 0;
+
+    /* "src/updatehouseholddata.pyx":16
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),
+ */
+    __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_pd); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_8 = __Pyx_PyObject_GetAttrStr(__pyx_t_3, __pyx_n_s_DataFrame); if (unlikely(!__pyx_t_8)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_8);
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(8); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_inventory); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_inventory, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":17
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
+ *     'production':float(firm.production),             # <<<<<<<<<<<<<<
+ *     'price':float(firm.product_price),
+ *     'revenue':float(firm.revenue),
+ */
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_production); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 17, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 17, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_production, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+    /* "src/updatehouseholddata.pyx":18
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),             # <<<<<<<<<<<<<<
+ *     'revenue':float(firm.revenue),
+ *     'expected production':float(firm.expected_production),
+ */
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_product_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 18, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 18, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_price, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":19
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),
+ *     'revenue':float(firm.revenue),             # <<<<<<<<<<<<<<
+ *     'expected production':float(firm.expected_production),
+ *     'capital investment':float(firm.capital_investment),
+ */
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_revenue); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 19, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 19, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_revenue, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+    /* "src/updatehouseholddata.pyx":20
+ *     'price':float(firm.product_price),
+ *     'revenue':float(firm.revenue),
+ *     'expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
+ *     'capital investment':float(firm.capital_investment),
+ *     'capital stock':float(firm.capital_stock),
+ */
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_expected_production_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 20, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 20, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_expected_production, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":21
+ *     'revenue':float(firm.revenue),
+ *     'expected production':float(firm.expected_production),
+ *     'capital investment':float(firm.capital_investment),             # <<<<<<<<<<<<<<
+ *     'capital stock':float(firm.capital_stock),
+ *     'debt':float(firm.debt),},
+ */
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_capital_investment_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_capital_investment, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+    /* "src/updatehouseholddata.pyx":22
+ *     'expected production':float(firm.expected_production),
+ *     'capital investment':float(firm.capital_investment),
+ *     'capital stock':float(firm.capital_stock),             # <<<<<<<<<<<<<<
+ *     'debt':float(firm.debt),},
+ *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
+ */
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_capital_stock_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 22, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 22, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_capital_stock, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":23
+ *     'capital investment':float(firm.capital_investment),
+ *     'capital stock':float(firm.capital_stock),
+ *     'debt':float(firm.debt),},             # <<<<<<<<<<<<<<
+ *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
+ * 
+ */
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_debt); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 23, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 23, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_debt, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+
+    /* "src/updatehouseholddata.pyx":16
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),
+ */
+    __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_5);
+    __Pyx_GIVEREF(__pyx_t_3);
+    PyTuple_SET_ITEM(__pyx_t_5, 0, __pyx_t_3);
+    __pyx_t_3 = 0;
+
+    /* "src/updatehouseholddata.pyx":24
+ *     'capital stock':float(firm.capital_stock),
+ *     'debt':float(firm.debt),},
+ *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
+ * 
+ *   return new_firms_data
+ */
+    __pyx_t_3 = __Pyx_PyDict_NewPresized(1); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 24, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_3);
+    __pyx_t_9 = __Pyx_PyInt_From_int(__pyx_v_time); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 24, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_11 = PyTuple_New(3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 24, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_GIVEREF(__pyx_t_9);
+    PyTuple_SET_ITEM(__pyx_t_11, 0, __pyx_t_9);
+    __Pyx_INCREF(__pyx_v_cycle);
+    __Pyx_GIVEREF(__pyx_v_cycle);
+    PyTuple_SET_ITEM(__pyx_t_11, 1, __pyx_v_cycle);
+    __Pyx_INCREF(__pyx_v_firmID);
+    __Pyx_GIVEREF(__pyx_v_firmID);
+    PyTuple_SET_ITEM(__pyx_t_11, 2, __pyx_v_firmID);
+    __pyx_t_9 = 0;
+    __pyx_t_9 = PyList_New(1); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 24, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_GIVEREF(__pyx_t_11);
+    PyList_SET_ITEM(__pyx_t_9, 0, __pyx_t_11);
+    __pyx_t_11 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_index, __pyx_t_9) < 0) __PYX_ERR(0, 24, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":16
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),
+ */
+    __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_8); __pyx_t_8 = 0;
+    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
+    __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
+    if (unlikely(__Pyx_ListComp_Append(__pyx_t_2, (PyObject*)__pyx_t_9))) __PYX_ERR(0, 16, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updatehouseholddata.pyx":24
+ *     'capital stock':float(firm.capital_stock),
+ *     'debt':float(firm.debt),},
+ *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
+ * 
+ *   return new_firms_data
+ */
+  }
+  __Pyx_DECREF(__pyx_t_4); __pyx_t_4 = 0;
+
+  /* "src/updatehouseholddata.pyx":16
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
+ *     'production':float(firm.production),
+ *     'price':float(firm.product_price),
+ */
+  __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_4);
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+  __Pyx_DECREF(__pyx_t_2); __pyx_t_2 = 0;
+  __pyx_v_new_firms_data = ((PyObject*)__pyx_t_4);
+  __pyx_t_4 = 0;
+
+  /* "src/updatehouseholddata.pyx":26
+ *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
+ * 
+ *   return new_firms_data             # <<<<<<<<<<<<<<
+ * 
+ * def update_households_data(households_data, households, int time, str cycle):
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __Pyx_INCREF(__pyx_v_new_firms_data);
+  __pyx_r = __pyx_v_new_firms_data;
+  goto __pyx_L0;
+
+  /* "src/updatehouseholddata.pyx":15
+ *   return new_households_data
+ * 
+ * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
+ *     'production':float(firm.production),
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_XDECREF(__pyx_t_2);
+  __Pyx_XDECREF(__pyx_t_3);
+  __Pyx_XDECREF(__pyx_t_4);
+  __Pyx_XDECREF(__pyx_t_5);
+  __Pyx_XDECREF(__pyx_t_8);
+  __Pyx_XDECREF(__pyx_t_9);
+  __Pyx_XDECREF(__pyx_t_11);
+  __Pyx_AddTraceback("src.updatehouseholddata.cupdate_firms_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = 0;
+  __pyx_L0:;
+  __Pyx_XDECREF(__pyx_v_new_firms_data);
+  __Pyx_XDECREF(__pyx_v_firmID);
+  __Pyx_XDECREF(__pyx_v_firm);
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/updatehouseholddata.pyx":28
+ *   return new_firms_data
+ * 
+ * def update_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
  */
 
 /* Python wrapper */
-static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_household_data(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
-static PyMethodDef __pyx_mdef_3src_19updatehouseholddata_1update_household_data = {"update_household_data", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_19updatehouseholddata_1update_household_data, METH_VARARGS|METH_KEYWORDS, 0};
-static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_household_data(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_households_data(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_3src_19updatehouseholddata_1update_households_data = {"update_households_data", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_19updatehouseholddata_1update_households_data, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_households_data(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
   PyObject *__pyx_v_households_data = 0;
   PyObject *__pyx_v_households = 0;
   int __pyx_v_time;
   PyObject *__pyx_v_cycle = 0;
   PyObject *__pyx_r = 0;
   __Pyx_RefNannyDeclarations
-  __Pyx_RefNannySetupContext("update_household_data (wrapper)", 0);
+  __Pyx_RefNannySetupContext("update_households_data (wrapper)", 0);
   {
     static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_households_data,&__pyx_n_s_households,&__pyx_n_s_time,&__pyx_n_s_cycle,0};
     PyObject* values[4] = {0,0,0,0};
@@ -1907,23 +2300,23 @@ static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_household_data(PyOb
         case  1:
         if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_households)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_household_data", 1, 4, 4, 1); __PYX_ERR(0, 16, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("update_households_data", 1, 4, 4, 1); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  2:
         if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_time)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_household_data", 1, 4, 4, 2); __PYX_ERR(0, 16, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("update_households_data", 1, 4, 4, 2); __PYX_ERR(0, 28, __pyx_L3_error)
         }
         CYTHON_FALLTHROUGH;
         case  3:
         if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_cycle)) != 0)) kw_args--;
         else {
-          __Pyx_RaiseArgtupleInvalid("update_household_data", 1, 4, 4, 3); __PYX_ERR(0, 16, __pyx_L3_error)
+          __Pyx_RaiseArgtupleInvalid("update_households_data", 1, 4, 4, 3); __PYX_ERR(0, 28, __pyx_L3_error)
         }
       }
       if (unlikely(kw_args > 0)) {
-        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_household_data") < 0)) __PYX_ERR(0, 16, __pyx_L3_error)
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_households_data") < 0)) __PYX_ERR(0, 28, __pyx_L3_error)
       }
     } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
       goto __pyx_L5_argtuple_error;
@@ -1935,19 +2328,19 @@ static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_household_data(PyOb
     }
     __pyx_v_households_data = values[0];
     __pyx_v_households = values[1];
-    __pyx_v_time = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_time == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 16, __pyx_L3_error)
+    __pyx_v_time = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_time == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 28, __pyx_L3_error)
     __pyx_v_cycle = ((PyObject*)values[3]);
   }
   goto __pyx_L4_argument_unpacking_done;
   __pyx_L5_argtuple_error:;
-  __Pyx_RaiseArgtupleInvalid("update_household_data", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 16, __pyx_L3_error)
+  __Pyx_RaiseArgtupleInvalid("update_households_data", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 28, __pyx_L3_error)
   __pyx_L3_error:;
-  __Pyx_AddTraceback("src.updatehouseholddata.update_household_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.updatehouseholddata.update_households_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __Pyx_RefNannyFinishContext();
   return NULL;
   __pyx_L4_argument_unpacking_done:;
-  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cycle), (&PyString_Type), 1, "cycle", 1))) __PYX_ERR(0, 16, __pyx_L1_error)
-  __pyx_r = __pyx_pf_3src_19updatehouseholddata_update_household_data(__pyx_self, __pyx_v_households_data, __pyx_v_households, __pyx_v_time, __pyx_v_cycle);
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cycle), (&PyString_Type), 1, "cycle", 1))) __PYX_ERR(0, 28, __pyx_L1_error)
+  __pyx_r = __pyx_pf_3src_19updatehouseholddata_update_households_data(__pyx_self, __pyx_v_households_data, __pyx_v_households, __pyx_v_time, __pyx_v_cycle);
 
   /* function exit code */
   goto __pyx_L0;
@@ -1958,35 +2351,170 @@ static PyObject *__pyx_pw_3src_19updatehouseholddata_1update_household_data(PyOb
   return __pyx_r;
 }
 
-static PyObject *__pyx_pf_3src_19updatehouseholddata_update_household_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle) {
+static PyObject *__pyx_pf_3src_19updatehouseholddata_update_households_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle) {
   PyObject *__pyx_r = NULL;
   __Pyx_RefNannyDeclarations
   PyObject *__pyx_t_1 = NULL;
-  __Pyx_RefNannySetupContext("update_household_data", 0);
+  __Pyx_RefNannySetupContext("update_households_data", 0);
 
-  /* "src/updatehouseholddata.pyx":17
+  /* "src/updatehouseholddata.pyx":29
  * 
- * def update_household_data(households_data, households, int time, str cycle):
- *   return cupdate_household_data(households_data, households, time, cycle)             # <<<<<<<<<<<<<<
+ * def update_households_data(households_data, households, int time, str cycle):
+ *   return cupdate_households_data(households_data, households, time, cycle)             # <<<<<<<<<<<<<<
+ * 
+ * def update_firms_data(firms_data, firms, int time, str cycle):
  */
   __Pyx_XDECREF(__pyx_r);
-  __pyx_t_1 = __pyx_f_3src_19updatehouseholddata_cupdate_household_data(__pyx_v_households_data, __pyx_v_households, __pyx_v_time, __pyx_v_cycle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 17, __pyx_L1_error)
+  __pyx_t_1 = __pyx_f_3src_19updatehouseholddata_cupdate_households_data(__pyx_v_households_data, __pyx_v_households, __pyx_v_time, __pyx_v_cycle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 29, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   __pyx_r = __pyx_t_1;
   __pyx_t_1 = 0;
   goto __pyx_L0;
 
-  /* "src/updatehouseholddata.pyx":16
- *     return new_households_data
+  /* "src/updatehouseholddata.pyx":28
+ *   return new_firms_data
  * 
- * def update_household_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- *   return cupdate_household_data(households_data, households, time, cycle)
+ * def update_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
  */
 
   /* function exit code */
   __pyx_L1_error:;
   __Pyx_XDECREF(__pyx_t_1);
-  __Pyx_AddTraceback("src.updatehouseholddata.update_household_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_AddTraceback("src.updatehouseholddata.update_households_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_XGIVEREF(__pyx_r);
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+/* "src/updatehouseholddata.pyx":31
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
+ * def update_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_firms_data(firms_data, firms, time, cycle)
+ */
+
+/* Python wrapper */
+static PyObject *__pyx_pw_3src_19updatehouseholddata_3update_firms_data(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds); /*proto*/
+static PyMethodDef __pyx_mdef_3src_19updatehouseholddata_3update_firms_data = {"update_firms_data", (PyCFunction)(void*)(PyCFunctionWithKeywords)__pyx_pw_3src_19updatehouseholddata_3update_firms_data, METH_VARARGS|METH_KEYWORDS, 0};
+static PyObject *__pyx_pw_3src_19updatehouseholddata_3update_firms_data(PyObject *__pyx_self, PyObject *__pyx_args, PyObject *__pyx_kwds) {
+  PyObject *__pyx_v_firms_data = 0;
+  PyObject *__pyx_v_firms = 0;
+  int __pyx_v_time;
+  PyObject *__pyx_v_cycle = 0;
+  PyObject *__pyx_r = 0;
+  __Pyx_RefNannyDeclarations
+  __Pyx_RefNannySetupContext("update_firms_data (wrapper)", 0);
+  {
+    static PyObject **__pyx_pyargnames[] = {&__pyx_n_s_firms_data,&__pyx_n_s_firms,&__pyx_n_s_time,&__pyx_n_s_cycle,0};
+    PyObject* values[4] = {0,0,0,0};
+    if (unlikely(__pyx_kwds)) {
+      Py_ssize_t kw_args;
+      const Py_ssize_t pos_args = PyTuple_GET_SIZE(__pyx_args);
+      switch (pos_args) {
+        case  4: values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+        CYTHON_FALLTHROUGH;
+        case  3: values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+        CYTHON_FALLTHROUGH;
+        case  2: values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+        CYTHON_FALLTHROUGH;
+        case  1: values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+        CYTHON_FALLTHROUGH;
+        case  0: break;
+        default: goto __pyx_L5_argtuple_error;
+      }
+      kw_args = PyDict_Size(__pyx_kwds);
+      switch (pos_args) {
+        case  0:
+        if (likely((values[0] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_firms_data)) != 0)) kw_args--;
+        else goto __pyx_L5_argtuple_error;
+        CYTHON_FALLTHROUGH;
+        case  1:
+        if (likely((values[1] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_firms)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("update_firms_data", 1, 4, 4, 1); __PYX_ERR(0, 31, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  2:
+        if (likely((values[2] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_time)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("update_firms_data", 1, 4, 4, 2); __PYX_ERR(0, 31, __pyx_L3_error)
+        }
+        CYTHON_FALLTHROUGH;
+        case  3:
+        if (likely((values[3] = __Pyx_PyDict_GetItemStr(__pyx_kwds, __pyx_n_s_cycle)) != 0)) kw_args--;
+        else {
+          __Pyx_RaiseArgtupleInvalid("update_firms_data", 1, 4, 4, 3); __PYX_ERR(0, 31, __pyx_L3_error)
+        }
+      }
+      if (unlikely(kw_args > 0)) {
+        if (unlikely(__Pyx_ParseOptionalKeywords(__pyx_kwds, __pyx_pyargnames, 0, values, pos_args, "update_firms_data") < 0)) __PYX_ERR(0, 31, __pyx_L3_error)
+      }
+    } else if (PyTuple_GET_SIZE(__pyx_args) != 4) {
+      goto __pyx_L5_argtuple_error;
+    } else {
+      values[0] = PyTuple_GET_ITEM(__pyx_args, 0);
+      values[1] = PyTuple_GET_ITEM(__pyx_args, 1);
+      values[2] = PyTuple_GET_ITEM(__pyx_args, 2);
+      values[3] = PyTuple_GET_ITEM(__pyx_args, 3);
+    }
+    __pyx_v_firms_data = values[0];
+    __pyx_v_firms = values[1];
+    __pyx_v_time = __Pyx_PyInt_As_int(values[2]); if (unlikely((__pyx_v_time == (int)-1) && PyErr_Occurred())) __PYX_ERR(0, 31, __pyx_L3_error)
+    __pyx_v_cycle = ((PyObject*)values[3]);
+  }
+  goto __pyx_L4_argument_unpacking_done;
+  __pyx_L5_argtuple_error:;
+  __Pyx_RaiseArgtupleInvalid("update_firms_data", 1, 4, 4, PyTuple_GET_SIZE(__pyx_args)); __PYX_ERR(0, 31, __pyx_L3_error)
+  __pyx_L3_error:;
+  __Pyx_AddTraceback("src.updatehouseholddata.update_firms_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
+  __Pyx_RefNannyFinishContext();
+  return NULL;
+  __pyx_L4_argument_unpacking_done:;
+  if (unlikely(!__Pyx_ArgTypeTest(((PyObject *)__pyx_v_cycle), (&PyString_Type), 1, "cycle", 1))) __PYX_ERR(0, 31, __pyx_L1_error)
+  __pyx_r = __pyx_pf_3src_19updatehouseholddata_2update_firms_data(__pyx_self, __pyx_v_firms_data, __pyx_v_firms, __pyx_v_time, __pyx_v_cycle);
+
+  /* function exit code */
+  goto __pyx_L0;
+  __pyx_L1_error:;
+  __pyx_r = NULL;
+  __pyx_L0:;
+  __Pyx_RefNannyFinishContext();
+  return __pyx_r;
+}
+
+static PyObject *__pyx_pf_3src_19updatehouseholddata_2update_firms_data(CYTHON_UNUSED PyObject *__pyx_self, PyObject *__pyx_v_firms_data, PyObject *__pyx_v_firms, int __pyx_v_time, PyObject *__pyx_v_cycle) {
+  PyObject *__pyx_r = NULL;
+  __Pyx_RefNannyDeclarations
+  PyObject *__pyx_t_1 = NULL;
+  __Pyx_RefNannySetupContext("update_firms_data", 0);
+
+  /* "src/updatehouseholddata.pyx":32
+ * 
+ * def update_firms_data(firms_data, firms, int time, str cycle):
+ *   return cupdate_firms_data(firms_data, firms, time, cycle)             # <<<<<<<<<<<<<<
+ */
+  __Pyx_XDECREF(__pyx_r);
+  __pyx_t_1 = __pyx_f_3src_19updatehouseholddata_cupdate_firms_data(__pyx_v_firms_data, __pyx_v_firms, __pyx_v_time, __pyx_v_cycle); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 32, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  __pyx_r = __pyx_t_1;
+  __pyx_t_1 = 0;
+  goto __pyx_L0;
+
+  /* "src/updatehouseholddata.pyx":31
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
+ * def update_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_firms_data(firms_data, firms, time, cycle)
+ */
+
+  /* function exit code */
+  __pyx_L1_error:;
+  __Pyx_XDECREF(__pyx_t_1);
+  __Pyx_AddTraceback("src.updatehouseholddata.update_firms_data", __pyx_clineno, __pyx_lineno, __pyx_filename);
   __pyx_r = NULL;
   __pyx_L0:;
   __Pyx_XGIVEREF(__pyx_r);
@@ -2679,11 +3207,19 @@ static struct PyModuleDef __pyx_moduledef = {
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_DataFrame, __pyx_k_DataFrame, sizeof(__pyx_k_DataFrame), 0, 0, 1, 1},
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
-  {&__pyx_n_s_array, __pyx_k_array, sizeof(__pyx_k_array), 0, 0, 1, 1},
+  {&__pyx_kp_s_capital_investment, __pyx_k_capital_investment, sizeof(__pyx_k_capital_investment), 0, 0, 1, 0},
+  {&__pyx_n_s_capital_investment_2, __pyx_k_capital_investment_2, sizeof(__pyx_k_capital_investment_2), 0, 0, 1, 1},
+  {&__pyx_kp_s_capital_stock, __pyx_k_capital_stock, sizeof(__pyx_k_capital_stock), 0, 0, 1, 0},
+  {&__pyx_n_s_capital_stock_2, __pyx_k_capital_stock_2, sizeof(__pyx_k_capital_stock_2), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_cycle, __pyx_k_cycle, sizeof(__pyx_k_cycle), 0, 0, 1, 1},
+  {&__pyx_n_s_debt, __pyx_k_debt, sizeof(__pyx_k_debt), 0, 0, 1, 1},
   {&__pyx_kp_s_expected_income, __pyx_k_expected_income, sizeof(__pyx_k_expected_income), 0, 0, 1, 0},
   {&__pyx_n_s_expected_income_2, __pyx_k_expected_income_2, sizeof(__pyx_k_expected_income_2), 0, 0, 1, 1},
+  {&__pyx_kp_s_expected_production, __pyx_k_expected_production, sizeof(__pyx_k_expected_production), 0, 0, 1, 0},
+  {&__pyx_n_s_expected_production_2, __pyx_k_expected_production_2, sizeof(__pyx_k_expected_production_2), 0, 0, 1, 1},
+  {&__pyx_n_s_firms, __pyx_k_firms, sizeof(__pyx_k_firms), 0, 0, 1, 1},
+  {&__pyx_n_s_firms_data, __pyx_k_firms_data, sizeof(__pyx_k_firms_data), 0, 0, 1, 1},
   {&__pyx_n_s_households, __pyx_k_households, sizeof(__pyx_k_households), 0, 0, 1, 1},
   {&__pyx_n_s_households_data, __pyx_k_households_data, sizeof(__pyx_k_households_data), 0, 0, 1, 1},
   {&__pyx_kp_s_human_capital, __pyx_k_human_capital, sizeof(__pyx_k_human_capital), 0, 0, 1, 0},
@@ -2691,6 +3227,7 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_income, __pyx_k_income, sizeof(__pyx_k_income), 0, 0, 1, 1},
   {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
+  {&__pyx_n_s_inventory, __pyx_k_inventory, sizeof(__pyx_k_inventory), 0, 0, 1, 1},
   {&__pyx_n_s_items, __pyx_k_items, sizeof(__pyx_k_items), 0, 0, 1, 1},
   {&__pyx_n_s_main, __pyx_k_main, sizeof(__pyx_k_main), 0, 0, 1, 1},
   {&__pyx_n_s_mean, __pyx_k_mean, sizeof(__pyx_k_mean), 0, 0, 1, 1},
@@ -2699,12 +3236,17 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_pandas, __pyx_k_pandas, sizeof(__pyx_k_pandas), 0, 0, 1, 1},
   {&__pyx_n_s_pd, __pyx_k_pd, sizeof(__pyx_k_pd), 0, 0, 1, 1},
+  {&__pyx_n_s_price, __pyx_k_price, sizeof(__pyx_k_price), 0, 0, 1, 1},
+  {&__pyx_n_s_product_price, __pyx_k_product_price, sizeof(__pyx_k_product_price), 0, 0, 1, 1},
+  {&__pyx_n_s_production, __pyx_k_production, sizeof(__pyx_k_production), 0, 0, 1, 1},
+  {&__pyx_n_s_revenue, __pyx_k_revenue, sizeof(__pyx_k_revenue), 0, 0, 1, 1},
   {&__pyx_n_s_savings, __pyx_k_savings, sizeof(__pyx_k_savings), 0, 0, 1, 1},
   {&__pyx_n_s_spending, __pyx_k_spending, sizeof(__pyx_k_spending), 0, 0, 1, 1},
   {&__pyx_n_s_src_updatehouseholddata, __pyx_k_src_updatehouseholddata, sizeof(__pyx_k_src_updatehouseholddata), 0, 0, 1, 1},
   {&__pyx_n_s_test, __pyx_k_test, sizeof(__pyx_k_test), 0, 0, 1, 1},
   {&__pyx_n_s_time, __pyx_k_time, sizeof(__pyx_k_time), 0, 0, 1, 1},
-  {&__pyx_n_s_update_household_data, __pyx_k_update_household_data, sizeof(__pyx_k_update_household_data), 0, 0, 1, 1},
+  {&__pyx_n_s_update_firms_data, __pyx_k_update_firms_data, sizeof(__pyx_k_update_firms_data), 0, 0, 1, 1},
+  {&__pyx_n_s_update_households_data, __pyx_k_update_households_data, sizeof(__pyx_k_update_households_data), 0, 0, 1, 1},
   {&__pyx_kp_s_updatehouseholddata_pyx, __pyx_k_updatehouseholddata_pyx, sizeof(__pyx_k_updatehouseholddata_pyx), 0, 0, 1, 0},
   {0, 0, 0, 0, 0, 0, 0}
 };
@@ -2719,16 +3261,28 @@ static CYTHON_SMALL_CODE int __Pyx_InitCachedConstants(void) {
   __Pyx_RefNannyDeclarations
   __Pyx_RefNannySetupContext("__Pyx_InitCachedConstants", 0);
 
-  /* "src/updatehouseholddata.pyx":16
- *     return new_households_data
+  /* "src/updatehouseholddata.pyx":28
+ *   return new_firms_data
  * 
- * def update_household_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- *   return cupdate_household_data(households_data, households, time, cycle)
+ * def update_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
  */
-  __pyx_tuple_ = PyTuple_Pack(4, __pyx_n_s_households_data, __pyx_n_s_households, __pyx_n_s_time, __pyx_n_s_cycle); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_tuple_ = PyTuple_Pack(4, __pyx_n_s_households_data, __pyx_n_s_households, __pyx_n_s_time, __pyx_n_s_cycle); if (unlikely(!__pyx_tuple_)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_tuple_);
   __Pyx_GIVEREF(__pyx_tuple_);
-  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_updatehouseholddata_pyx, __pyx_n_s_update_household_data, 16, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_codeobj__2 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple_, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_updatehouseholddata_pyx, __pyx_n_s_update_households_data, 28, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__2)) __PYX_ERR(0, 28, __pyx_L1_error)
+
+  /* "src/updatehouseholddata.pyx":31
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
+ * def update_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_firms_data(firms_data, firms, time, cycle)
+ */
+  __pyx_tuple__3 = PyTuple_Pack(4, __pyx_n_s_firms_data, __pyx_n_s_firms, __pyx_n_s_time, __pyx_n_s_cycle); if (unlikely(!__pyx_tuple__3)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_tuple__3);
+  __Pyx_GIVEREF(__pyx_tuple__3);
+  __pyx_codeobj__4 = (PyObject*)__Pyx_PyCode_New(4, 0, 4, 0, CO_OPTIMIZED|CO_NEWLOCALS, __pyx_empty_bytes, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_tuple__3, __pyx_empty_tuple, __pyx_empty_tuple, __pyx_kp_s_updatehouseholddata_pyx, __pyx_n_s_update_firms_data, 31, __pyx_empty_bytes); if (unlikely(!__pyx_codeobj__4)) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_RefNannyFinishContext();
   return 0;
   __pyx_L1_error:;
@@ -3052,22 +3606,34 @@ if (!__Pyx_RefNanny) {
  * import numpy as np
  * import pandas as pd             # <<<<<<<<<<<<<<
  * 
- * cdef object cupdate_household_data(households_data, households, int time, str cycle):
+ * cdef object cupdate_households_data(households_data, households, int time, str cycle):
  */
   __pyx_t_1 = __Pyx_Import(__pyx_n_s_pandas, 0, -1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
   if (PyDict_SetItem(__pyx_d, __pyx_n_s_pd, __pyx_t_1) < 0) __PYX_ERR(0, 3, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
-  /* "src/updatehouseholddata.pyx":16
- *     return new_households_data
+  /* "src/updatehouseholddata.pyx":28
+ *   return new_firms_data
  * 
- * def update_household_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- *   return cupdate_household_data(households_data, households, time, cycle)
+ * def update_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
  */
-  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_19updatehouseholddata_1update_household_data, NULL, __pyx_n_s_src_updatehouseholddata); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_19updatehouseholddata_1update_households_data, NULL, __pyx_n_s_src_updatehouseholddata); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 28, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
-  if (PyDict_SetItem(__pyx_d, __pyx_n_s_update_household_data, __pyx_t_1) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_update_households_data, __pyx_t_1) < 0) __PYX_ERR(0, 28, __pyx_L1_error)
+  __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
+
+  /* "src/updatehouseholddata.pyx":31
+ *   return cupdate_households_data(households_data, households, time, cycle)
+ * 
+ * def update_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
+ *   return cupdate_firms_data(firms_data, firms, time, cycle)
+ */
+  __pyx_t_1 = PyCFunction_NewEx(&__pyx_mdef_3src_19updatehouseholddata_3update_firms_data, NULL, __pyx_n_s_src_updatehouseholddata); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 31, __pyx_L1_error)
+  __Pyx_GOTREF(__pyx_t_1);
+  if (PyDict_SetItem(__pyx_d, __pyx_n_s_update_firms_data, __pyx_t_1) < 0) __PYX_ERR(0, 31, __pyx_L1_error)
   __Pyx_DECREF(__pyx_t_1); __pyx_t_1 = 0;
 
   /* "src/updatehouseholddata.pyx":1
@@ -3143,81 +3709,6 @@ static CYTHON_INLINE PyObject* __Pyx_PyObject_GetAttrStr(PyObject* obj, PyObject
     return PyObject_GetAttr(obj, attr_name);
 }
 #endif
-
-/* GetBuiltinName */
-static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
-    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
-    if (unlikely(!result)) {
-        PyErr_Format(PyExc_NameError,
-#if PY_MAJOR_VERSION >= 3
-            "name '%U' is not defined", name);
-#else
-            "name '%.200s' is not defined", PyString_AS_STRING(name));
-#endif
-    }
-    return result;
-}
-
-/* PyDictVersioning */
-#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
-}
-static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
-    PyObject **dictptr = NULL;
-    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
-    if (offset) {
-#if CYTHON_COMPILING_IN_CPYTHON
-        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
-#else
-        dictptr = _PyObject_GetDictPtr(obj);
-#endif
-    }
-    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
-}
-static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
-    PyObject *dict = Py_TYPE(obj)->tp_dict;
-    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
-        return 0;
-    return obj_dict_version == __Pyx_get_object_dict_version(obj);
-}
-#endif
-
-/* GetModuleGlobalName */
-#if CYTHON_USE_DICT_VERSIONS
-static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
-#else
-static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
-#endif
-{
-    PyObject *result;
-#if !CYTHON_AVOID_BORROWED_REFS
-#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
-    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    } else if (unlikely(PyErr_Occurred())) {
-        return NULL;
-    }
-#else
-    result = PyDict_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-#endif
-#else
-    result = PyObject_GetItem(__pyx_d, name);
-    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
-    if (likely(result)) {
-        return __Pyx_NewRef(result);
-    }
-    PyErr_Clear();
-#endif
-    return __Pyx_GetBuiltinName(name);
-}
 
 /* PyFunctionFastCall */
 #if CYTHON_FAST_PYCALL
@@ -3521,6 +4012,81 @@ static int __Pyx_IternextUnpackEndCheck(PyObject *retval, Py_ssize_t expected) {
         return __Pyx_IterFinish();
     }
     return 0;
+}
+
+/* GetBuiltinName */
+static PyObject *__Pyx_GetBuiltinName(PyObject *name) {
+    PyObject* result = __Pyx_PyObject_GetAttrStr(__pyx_b, name);
+    if (unlikely(!result)) {
+        PyErr_Format(PyExc_NameError,
+#if PY_MAJOR_VERSION >= 3
+            "name '%U' is not defined", name);
+#else
+            "name '%.200s' is not defined", PyString_AS_STRING(name));
+#endif
+    }
+    return result;
+}
+
+/* PyDictVersioning */
+#if CYTHON_USE_DICT_VERSIONS && CYTHON_USE_TYPE_SLOTS
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_tp_dict_version(PyObject *obj) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    return likely(dict) ? __PYX_GET_DICT_VERSION(dict) : 0;
+}
+static CYTHON_INLINE PY_UINT64_T __Pyx_get_object_dict_version(PyObject *obj) {
+    PyObject **dictptr = NULL;
+    Py_ssize_t offset = Py_TYPE(obj)->tp_dictoffset;
+    if (offset) {
+#if CYTHON_COMPILING_IN_CPYTHON
+        dictptr = (likely(offset > 0)) ? (PyObject **) ((char *)obj + offset) : _PyObject_GetDictPtr(obj);
+#else
+        dictptr = _PyObject_GetDictPtr(obj);
+#endif
+    }
+    return (dictptr && *dictptr) ? __PYX_GET_DICT_VERSION(*dictptr) : 0;
+}
+static CYTHON_INLINE int __Pyx_object_dict_version_matches(PyObject* obj, PY_UINT64_T tp_dict_version, PY_UINT64_T obj_dict_version) {
+    PyObject *dict = Py_TYPE(obj)->tp_dict;
+    if (unlikely(!dict) || unlikely(tp_dict_version != __PYX_GET_DICT_VERSION(dict)))
+        return 0;
+    return obj_dict_version == __Pyx_get_object_dict_version(obj);
+}
+#endif
+
+/* GetModuleGlobalName */
+#if CYTHON_USE_DICT_VERSIONS
+static PyObject *__Pyx__GetModuleGlobalName(PyObject *name, PY_UINT64_T *dict_version, PyObject **dict_cached_value)
+#else
+static CYTHON_INLINE PyObject *__Pyx__GetModuleGlobalName(PyObject *name)
+#endif
+{
+    PyObject *result;
+#if !CYTHON_AVOID_BORROWED_REFS
+#if CYTHON_COMPILING_IN_CPYTHON && PY_VERSION_HEX >= 0x030500A1
+    result = _PyDict_GetItem_KnownHash(__pyx_d, name, ((PyASCIIObject *) name)->hash);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    } else if (unlikely(PyErr_Occurred())) {
+        return NULL;
+    }
+#else
+    result = PyDict_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+#endif
+#else
+    result = PyObject_GetItem(__pyx_d, name);
+    __PYX_UPDATE_DICT_CACHE(__pyx_d, result, *dict_cached_value, *dict_version)
+    if (likely(result)) {
+        return __Pyx_NewRef(result);
+    }
+    PyErr_Clear();
+#endif
+    return __Pyx_GetBuiltinName(name);
 }
 
 /* PyObjectCall2Args */

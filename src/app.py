@@ -27,6 +27,8 @@ class App():
         self.index = self.economy.economy_data.index.get_level_values(0).unique()
         self.cycles = 10
 
+        self.interest_rate_slider = False # setting to disable interest rate slider
+
         self.app.layout = html.Div(children=[
             html.Div([
                 html.H1('Kuznets core model demo', style={'display':'inline-block',}),
@@ -66,7 +68,7 @@ class App():
                         max=10,
                         step=0.25,
                         value=(self.economy.interest_rate-1)*100,
-                        disabled=True,
+                        disabled=self.interest_rate_slider,
                         marks={i:'{}'.format(i) for i in range(11)}
                     )
                 ], style={'display':'inline-block','width':'50%', }),

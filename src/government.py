@@ -7,10 +7,9 @@ class Government():
         self.expenditure = settings.init_govt_expenditure # 0
         self.debt = settings.init_govt_debt # 0
 
-        self.income_tax = 0.10
+        self.income_tax = settings.init_income_tax #0.10
         self.unemployed = {}
-        self.corporate_tax = 0.10
-        self.seigniorage = 1.04
+        self.corporate_tax = settings.init_corporate_tax # 0.10
 
     def govt_production_taxation(self):
         pass

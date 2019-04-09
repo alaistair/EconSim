@@ -83,7 +83,6 @@ class Firm():
         else:
             self.capital_investment = (self.revenue - cost_of_capital) * 0.5
 
-
         self.capital_stock = self.capital_stock * (1-self.capital_depreciation) + self.capital_investment
         self.debt = (self.debt + self.capital_investment - self.revenue) * interest_rate
         #print(str(round(profit_rate,2)) + ' ' + str(round(profit_rate/self.revenue,2)))
