@@ -1,4 +1,5 @@
 """ Class for all information about a household """
+import numpy as np
 import random
 
 class Household():
@@ -32,26 +33,25 @@ class Household():
 
     # Decide how much to spend and how much to save
     def update_consumption(self):
-        if self.savings < 0.3 * self.income:
-            self.MPC = 0.8
-            self.spending = self.income * self.MPC
-            self.income *= (1 - self.MPC)
-        elif self.savings < 0.7 * self.income:
-            self.MPC = 0.95
-            self.spending = self.income * self.MPC
-            self.income *= (1 - self.MPC)
-        elif self.savings < 1 * self.income:
-            self.MPC = 1.04
-            self.spending = self.income * self.MPC
-            self.income *= (1 - self.MPC)
-            self.savings += self.income
-            self.income = 0
+        if self.savings <= 0:
+            if self.income < np.mean(self.expected_income): # paycheck to paycheck
+                self.spending = self.income
+            else:
+                self.spending = np.mean(self.expected_income)
+                self.savings = self.income - np.mean(self.expected_income)
         else:
-            self.MPC = 1.3
-            self.spending = self.income * self.MPC
-            self.income *= (1 - self.MPC)
-            self.savings += self.income
-            self.income = 0
+            if self.savings < 0.3 * self.income:
+                self.MPC = 0.8
+            elif self.savings < 0.7 * self.income:
+                self.MPC = 0.95
+            elif self.savings < 1 * self.income:
+                self.MPC = 1.04
+            else:
+                self.MPC = 1.3
+
+            self.spending = np.mean(self.expected_income) * self.MPC
+            self.savings = self.savings + self.income - self.spending
+        self.income = 0
 
         return self.spending_basket
 

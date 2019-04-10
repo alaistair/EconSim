@@ -7,6 +7,7 @@ import random
 import numpy as np
 import pandas as pd
 import time
+import sys
 
 import src.helloworld
 
@@ -156,9 +157,9 @@ class Economy():
                                     'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
                                     }
 
+        self.accounting()
         self.move_production_to_inventory()
         self.consumption_market()
-        self.company_tax()
         self.update_economy_data('c')
         self.financial_market()
         self.update_economy_data('f')
@@ -270,7 +271,9 @@ class Economy():
                 household.income = welfare_per_household
                 self.government.expenditure += welfare_per_household
 
-        self.government.debt += (self.government.expenditure - self.government.revenue)
+        #self.government.debt += (self.government.expenditure - self.government.revenue)
+
+    # update economy data (p)
 
     def move_production_to_inventory(self):
         for f in self.firms.values():
@@ -278,6 +281,10 @@ class Economy():
             f.production = 0
 
     def consumption_market(self):
+        # rando housekeeping
+        #self.government.revenue = 0
+        #self.government.expenditure = 0
+
         # Cycle through every household's spending.
         # randomly assign 10% of spending to random firm
         # if firm has no inventory, reallocate
@@ -285,6 +292,10 @@ class Economy():
         total_sales = 0
         for hhID, household in self.households.items():
             household.update_consumption()
+            if household.savings < -100:
+                print('hhID ' + str(hhID) + ' savings ' + str(household.savings) + ' income ' + str(household.income) + ' ex income ' + str(np.mean(household.expected_income)))
+                self.status()
+                sys.exit()
 
             # Cycle through each product in household's spending basket
             for household_product in household.spending_basket:
@@ -320,21 +331,19 @@ class Economy():
         else:
             self.CPI = float('NaN')
 
-    def company_tax(self):
-        self.government.expenditure = 0
-        self.government.revenue = 0
-        for firm in self.firms.values():
-            self.government.revenue += firm.revenue * self.government.corporate_tax
-            firm.revenue *= (1-self.government.corporate_tax)
-        self.government.debt -= self.government.revenue
+    # update economy data (c)
 
     def financial_market(self):
-        self.government.govt_financial(self.interest_rate)
         for h in self.households.values():
             h.update_financial(self.interest_rate)
         for f in self.firms.values():
             profit = f.update_financial(self.interest_rate + 0.02, self.growth_rate(self.economy_data['CPI']))
-            #print(str(firmID) + ' profit ' + str(round(profit,2)))
+            if profit > 0: # company tax
+                self.government.revenue += profit * self.government.corporate_tax
+                f.debt += profit * self.government.corporate_tax
+        self.government.govt_financial(self.interest_rate)
+
+    # update economy data (f)
 
     '''def update_households_data(self, households_data, households, time, cycle):
         new_data = [pd.DataFrame({'income':household.income,
@@ -398,6 +407,12 @@ class Economy():
                             index = [(self.time, cycle)])
 
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
+        self.accounting()
+
+    def accounting(self):
+        self.government.debt += self.government.expenditure - self.government.revenue
+        self.government.expenditure = 0
+        self.government.revenue = 0
 
     def demographics(self):
         number_households = len(self.households.keys())
@@ -414,7 +429,6 @@ class Economy():
             self.update_economy_data('p')
             self.move_production_to_inventory()
             self.consumption_market()
-            self.company_tax()
             self.update_economy_data('c')
             self.financial_market()
             self.update_economy_data('f')
@@ -422,6 +436,7 @@ class Economy():
             #self.status()
 
         end = time.time()
+        self.print_households_data(-1)
         self.print_firms_data(-1)
         print('time ' + str(round(end - start,2)))
         self.print_all()
@@ -497,4 +512,4 @@ class Economy():
         self.print_government_data(self.time)
 
     def print_all(self):
-        print(self.economy_data)
+        print(self.economy_data.to_string())

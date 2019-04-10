@@ -15,6 +15,7 @@ class Firm():
         self.profit = 0
 
         self.labour_productivity = settings.init_labour_productivity # output per labour input
+        self.labour_cost = 0
         self.capital_stock = settings.init_production
         self.capital_investment = 0
         self.debt = self.capital_stock
@@ -26,7 +27,6 @@ class Firm():
     def update_hiring_intentions(self, interest_rate):
         # Update firm productivity based on capital spending
         #self.labour_productivity *= (1 + self.capital_investment/self.capital_stock)
-        self.capital_investment = 0 # this should probably be moved somewhere else at some point
 
         # Update firm's expected revenue based on sales
         if self.inventory == 0: # Ran out of inventory
@@ -41,7 +41,7 @@ class Firm():
         if self.product_price < 0: self.product_price = 0.01
 
         expected_revenue = self.expected_production * self.product_price
-        expected_production_spending = expected_revenue - self.debt * (interest_rate + 0.5 - 1) - self.capital_investment
+        expected_production_spending = expected_revenue - self.debt * (interest_rate + 0.0 - 1) - self.capital_investment
         expected_labour_spending = expected_production_spending/self.labour_productivity
         expected_additional_labour_spending = expected_labour_spending
         for hhID, household in self.workers.items():
@@ -52,8 +52,12 @@ class Firm():
         else:
             return expected_additional_labour_spending
 
+        self.capital_investment = 0 # this should probably be moved somewhere else at some point
+
+
     def update_production(self, labour_cost):
         self.production += labour_cost * self.labour_productivity
+        self.labour_cost += labour_cost
         self.debt += labour_cost
         return 1
 
@@ -76,7 +80,9 @@ class Firm():
     def update_financial(self, interest_rate, CPI):
         cost_of_capital = self.capital_stock * (interest_rate - CPI + self.capital_depreciation)
         profit_rate = self.revenue - cost_of_capital
-        self.profit = profit_rate
+        self.profit = profit_rate - self.labour_cost
+        self.labour_cost = 0
+
         if profit_rate <= 0:
             self.capital_investment = 0
         else:
@@ -86,7 +92,7 @@ class Firm():
         self.debt = (self.debt + self.capital_investment - self.revenue) * interest_rate
         self.revenue = 0
 
-        return profit_rate
+        return self.profit
 
     def status(self):
         status = "Inventory: " + str(round(self.inventory,2)) + " production: " + str(round(self.production,2)) + " revenue: " + str(round(self.revenue,2)) + " debt: " + str(round(self.debt,2))

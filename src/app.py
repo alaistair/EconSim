@@ -80,10 +80,10 @@ class App():
                     id='cycle-update-box',
                     options=[
                         {'label': '1 ', 'value': '1'},
-                        {'label': '20 ', 'value': '20'},
+                        {'label': '5 ', 'value': '5'},
                         {'label': '100 ', 'value': '100'}
                     ],
-                    value='20'),
+                    value='5'),
                     style={'display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
                 html.P('cycles ',
                     style={'display':'inline-block','vertical-align':'middle','margin-left':'0.8%','margin-right':'2%','padding-top':'2%'}),
@@ -156,9 +156,10 @@ class App():
                             options=[
                                 {'label':'Okun\'s Law','value':'Okun'},
                                 {'label':'Phillip\'s curve','value':'Phillip'},
-                                {'label':'test','value':'test'},
+                                {'label':'Cobb-Douglas test','value':'Cobb-Douglas'},
                                 {'label':'___________________','value':'-','disabled': True},
-                                {'label':'Cobb-Douglas','value':'Cobb-Douglas'},
+                                {'label':'Firms','value':'Firms'},
+                                {'label':'Households','value':'Household'},
                                 ], style={'width':'100%','float':'right'}),
                             style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
                         html.Div([
