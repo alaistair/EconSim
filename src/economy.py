@@ -8,9 +8,9 @@ import numpy as np
 import pandas as pd
 import time
 
-import src.src.helloworld
+import src.helloworld
 
-import src.src.updatehouseholddata as updatehouseholddata
+import src.updateeconomydata as updateeconomydata
 
 class Economy():
 
@@ -45,7 +45,10 @@ class Economy():
                                 'expected production':[0.],
                                 'capital investment':[0.],
                                 'capital stock':[0.],
-                                'debt':[0.]
+                                'debt':[0.],
+                                'debt/revenue':[0.],
+                                'profit':[0.],
+                                'workers':[0.],
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
 
         # Initialise government
@@ -122,7 +125,10 @@ class Economy():
                                 'expected production':firm.expected_production,
                                 'capital investment':firm.capital_investment,
                                 'capital stock':firm.capital_stock,
-                                'debt':firm.debt,}
+                                'debt':firm.debt,
+                                'debt/revenue':firm.debt/firm.revenue,
+                                'profit':firm.profit,
+                                'workers':len(firm.workers.keys())}
 
         self.government_data = pd.DataFrame({'revenue':self.government.revenue,
                                 'expenditure':self.government.expenditure,
@@ -156,7 +162,6 @@ class Economy():
         self.update_economy_data('c')
         self.financial_market()
         self.update_economy_data('f')
-        self.status()
 
     def labour_market(self):
         # Workforce seperations
@@ -244,15 +249,28 @@ class Economy():
             h.income *= (1-self.government.income_tax)
 
     def welfare(self):
-        self.government.expenditure = self.government.revenue * 2.4
+        # Get average incomes
+        total_income = 0
+        for hhID, household in self.households.items():
+            total_income += household.income
 
         total_unemployed = len(self.government.unemployed.keys())
+        total_employed = len(self.households.keys()) - total_unemployed
+        if total_employed == 0:
+            income_per_household = 0
+        else:
+            income_per_household = total_income/total_employed
+
+        welfare_per_household = 0.8 * income_per_household
+
         if total_unemployed == 0:
             pass
         else:
-            spending = self.government.expenditure/total_unemployed
             for hhID, household in self.government.unemployed.items():
-                household.income = spending
+                household.income = welfare_per_household
+                self.government.expenditure += welfare_per_household
+
+        self.government.debt += (self.government.expenditure - self.government.revenue)
 
     def move_production_to_inventory(self):
         for f in self.firms.values():
@@ -303,9 +321,12 @@ class Economy():
             self.CPI = float('NaN')
 
     def company_tax(self):
+        self.government.expenditure = 0
+        self.government.revenue = 0
         for firm in self.firms.values():
             self.government.revenue += firm.revenue * self.government.corporate_tax
             firm.revenue *= (1-self.government.corporate_tax)
+        self.government.debt -= self.government.revenue
 
     def financial_market(self):
         self.government.govt_financial(self.interest_rate)
@@ -343,10 +364,10 @@ class Economy():
 
     def update_economy_data(self, cycle):
 
-        self.households_data = pd.concat(updatehouseholddata.update_households_data(self.households_data, self.households, self.time, cycle))
+        self.households_data = pd.concat(updateeconomydata.update_households_data(self.households_data, self.households, self.time, cycle))
         #self.households_data = pd.concat(self.update_household_data(self.households_data, self.households, self.time, cycle))
 
-        self.firms_data = pd.concat(updatehouseholddata.update_firms_data(self.firms_data, self.firms, self.time, cycle))
+        self.firms_data = pd.concat(updateeconomydata.update_firms_data(self.firms_data, self.firms, self.time, cycle))
         #self.firms_data = pd.concat(self.update_firms_data(self.firms_data, self.firms, self.time, cycle))
 
         self.government_data = pd.concat([self.government_data,
@@ -378,6 +399,10 @@ class Economy():
 
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
 
+    def demographics(self):
+        number_households = len(self.households.keys())
+
+
     def cycle(self, number = 1):
         start = time.time()
         for i in range(number):
@@ -393,13 +418,13 @@ class Economy():
             self.update_economy_data('c')
             self.financial_market()
             self.update_economy_data('f')
-            self.status()
+            self.demographics()
+            #self.status()
 
         end = time.time()
-
+        self.print_firms_data(-1)
         print('time ' + str(round(end - start,2)))
         self.print_all()
-        #self.status()
 
     def get_production_cycle_data(self):
         return self.economy_data.iloc[::3,]
@@ -424,16 +449,28 @@ class Economy():
         print("Firm remove")
 
     def print_economy_data(self, time):
-        print(self.economy_data.loc[(time,):(time,)])
+        if time == -1:
+            print(self.economy_data.to_string())
+        else:
+            print(self.economy_data.loc[(time,):(time,)])
 
     def print_households_data(self, time):
-        print(self.households_data.loc[(time,):(time,)])
+        if time == -1:
+            print(self.households_data.to_string())
+        else:
+            print(self.households_data.loc[(time,):(time,)])
 
     def print_firms_data(self, time):
-        print(self.firms_data.loc[(time,):(time,)])
+        if time == -1:
+            print(self.firms_data.to_string())
+        else:
+            print(self.firms_data.loc[(time,):(time,)])
 
     def print_government_data(self, time):
-        print(self.government_data.loc[(time,):(time,)])
+        if time == -1:
+            print(self.government_data.to_string())
+        else:
+            print(self.government_data.loc[(time,):(time,)])
 
     def print_labour_market(self):
         print("Labour market allocation to firms:")

@@ -80,10 +80,10 @@ class App():
                     id='cycle-update-box',
                     options=[
                         {'label': '1 ', 'value': '1'},
-                        {'label': '5 ', 'value': '5'},
-                        {'label': '20 ', 'value': '20'}
+                        {'label': '20 ', 'value': '20'},
+                        {'label': '100 ', 'value': '100'}
                     ],
-                    value='5'),
+                    value='20'),
                     style={'display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
                 html.P('cycles ',
                     style={'display':'inline-block','vertical-align':'middle','margin-left':'0.8%','margin-right':'2%','padding-top':'2%'}),
@@ -111,7 +111,14 @@ class App():
                         html.Div([dcc.Graph(id='main-graph',config={'displayModeBar': False},
                             style={'display':'inline-block','width':'80%'}),
                             html.Div([
-                                html.P('Plot display:', style={'font-weight':'bold'}),
+                                html.P('Plot display', style={'font-weight':'bold'}),
+                                dcc.Checklist(
+                                    id='clear-checklist',
+                                    options=[
+                                        {'label': 'Clear all', 'value': 'Clear'},
+                                    ],
+                                    values=[],
+                                    labelStyle={'display':'block','font-size':'0.8em'}),
                                 html.P('Households', style={'margin-bottom':'0%'}),
                                 dcc.Checklist(
                                     id='household-lines-checklist',
@@ -178,7 +185,8 @@ class App():
             [dash.dependencies.Output('main-graph', 'figure'),
             dash.dependencies.Output('loading-output-1', 'children'),
             dash.dependencies.Output('relationships-graph', 'figure')],
-            [dash.dependencies.Input('household-lines-checklist', 'values'),
+            [dash.dependencies.Input('clear-checklist', 'values'),
+            dash.dependencies.Input('household-lines-checklist', 'values'),
             dash.dependencies.Input('firm-lines-checklist', 'values'),
             dash.dependencies.Input('macro-lines-checklist', 'values'),
             dash.dependencies.Input('cycle-update-button', 'n_clicks_timestamp'),
@@ -187,7 +195,7 @@ class App():
             [dash.dependencies.State('cycle-update-box', 'value'),
             dash.dependencies.State('interest-rate', 'value')
             ])
-        def update_main_graph(household_lines_checklist, firm_lines_checklist,
+        def update_main_graph(clear_checklist, household_lines_checklist, firm_lines_checklist,
             macro_lines_checklist, n_clicks_timestamp_1, n_clicks_timestamp_2,
             relationships_dropdown, value_1, value_2):
 
@@ -227,6 +235,10 @@ class App():
             relationships_graph_data = []
             relationships_graph_layout = []
 
+            for i in clear_checklist:
+                if i == 'Clear':
+                    household_lines_checklist = ''
+
             for i in household_lines_checklist:
                 if i == 'Household income':
                     main_graph_data.append(go.Scatter(
@@ -241,7 +253,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(255,140,0)'},
+                        line = {'color':'rgb(255,0,0)'},
                         legendgroup = 'Households',
                     ))
                 elif i == 'Household savings':
@@ -258,7 +270,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_production_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(100,149,237)'},
+                        line = {'color':'rgb(0,255,255)'},
                         legendgroup = 'Firms',
                     ))
                 elif i == 'Firm revenue':
@@ -266,7 +278,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(128,0,128)'},
+                        line = {'color':'rgb(100,149,237)'},
                         legendgroup = 'Firms',
 
                     ))
@@ -284,7 +296,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['CPI'].pct_change()*100,
                         name = i,
-                        line = {},
+                        line = {'color':'rgb(191,0,255)'},
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))
@@ -301,6 +313,7 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['Unemployment rate']*100,
                         name = i,
+                        line = {'color':'rgb(128,255,0)'},
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))

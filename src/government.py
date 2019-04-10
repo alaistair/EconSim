@@ -22,9 +22,7 @@ class Government():
 
     def govt_financial(self, interest_rate):
         self.debt *= interest_rate
-        self.debt += (self.expenditure - self.revenue)
         self.revenue = 0
-        #self.expenditure = 0
         return 1
 
     def status(self):

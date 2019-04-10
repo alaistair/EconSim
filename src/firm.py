@@ -12,6 +12,7 @@ class Firm():
         self.product_price = 1 + (random.random() - 0.5) * 0.2
         self.inventory = int(0) # stock of inventory (units of output)
         self.revenue = 0 # flow of revenue (one cycle)
+        self.profit = 0
 
         self.labour_productivity = settings.init_labour_productivity # output per labour input
         self.capital_stock = settings.init_production
@@ -40,7 +41,7 @@ class Firm():
         if self.product_price < 0: self.product_price = 0.01
 
         expected_revenue = self.expected_production * self.product_price
-        expected_production_spending = expected_revenue - self.debt * (interest_rate + 0.1 - 1) - self.capital_investment
+        expected_production_spending = expected_revenue - self.debt * (interest_rate + 0.5 - 1) - self.capital_investment
         expected_labour_spending = expected_production_spending/self.labour_productivity
         expected_additional_labour_spending = expected_labour_spending
         for hhID, household in self.workers.items():
@@ -75,9 +76,7 @@ class Firm():
     def update_financial(self, interest_rate, CPI):
         cost_of_capital = self.capital_stock * (interest_rate - CPI + self.capital_depreciation)
         profit_rate = self.revenue - cost_of_capital
-
-        #print('cap stock: ' + str(self.capital_stock) + 'cost of capital: ' + str(cost_of_capital))
-
+        self.profit = profit_rate
         if profit_rate <= 0:
             self.capital_investment = 0
         else:
@@ -85,7 +84,6 @@ class Firm():
 
         self.capital_stock = self.capital_stock * (1-self.capital_depreciation) + self.capital_investment
         self.debt = (self.debt + self.capital_investment - self.revenue) * interest_rate
-        #print(str(round(profit_rate,2)) + ' ' + str(round(profit_rate/self.revenue,2)))
         self.revenue = 0
 
         return profit_rate

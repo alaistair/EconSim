@@ -8,7 +8,7 @@ class Household():
         self.age = 18
         self.human_capital = random.choice(settings.init_human_capital) #[10,20,30]
 
-        self.expected_income = [self.human_capital, self.human_capital, self.human_capital]# permanent income
+        self.expected_income = [self.human_capital, self.human_capital, self.human_capital] # permanent income. Average of past three incomes
         self.income = 0 # income from working for one cycle
         self.savings = settings.init_household_savings # stock of savings
         self.MPC = settings.init_MPC # 0.95
@@ -18,13 +18,17 @@ class Household():
                             'Price': 1 + (random.random() - 0.5) * 0.1,
                             'Proportion': 1}] # proportion = % spending
 
+    # Update expected income in light of current income. Expected wages rise with CPI,
+    # but sticky wages mean expected wages flat if CPI < 0.
     def update_production(self, income, CPI):
-        self.income = income
         self.expected_income.pop()
+        if income < 0: income = 0
+        self.income = income
         if CPI > 1:
             self.expected_income.append(income * CPI)
         else:
             self.expected_income.append(income)
+        return self.expected_income
 
     # Decide how much to spend and how much to save
     def update_consumption(self):

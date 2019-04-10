@@ -5,7 +5,7 @@
     "distutils": {
         "name": "src.helloworld",
         "sources": [
-            "helloworld.pyx"
+            "/Users/alaistairchan/Dropbox/Python/Kuznets/src/helloworld.pyx"
         ]
     },
     "module_name": "src.helloworld"

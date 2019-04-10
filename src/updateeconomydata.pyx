@@ -20,7 +20,10 @@ cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
     'expected production':float(firm.expected_production),
     'capital investment':float(firm.capital_investment),
     'capital stock':float(firm.capital_stock),
-    'debt':float(firm.debt),},
+    'debt':float(firm.debt),
+    'debt/revenue':float(firm.debt/firm.revenue),
+    'profit':float(firm.profit),
+    'workers':int(len(firm.workers.keys()))},
     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
 
   return new_firms_data
