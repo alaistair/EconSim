@@ -9,8 +9,6 @@ import pandas as pd
 import time
 import sys
 
-import src.helloworld
-
 import src.updateeconomydata as updateeconomydata
 
 class Economy():
@@ -107,6 +105,7 @@ class Economy():
         self.production_market()
         self.income_tax()
         self.welfare()
+        self.accounting_pre()
 
         # update economy dataframe
         for hhID, household in self.households.items():
@@ -157,7 +156,7 @@ class Economy():
                                     'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
                                     }
 
-        self.accounting()
+        self.accounting_post()
         self.move_production_to_inventory()
         self.consumption_market()
         self.update_economy_data('c')
@@ -271,8 +270,6 @@ class Economy():
                 household.income = welfare_per_household
                 self.government.expenditure += welfare_per_household
 
-        #self.government.debt += (self.government.expenditure - self.government.revenue)
-
     # update economy data (p)
 
     def move_production_to_inventory(self):
@@ -366,8 +363,12 @@ class Economy():
         new_firms_data = [firms_data] + new_data
         return new_firms_data
         '''
+    def accounting_pre(self):
+        for hhID, household in self.households.items():
+            household.savings += household.income
 
     def update_economy_data(self, cycle):
+        self.accounting_pre()
 
         self.households_data = pd.concat(updateeconomydata.update_households_data(self.households_data, self.households, self.time, cycle))
         #self.households_data = pd.concat(self.update_household_data(self.households_data, self.households, self.time, cycle))
@@ -403,9 +404,9 @@ class Economy():
                             index = [(self.time, cycle)])
 
         self.economy_data = pd.concat([self.economy_data, sum], sort=False)
-        self.accounting()
+        self.accounting_post()
 
-    def accounting(self):
+    def accounting_post(self):
         self.government.debt += self.government.expenditure - self.government.revenue
         self.government.expenditure = 0
         self.government.revenue = 0
