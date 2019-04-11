@@ -1371,6 +1371,7 @@ int __pyx_module_is_main_src__updateeconomydata = 0;
 static PyObject *__pyx_builtin_MemoryError;
 static const char __pyx_k_np[] = "np";
 static const char __pyx_k_pd[] = "pd";
+static const char __pyx_k_Debt[] = "Debt";
 static const char __pyx_k_debt[] = "debt";
 static const char __pyx_k_keys[] = "keys";
 static const char __pyx_k_main[] = "__main__";
@@ -1383,59 +1384,77 @@ static const char __pyx_k_firms[] = "firms";
 static const char __pyx_k_index[] = "index";
 static const char __pyx_k_items[] = "items";
 static const char __pyx_k_numpy[] = "numpy";
-static const char __pyx_k_price[] = "price";
+static const char __pyx_k_Income[] = "Income";
+static const char __pyx_k_Profit[] = "Profit";
 static const char __pyx_k_import[] = "__import__";
 static const char __pyx_k_income[] = "income";
 static const char __pyx_k_pandas[] = "pandas";
 static const char __pyx_k_profit[] = "profit";
+static const char __pyx_k_Revenue[] = "Revenue";
+static const char __pyx_k_Savings[] = "Savings";
+static const char __pyx_k_Workers[] = "Workers";
 static const char __pyx_k_revenue[] = "revenue";
 static const char __pyx_k_savings[] = "savings";
 static const char __pyx_k_workers[] = "workers";
+static const char __pyx_k_Spending[] = "Spending";
 static const char __pyx_k_spending[] = "spending";
 static const char __pyx_k_DataFrame[] = "DataFrame";
+static const char __pyx_k_Inventory[] = "Inventory";
 static const char __pyx_k_inventory[] = "inventory";
+static const char __pyx_k_Production[] = "Production";
 static const char __pyx_k_firms_data[] = "firms_data";
 static const char __pyx_k_households[] = "households";
 static const char __pyx_k_production[] = "production";
 static const char __pyx_k_MemoryError[] = "MemoryError";
-static const char __pyx_k_debt_revenue[] = "debt/revenue";
-static const char __pyx_k_capital_stock[] = "capital stock";
-static const char __pyx_k_human_capital[] = "human capital";
+static const char __pyx_k_Debt_revenue[] = "Debt/revenue";
+static const char __pyx_k_Capital_stock[] = "Capital stock";
+static const char __pyx_k_Human_capital[] = "Human capital";
+static const char __pyx_k_Product_price[] = "Product price";
+static const char __pyx_k_capital_stock[] = "capital_stock";
+static const char __pyx_k_human_capital[] = "human_capital";
 static const char __pyx_k_product_price[] = "product_price";
-static const char __pyx_k_capital_stock_2[] = "capital_stock";
-static const char __pyx_k_expected_income[] = "expected income";
+static const char __pyx_k_Expected_income[] = "Expected income";
+static const char __pyx_k_expected_income[] = "expected_income";
 static const char __pyx_k_households_data[] = "households_data";
-static const char __pyx_k_human_capital_2[] = "human_capital";
-static const char __pyx_k_expected_income_2[] = "expected_income";
 static const char __pyx_k_update_firms_data[] = "update_firms_data";
-static const char __pyx_k_capital_investment[] = "capital investment";
+static const char __pyx_k_Capital_investment[] = "Capital investment";
+static const char __pyx_k_capital_investment[] = "capital_investment";
 static const char __pyx_k_cline_in_traceback[] = "cline_in_traceback";
-static const char __pyx_k_expected_production[] = "expected production";
-static const char __pyx_k_capital_investment_2[] = "capital_investment";
-static const char __pyx_k_expected_production_2[] = "expected_production";
+static const char __pyx_k_Expected_production[] = "Expected production";
+static const char __pyx_k_expected_production[] = "expected_production";
 static const char __pyx_k_src_updateeconomydata[] = "src.updateeconomydata";
 static const char __pyx_k_update_households_data[] = "update_households_data";
 static const char __pyx_k_src_updateeconomydata_pyx[] = "src/updateeconomydata.pyx";
+static PyObject *__pyx_kp_s_Capital_investment;
+static PyObject *__pyx_kp_s_Capital_stock;
 static PyObject *__pyx_n_s_DataFrame;
+static PyObject *__pyx_n_s_Debt;
+static PyObject *__pyx_kp_s_Debt_revenue;
+static PyObject *__pyx_kp_s_Expected_income;
+static PyObject *__pyx_kp_s_Expected_production;
+static PyObject *__pyx_kp_s_Human_capital;
+static PyObject *__pyx_n_s_Income;
+static PyObject *__pyx_n_s_Inventory;
 static PyObject *__pyx_n_s_MemoryError;
-static PyObject *__pyx_kp_s_capital_investment;
-static PyObject *__pyx_n_s_capital_investment_2;
-static PyObject *__pyx_kp_s_capital_stock;
-static PyObject *__pyx_n_s_capital_stock_2;
+static PyObject *__pyx_kp_s_Product_price;
+static PyObject *__pyx_n_s_Production;
+static PyObject *__pyx_n_s_Profit;
+static PyObject *__pyx_n_s_Revenue;
+static PyObject *__pyx_n_s_Savings;
+static PyObject *__pyx_n_s_Spending;
+static PyObject *__pyx_n_s_Workers;
+static PyObject *__pyx_n_s_capital_investment;
+static PyObject *__pyx_n_s_capital_stock;
 static PyObject *__pyx_n_s_cline_in_traceback;
 static PyObject *__pyx_n_s_cycle;
 static PyObject *__pyx_n_s_debt;
-static PyObject *__pyx_kp_s_debt_revenue;
-static PyObject *__pyx_kp_s_expected_income;
-static PyObject *__pyx_n_s_expected_income_2;
-static PyObject *__pyx_kp_s_expected_production;
-static PyObject *__pyx_n_s_expected_production_2;
+static PyObject *__pyx_n_s_expected_income;
+static PyObject *__pyx_n_s_expected_production;
 static PyObject *__pyx_n_s_firms;
 static PyObject *__pyx_n_s_firms_data;
 static PyObject *__pyx_n_s_households;
 static PyObject *__pyx_n_s_households_data;
-static PyObject *__pyx_kp_s_human_capital;
-static PyObject *__pyx_n_s_human_capital_2;
+static PyObject *__pyx_n_s_human_capital;
 static PyObject *__pyx_n_s_import;
 static PyObject *__pyx_n_s_income;
 static PyObject *__pyx_n_s_index;
@@ -1449,7 +1468,6 @@ static PyObject *__pyx_n_s_np;
 static PyObject *__pyx_n_s_numpy;
 static PyObject *__pyx_n_s_pandas;
 static PyObject *__pyx_n_s_pd;
-static PyObject *__pyx_n_s_price;
 static PyObject *__pyx_n_s_product_price;
 static PyObject *__pyx_n_s_production;
 static PyObject *__pyx_n_s_profit;
@@ -1477,8 +1495,8 @@ static PyObject *__pyx_codeobj__4;
  * import pandas as pd
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
- *     'savings':float(household.savings),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),
+ *   'Expected income':np.mean(household.expected_income),
  */
 
 static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObject *__pyx_v_households_data, PyObject *__pyx_v_households, int __pyx_v_time, PyObject *__pyx_v_cycle) {
@@ -1504,9 +1522,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
   /* "src/updateeconomydata.pyx":6
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),             # <<<<<<<<<<<<<<
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -1517,9 +1535,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
   __Pyx_GOTREF(__pyx_t_2);
 
   /* "src/updateeconomydata.pyx":11
- *     'expected income':np.mean(household.expected_income),
- *     'human capital':float(household.human_capital),},
- *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
+ *   'Spending':float(household.spending),
+ *   'Savings':float(household.savings),},
+ *   index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
  * 
  *   return new_households_data
  */
@@ -1634,9 +1652,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
     /* "src/updateeconomydata.pyx":6
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),             # <<<<<<<<<<<<<<
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),
  */
     __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_pd); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -1645,57 +1663,27 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = __Pyx_PyDict_NewPresized(5); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_income); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 6, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_human_capital); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_income, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Human_capital, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":7
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
- *     'savings':float(household.savings),             # <<<<<<<<<<<<<<
- *     'spending':float(household.spending),
- *     'expected income':np.mean(household.expected_income),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),
+ *   'Expected income':np.mean(household.expected_income),             # <<<<<<<<<<<<<<
+ *   'Income':float(household.income),
+ *   'Spending':float(household.spending),
  */
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_savings); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 7, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
+    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_savings, __pyx_t_5) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-
-    /* "src/updateeconomydata.pyx":8
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),             # <<<<<<<<<<<<<<
- *     'expected income':np.mean(household.expected_income),
- *     'human capital':float(household.human_capital),},
- */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_spending); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 8, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_9);
-    __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_spending, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
-    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-
-    /* "src/updateeconomydata.pyx":9
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),
- *     'expected income':np.mean(household.expected_income),             # <<<<<<<<<<<<<<
- *     'human capital':float(household.human_capital),},
- *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]
- */
-    __Pyx_GetModuleGlobalName(__pyx_t_5, __pyx_n_s_np); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 9, __pyx_L1_error)
-    __Pyx_GOTREF(__pyx_t_5);
-    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_mean); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_t_5, __pyx_n_s_mean); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 7, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_expected_income_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_expected_income); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 7, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_12 = NULL;
     if (CYTHON_UNPACK_METHODS && unlikely(PyMethod_Check(__pyx_t_11))) {
@@ -1710,33 +1698,63 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
     __pyx_t_9 = (__pyx_t_12) ? __Pyx_PyObject_Call2Args(__pyx_t_11, __pyx_t_12, __pyx_t_5) : __Pyx_PyObject_CallOneArg(__pyx_t_11, __pyx_t_5);
     __Pyx_XDECREF(__pyx_t_12); __pyx_t_12 = 0;
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 9, __pyx_L1_error)
+    if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 7, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_expected_income, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Expected_income, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+
+    /* "src/updateeconomydata.pyx":8
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),             # <<<<<<<<<<<<<<
+ *   'Spending':float(household.spending),
+ *   'Savings':float(household.savings),},
+ */
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_income); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __pyx_t_11 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 8, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Income, __pyx_t_11) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+
+    /* "src/updateeconomydata.pyx":9
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),
+ *   'Spending':float(household.spending),             # <<<<<<<<<<<<<<
+ *   'Savings':float(household.savings),},
+ *   index = [(time, cycle, hhID)]) for hhID, household in households.items()]
+ */
+    __pyx_t_11 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_spending); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_11);
+    __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_11); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 9, __pyx_L1_error)
+    __Pyx_GOTREF(__pyx_t_9);
+    __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Spending, __pyx_t_9) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":10
- *     'spending':float(household.spending),
- *     'expected income':np.mean(household.expected_income),
- *     'human capital':float(household.human_capital),},             # <<<<<<<<<<<<<<
- *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]
+ *   'Income':float(household.income),
+ *   'Spending':float(household.spending),
+ *   'Savings':float(household.savings),},             # <<<<<<<<<<<<<<
+ *   index = [(time, cycle, hhID)]) for hhID, household in households.items()]
  * 
  */
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_human_capital_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 10, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_household, __pyx_n_s_savings); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 10, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_11 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 10, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_human_capital, __pyx_t_11) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Savings, __pyx_t_11) < 0) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "src/updateeconomydata.pyx":6
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),             # <<<<<<<<<<<<<<
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),
  */
     __pyx_t_11 = PyTuple_New(1); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
@@ -1745,9 +1763,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
     __pyx_t_3 = 0;
 
     /* "src/updateeconomydata.pyx":11
- *     'expected income':np.mean(household.expected_income),
- *     'human capital':float(household.human_capital),},
- *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
+ *   'Spending':float(household.spending),
+ *   'Savings':float(household.savings),},
+ *   index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
  * 
  *   return new_households_data
  */
@@ -1777,9 +1795,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
     /* "src/updateeconomydata.pyx":6
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),             # <<<<<<<<<<<<<<
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),
  */
     __pyx_t_9 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_11, __pyx_t_3); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 6, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
@@ -1790,9 +1808,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":11
- *     'expected income':np.mean(household.expected_income),
- *     'human capital':float(household.human_capital),},
- *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
+ *   'Spending':float(household.spending),
+ *   'Savings':float(household.savings),},
+ *   index = [(time, cycle, hhID)]) for hhID, household in households.items()]             # <<<<<<<<<<<<<<
  * 
  *   return new_households_data
  */
@@ -1802,9 +1820,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
   /* "src/updateeconomydata.pyx":6
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),             # <<<<<<<<<<<<<<
- *     'savings':float(household.savings),
- *     'spending':float(household.spending),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),             # <<<<<<<<<<<<<<
+ *   'Expected income':np.mean(household.expected_income),
+ *   'Income':float(household.income),
  */
   __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 6, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -1814,7 +1832,7 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
   __pyx_t_4 = 0;
 
   /* "src/updateeconomydata.pyx":13
- *     index = [(time, cycle, hhID)]) for hhID, household in households.items()]
+ *   index = [(time, cycle, hhID)]) for hhID, household in households.items()]
  * 
  *   return new_households_data             # <<<<<<<<<<<<<<
  * 
@@ -1829,8 +1847,8 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
  * import pandas as pd
  * 
  * cdef object cupdate_households_data(households_data, households, int time, str cycle):             # <<<<<<<<<<<<<<
- *   new_households_data = [households_data] + [pd.DataFrame({'income':float(household.income),
- *     'savings':float(household.savings),
+ *   new_households_data = [households_data] + [pd.DataFrame({'Human capital':float(household.human_capital),
+ *   'Expected income':np.mean(household.expected_income),
  */
 
   /* function exit code */
@@ -1859,8 +1877,8 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_households_data(PyObje
  *   return new_households_data
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
- *     'production':float(firm.production),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),
+ *   'Production':float(firm.production),
  */
 
 static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *__pyx_v_firms_data, PyObject *__pyx_v_firms, int __pyx_v_time, PyObject *__pyx_v_cycle) {
@@ -1886,9 +1904,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
   /* "src/updateeconomydata.pyx":16
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),
  */
   __pyx_t_1 = PyList_New(1); if (unlikely(!__pyx_t_1)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_1);
@@ -1899,9 +1917,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
   __Pyx_GOTREF(__pyx_t_2);
 
   /* "src/updateeconomydata.pyx":27
- *     'profit':float(firm.profit),
- *     'workers':int(len(firm.workers.keys()))},
- *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
+ *   'Profit':float(firm.profit),
+ *   'Workers':int(len(firm.workers.keys()))},
+ *   index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
  * 
  *   return new_firms_data
  */
@@ -2016,9 +2034,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     /* "src/updateeconomydata.pyx":16
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),
  */
     __Pyx_GetModuleGlobalName(__pyx_t_3, __pyx_n_s_pd); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
@@ -2027,125 +2045,125 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     __Pyx_DECREF(__pyx_t_3); __pyx_t_3 = 0;
     __pyx_t_3 = __Pyx_PyDict_NewPresized(11); if (unlikely(!__pyx_t_3)) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_3);
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_inventory); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_expected_production); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_inventory, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Expected_production, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":17
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
- *     'production':float(firm.production),             # <<<<<<<<<<<<<<
- *     'price':float(firm.product_price),
- *     'revenue':float(firm.revenue),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),
+ *   'Production':float(firm.production),             # <<<<<<<<<<<<<<
+ *   'Product price':float(firm.product_price),
+ *   'Revenue':float(firm.revenue),
  */
     __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_production); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 17, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 17, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_production, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Production, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
     /* "src/updateeconomydata.pyx":18
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),             # <<<<<<<<<<<<<<
- *     'revenue':float(firm.revenue),
- *     'expected production':float(firm.expected_production),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),             # <<<<<<<<<<<<<<
+ *   'Revenue':float(firm.revenue),
+ *   'Inventory':float(firm.inventory),
  */
     __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_product_price); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 18, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_price, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Product_price, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":19
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),
- *     'revenue':float(firm.revenue),             # <<<<<<<<<<<<<<
- *     'expected production':float(firm.expected_production),
- *     'capital investment':float(firm.capital_investment),
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),
+ *   'Revenue':float(firm.revenue),             # <<<<<<<<<<<<<<
+ *   'Inventory':float(firm.inventory),
+ *   'Capital investment':float(firm.capital_investment),
  */
     __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_revenue); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 19, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 19, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_revenue, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Revenue, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
     /* "src/updateeconomydata.pyx":20
- *     'price':float(firm.product_price),
- *     'revenue':float(firm.revenue),
- *     'expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
- *     'capital investment':float(firm.capital_investment),
- *     'capital stock':float(firm.capital_stock),
+ *   'Product price':float(firm.product_price),
+ *   'Revenue':float(firm.revenue),
+ *   'Inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
+ *   'Capital investment':float(firm.capital_investment),
+ *   'Capital stock':float(firm.capital_stock),
  */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_expected_production_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 20, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_inventory); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 20, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 20, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_expected_production, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Inventory, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":21
- *     'revenue':float(firm.revenue),
- *     'expected production':float(firm.expected_production),
- *     'capital investment':float(firm.capital_investment),             # <<<<<<<<<<<<<<
- *     'capital stock':float(firm.capital_stock),
- *     'debt':float(firm.debt),
+ *   'Revenue':float(firm.revenue),
+ *   'Inventory':float(firm.inventory),
+ *   'Capital investment':float(firm.capital_investment),             # <<<<<<<<<<<<<<
+ *   'Capital stock':float(firm.capital_stock),
+ *   'Debt':float(firm.debt),
  */
-    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_capital_investment_2); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 21, __pyx_L1_error)
+    __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_capital_investment); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 21, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 21, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_capital_investment, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Capital_investment, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
     /* "src/updateeconomydata.pyx":22
- *     'expected production':float(firm.expected_production),
- *     'capital investment':float(firm.capital_investment),
- *     'capital stock':float(firm.capital_stock),             # <<<<<<<<<<<<<<
- *     'debt':float(firm.debt),
- *     'debt/revenue':float(firm.debt/firm.revenue),
+ *   'Inventory':float(firm.inventory),
+ *   'Capital investment':float(firm.capital_investment),
+ *   'Capital stock':float(firm.capital_stock),             # <<<<<<<<<<<<<<
+ *   'Debt':float(firm.debt),
+ *   'Debt/revenue':float(firm.debt/firm.revenue),
  */
-    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_capital_stock_2); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 22, __pyx_L1_error)
+    __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_capital_stock); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 22, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_5); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 22, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_capital_stock, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Capital_stock, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":23
- *     'capital investment':float(firm.capital_investment),
- *     'capital stock':float(firm.capital_stock),
- *     'debt':float(firm.debt),             # <<<<<<<<<<<<<<
- *     'debt/revenue':float(firm.debt/firm.revenue),
- *     'profit':float(firm.profit),
+ *   'Capital investment':float(firm.capital_investment),
+ *   'Capital stock':float(firm.capital_stock),
+ *   'Debt':float(firm.debt),             # <<<<<<<<<<<<<<
+ *   'Debt/revenue':float(firm.debt/firm.revenue),
+ *   'Profit':float(firm.profit),
  */
     __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_debt); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 23, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_5 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 23, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_debt, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Debt, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
     /* "src/updateeconomydata.pyx":24
- *     'capital stock':float(firm.capital_stock),
- *     'debt':float(firm.debt),
- *     'debt/revenue':float(firm.debt/firm.revenue),             # <<<<<<<<<<<<<<
- *     'profit':float(firm.profit),
- *     'workers':int(len(firm.workers.keys()))},
+ *   'Capital stock':float(firm.capital_stock),
+ *   'Debt':float(firm.debt),
+ *   'Debt/revenue':float(firm.debt/firm.revenue),             # <<<<<<<<<<<<<<
+ *   'Profit':float(firm.profit),
+ *   'Workers':int(len(firm.workers.keys()))},
  */
     __pyx_t_5 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_debt); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 24, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
@@ -2158,29 +2176,29 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     __pyx_t_9 = __Pyx_PyNumber_Float(__pyx_t_11); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 24, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_debt_revenue, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_kp_s_Debt_revenue, __pyx_t_9) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
 
     /* "src/updateeconomydata.pyx":25
- *     'debt':float(firm.debt),
- *     'debt/revenue':float(firm.debt/firm.revenue),
- *     'profit':float(firm.profit),             # <<<<<<<<<<<<<<
- *     'workers':int(len(firm.workers.keys()))},
- *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
+ *   'Debt':float(firm.debt),
+ *   'Debt/revenue':float(firm.debt/firm.revenue),
+ *   'Profit':float(firm.profit),             # <<<<<<<<<<<<<<
+ *   'Workers':int(len(firm.workers.keys()))},
+ *   index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
  */
     __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_profit); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 25, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_9);
     __pyx_t_11 = __Pyx_PyNumber_Float(__pyx_t_9); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 25, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
     __Pyx_DECREF(__pyx_t_9); __pyx_t_9 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_profit, __pyx_t_11) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Profit, __pyx_t_11) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "src/updateeconomydata.pyx":26
- *     'debt/revenue':float(firm.debt/firm.revenue),
- *     'profit':float(firm.profit),
- *     'workers':int(len(firm.workers.keys()))},             # <<<<<<<<<<<<<<
- *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
+ *   'Debt/revenue':float(firm.debt/firm.revenue),
+ *   'Profit':float(firm.profit),
+ *   'Workers':int(len(firm.workers.keys()))},             # <<<<<<<<<<<<<<
+ *   index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
  * 
  */
     __pyx_t_9 = __Pyx_PyObject_GetAttrStr(__pyx_v_firm, __pyx_n_s_workers); if (unlikely(!__pyx_t_9)) __PYX_ERR(0, 26, __pyx_L1_error)
@@ -2210,15 +2228,15 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     __pyx_t_5 = __Pyx_PyObject_CallOneArg(((PyObject *)(&PyInt_Type)), __pyx_t_11); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 26, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
-    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_workers, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
+    if (PyDict_SetItem(__pyx_t_3, __pyx_n_s_Workers, __pyx_t_5) < 0) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_DECREF(__pyx_t_5); __pyx_t_5 = 0;
 
     /* "src/updateeconomydata.pyx":16
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),
  */
     __pyx_t_5 = PyTuple_New(1); if (unlikely(!__pyx_t_5)) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_5);
@@ -2227,9 +2245,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     __pyx_t_3 = 0;
 
     /* "src/updateeconomydata.pyx":27
- *     'profit':float(firm.profit),
- *     'workers':int(len(firm.workers.keys()))},
- *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
+ *   'Profit':float(firm.profit),
+ *   'Workers':int(len(firm.workers.keys()))},
+ *   index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
  * 
  *   return new_firms_data
  */
@@ -2259,9 +2277,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     /* "src/updateeconomydata.pyx":16
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),
  */
     __pyx_t_11 = __Pyx_PyObject_Call(__pyx_t_8, __pyx_t_5, __pyx_t_3); if (unlikely(!__pyx_t_11)) __PYX_ERR(0, 16, __pyx_L1_error)
     __Pyx_GOTREF(__pyx_t_11);
@@ -2272,9 +2290,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
     __Pyx_DECREF(__pyx_t_11); __pyx_t_11 = 0;
 
     /* "src/updateeconomydata.pyx":27
- *     'profit':float(firm.profit),
- *     'workers':int(len(firm.workers.keys()))},
- *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
+ *   'Profit':float(firm.profit),
+ *   'Workers':int(len(firm.workers.keys()))},
+ *   index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]             # <<<<<<<<<<<<<<
  * 
  *   return new_firms_data
  */
@@ -2284,9 +2302,9 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
   /* "src/updateeconomydata.pyx":16
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),             # <<<<<<<<<<<<<<
- *     'production':float(firm.production),
- *     'price':float(firm.product_price),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),             # <<<<<<<<<<<<<<
+ *   'Production':float(firm.production),
+ *   'Product price':float(firm.product_price),
  */
   __pyx_t_4 = PyNumber_Add(__pyx_t_1, __pyx_t_2); if (unlikely(!__pyx_t_4)) __PYX_ERR(0, 16, __pyx_L1_error)
   __Pyx_GOTREF(__pyx_t_4);
@@ -2296,7 +2314,7 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
   __pyx_t_4 = 0;
 
   /* "src/updateeconomydata.pyx":29
- *     index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
+ *   index = [(time, cycle, firmID)]) for firmID, firm in firms.items()]
  * 
  *   return new_firms_data             # <<<<<<<<<<<<<<
  * 
@@ -2311,8 +2329,8 @@ static PyObject *__pyx_f_3src_17updateeconomydata_cupdate_firms_data(PyObject *_
  *   return new_households_data
  * 
  * cdef object cupdate_firms_data(firms_data, firms, int time, str cycle):             # <<<<<<<<<<<<<<
- *   new_firms_data = [firms_data] + [pd.DataFrame({'inventory':float(firm.inventory),
- *     'production':float(firm.production),
+ *   new_firms_data = [firms_data] + [pd.DataFrame({'Expected production':float(firm.expected_production),
+ *   'Production':float(firm.production),
  */
 
   /* function exit code */
@@ -3287,26 +3305,36 @@ static struct PyModuleDef __pyx_moduledef = {
 #endif
 
 static __Pyx_StringTabEntry __pyx_string_tab[] = {
+  {&__pyx_kp_s_Capital_investment, __pyx_k_Capital_investment, sizeof(__pyx_k_Capital_investment), 0, 0, 1, 0},
+  {&__pyx_kp_s_Capital_stock, __pyx_k_Capital_stock, sizeof(__pyx_k_Capital_stock), 0, 0, 1, 0},
   {&__pyx_n_s_DataFrame, __pyx_k_DataFrame, sizeof(__pyx_k_DataFrame), 0, 0, 1, 1},
+  {&__pyx_n_s_Debt, __pyx_k_Debt, sizeof(__pyx_k_Debt), 0, 0, 1, 1},
+  {&__pyx_kp_s_Debt_revenue, __pyx_k_Debt_revenue, sizeof(__pyx_k_Debt_revenue), 0, 0, 1, 0},
+  {&__pyx_kp_s_Expected_income, __pyx_k_Expected_income, sizeof(__pyx_k_Expected_income), 0, 0, 1, 0},
+  {&__pyx_kp_s_Expected_production, __pyx_k_Expected_production, sizeof(__pyx_k_Expected_production), 0, 0, 1, 0},
+  {&__pyx_kp_s_Human_capital, __pyx_k_Human_capital, sizeof(__pyx_k_Human_capital), 0, 0, 1, 0},
+  {&__pyx_n_s_Income, __pyx_k_Income, sizeof(__pyx_k_Income), 0, 0, 1, 1},
+  {&__pyx_n_s_Inventory, __pyx_k_Inventory, sizeof(__pyx_k_Inventory), 0, 0, 1, 1},
   {&__pyx_n_s_MemoryError, __pyx_k_MemoryError, sizeof(__pyx_k_MemoryError), 0, 0, 1, 1},
-  {&__pyx_kp_s_capital_investment, __pyx_k_capital_investment, sizeof(__pyx_k_capital_investment), 0, 0, 1, 0},
-  {&__pyx_n_s_capital_investment_2, __pyx_k_capital_investment_2, sizeof(__pyx_k_capital_investment_2), 0, 0, 1, 1},
-  {&__pyx_kp_s_capital_stock, __pyx_k_capital_stock, sizeof(__pyx_k_capital_stock), 0, 0, 1, 0},
-  {&__pyx_n_s_capital_stock_2, __pyx_k_capital_stock_2, sizeof(__pyx_k_capital_stock_2), 0, 0, 1, 1},
+  {&__pyx_kp_s_Product_price, __pyx_k_Product_price, sizeof(__pyx_k_Product_price), 0, 0, 1, 0},
+  {&__pyx_n_s_Production, __pyx_k_Production, sizeof(__pyx_k_Production), 0, 0, 1, 1},
+  {&__pyx_n_s_Profit, __pyx_k_Profit, sizeof(__pyx_k_Profit), 0, 0, 1, 1},
+  {&__pyx_n_s_Revenue, __pyx_k_Revenue, sizeof(__pyx_k_Revenue), 0, 0, 1, 1},
+  {&__pyx_n_s_Savings, __pyx_k_Savings, sizeof(__pyx_k_Savings), 0, 0, 1, 1},
+  {&__pyx_n_s_Spending, __pyx_k_Spending, sizeof(__pyx_k_Spending), 0, 0, 1, 1},
+  {&__pyx_n_s_Workers, __pyx_k_Workers, sizeof(__pyx_k_Workers), 0, 0, 1, 1},
+  {&__pyx_n_s_capital_investment, __pyx_k_capital_investment, sizeof(__pyx_k_capital_investment), 0, 0, 1, 1},
+  {&__pyx_n_s_capital_stock, __pyx_k_capital_stock, sizeof(__pyx_k_capital_stock), 0, 0, 1, 1},
   {&__pyx_n_s_cline_in_traceback, __pyx_k_cline_in_traceback, sizeof(__pyx_k_cline_in_traceback), 0, 0, 1, 1},
   {&__pyx_n_s_cycle, __pyx_k_cycle, sizeof(__pyx_k_cycle), 0, 0, 1, 1},
   {&__pyx_n_s_debt, __pyx_k_debt, sizeof(__pyx_k_debt), 0, 0, 1, 1},
-  {&__pyx_kp_s_debt_revenue, __pyx_k_debt_revenue, sizeof(__pyx_k_debt_revenue), 0, 0, 1, 0},
-  {&__pyx_kp_s_expected_income, __pyx_k_expected_income, sizeof(__pyx_k_expected_income), 0, 0, 1, 0},
-  {&__pyx_n_s_expected_income_2, __pyx_k_expected_income_2, sizeof(__pyx_k_expected_income_2), 0, 0, 1, 1},
-  {&__pyx_kp_s_expected_production, __pyx_k_expected_production, sizeof(__pyx_k_expected_production), 0, 0, 1, 0},
-  {&__pyx_n_s_expected_production_2, __pyx_k_expected_production_2, sizeof(__pyx_k_expected_production_2), 0, 0, 1, 1},
+  {&__pyx_n_s_expected_income, __pyx_k_expected_income, sizeof(__pyx_k_expected_income), 0, 0, 1, 1},
+  {&__pyx_n_s_expected_production, __pyx_k_expected_production, sizeof(__pyx_k_expected_production), 0, 0, 1, 1},
   {&__pyx_n_s_firms, __pyx_k_firms, sizeof(__pyx_k_firms), 0, 0, 1, 1},
   {&__pyx_n_s_firms_data, __pyx_k_firms_data, sizeof(__pyx_k_firms_data), 0, 0, 1, 1},
   {&__pyx_n_s_households, __pyx_k_households, sizeof(__pyx_k_households), 0, 0, 1, 1},
   {&__pyx_n_s_households_data, __pyx_k_households_data, sizeof(__pyx_k_households_data), 0, 0, 1, 1},
-  {&__pyx_kp_s_human_capital, __pyx_k_human_capital, sizeof(__pyx_k_human_capital), 0, 0, 1, 0},
-  {&__pyx_n_s_human_capital_2, __pyx_k_human_capital_2, sizeof(__pyx_k_human_capital_2), 0, 0, 1, 1},
+  {&__pyx_n_s_human_capital, __pyx_k_human_capital, sizeof(__pyx_k_human_capital), 0, 0, 1, 1},
   {&__pyx_n_s_import, __pyx_k_import, sizeof(__pyx_k_import), 0, 0, 1, 1},
   {&__pyx_n_s_income, __pyx_k_income, sizeof(__pyx_k_income), 0, 0, 1, 1},
   {&__pyx_n_s_index, __pyx_k_index, sizeof(__pyx_k_index), 0, 0, 1, 1},
@@ -3320,7 +3348,6 @@ static __Pyx_StringTabEntry __pyx_string_tab[] = {
   {&__pyx_n_s_numpy, __pyx_k_numpy, sizeof(__pyx_k_numpy), 0, 0, 1, 1},
   {&__pyx_n_s_pandas, __pyx_k_pandas, sizeof(__pyx_k_pandas), 0, 0, 1, 1},
   {&__pyx_n_s_pd, __pyx_k_pd, sizeof(__pyx_k_pd), 0, 0, 1, 1},
-  {&__pyx_n_s_price, __pyx_k_price, sizeof(__pyx_k_price), 0, 0, 1, 1},
   {&__pyx_n_s_product_price, __pyx_k_product_price, sizeof(__pyx_k_product_price), 0, 0, 1, 1},
   {&__pyx_n_s_production, __pyx_k_production, sizeof(__pyx_k_production), 0, 0, 1, 1},
   {&__pyx_n_s_profit, __pyx_k_profit, sizeof(__pyx_k_profit), 0, 0, 1, 1},

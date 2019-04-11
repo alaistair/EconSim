@@ -53,29 +53,10 @@ class App():
                         'font-size':'0.8em'}),
             ],style={}),
             html.Hr(style={'margin-bottom':'3%'}),
+
             html.Div([
-                html.Div([
-                    html.H2('Simulation settings'),
-                    html.P('Households: ' + str(len(self.economy.households))
-                        + ' Firms: ' + str(len(self.economy.firms))),
-                ], style={'display':'inline-block','width':'50%', }),
-                html.Div([
-                    html.H2('Policy settings'),
-                    html.P('Interest rate (%)'),
-                    dcc.Slider(
-                        id='interest-rate',
-                        min=0,
-                        max=10,
-                        step=0.25,
-                        value=(self.economy.interest_rate-1)*100,
-                        disabled=self.interest_rate_slider,
-                        marks={i:'{}'.format(i) for i in range(11)}
-                    )
-                ], style={'display':'inline-block','width':'50%', }),
-                ], style={'margin-bottom':'5%','padding-left':'3%','padding-right':'3%'}),
-            html.Div([
-                html.P('Run simulation for ',
-                    style={'display':'inline-block','vertical-align':'middle','margin-right':'0.8%','padding-top':'2%'}),
+                html.P('Simulate ',
+                    style={'display':'inline-block','vertical-align':'middle','margin-right':'0.8%','margin-top':'1%'}),
                 html.P(dcc.RadioItems(
                     id='cycle-update-box',
                     options=[
@@ -84,94 +65,149 @@ class App():
                         {'label': '100 ', 'value': '100'}
                     ],
                     value='5'),
-                    style={'display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
+                    style={'display':'inline-block','vertical-align':'middle','margin-top':'1%'}),
                 html.P('cycles ',
-                    style={'display':'inline-block','vertical-align':'middle','margin-left':'0.8%','margin-right':'2%','padding-top':'2%'}),
+                    style={'display':'inline-block','vertical-align':'middle','margin-left':'0.8%','margin-right':'2%','margin-top':'1%'}),
                 html.Div(html.Button(
-                    'Run',
+                    'Go',
                     id='cycle-update-button',
                     n_clicks=0),
-                    style={'width':'10%','display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
+                    style={'width':'10%','display':'inline-block','vertical-align':'middle', 'margin-left':'2%'}),
                 html.Div(html.Button(
                     'reset',
                     id='reset-button',
                     n_clicks=0),
-                    style={'width':'10%','display':'inline-block','vertical-align':'middle','padding-top':'2%'}),
+                    style={'width':'10%','display':'inline-block','vertical-align':'middle','margin-left':'0%'}),
                 html.Div(dcc.Loading(
                     id='loading-1',
                     children=[html.Div(id='loading-output-1')],
                     type='dot',
                     fullscreen=True),
                     style={'width':'10%','display':'inline-block','vertical-align':'middle','height':'1%'}),
-            ], style={'padding-top':'0%','padding-left':'3%','padding-right':'3%'}),
+            ], style={'margin-bottom':'2%','margin-left':'5%','margin-right':'5%'}),
+            html.Div([
+                html.Div([
+                    html.P('Monetary policy rate (%)'),
+                    html.Div([
+                        dcc.Slider(
+                            id='interest-rate',
+                            min=0,
+                            max=10,
+                            step=0.25,
+                            value=(self.economy.interest_rate-1)*100,
+                            disabled=self.interest_rate_slider,
+                            marks={i:'{}'.format(i) for i in range(11)}
+                        )], style={'margin-left':'5%','margin-right':'5%'},)
+                ], style={'display':'inline-block','width':'50%',}),
+                html.Div([
+                    html.P('Income tax rate (%)'),
+                    dcc.Slider(
+                        id='tax-rate',
+                        min=0,
+                        max=10,
+                        step=0.25,
+                        value=(self.economy.interest_rate-1)*100,
+                        disabled=self.interest_rate_slider,
+                        marks={i:'{}'.format(i) for i in range(11)}
+                    )
+                ], style={'display':'inline-block','width':'50%',}),
+            ], style={'margin-left':'5%','margin-right':'5%'}),
 
             html.Div([
-                dcc.Tabs(id='tabs',value='tab-1',children=[
-                    dcc.Tab(label='Main graph',children=[
-                        html.Div([dcc.Graph(id='main-graph',config={'displayModeBar': False},
-                            style={'display':'inline-block','width':'80%'}),
-                            html.Div([
-                                html.P('Plot display', style={'font-weight':'bold'}),
-                                dcc.Checklist(
-                                    id='clear-checklist',
+                dcc.Tabs(
+                    id='tabs',
+                    value='tab-1',
+                    parent_className='custom-tabs',
+                    className='custom-tabs-container',
+                    children=[
+                        dcc.Tab(
+                            label='Main graph',
+                            className='custom-tab',
+                            selected_className='custom-tab--selected',
+                            children=[
+                                html.Div([
+                                    dcc.Graph(
+                                        id='main-graph',
+                                        config={'displayModeBar':False},
+                                        style={'display':'inline-block','width':'80%','margin-top':'0%'}),
+                                    html.Div([
+                                        html.P('Plot display',
+                                            style={'font-weight':'bold'}),
+                                        dcc.Checklist(
+                                            id='clear-checklist',
+                                            options=[
+                                                {'label': 'Clear all', 'value': 'Clear'},
+                                            ],
+                                            values=[],
+                                            labelStyle={'display':'block','font-size':'0.8em'}),
+                                        html.P('Households',
+                                            style={'margin-bottom':'0%'}),
+                                        dcc.Checklist(
+                                            id='household-lines-checklist',
+                                            options=[
+                                                {'label': 'Income', 'value': 'Household income'},
+                                                {'label': 'Savings', 'value': 'Household savings'},
+                                                {'label': 'Spending', 'value': 'Household spending'},
+                                            ],
+                                            values=['Household savings', 'Household spending'],
+                                            labelStyle={'display':'block','font-size':'0.8em'}),
+                                        html.P('Firms',
+                                            style={'margin-bottom':'0%'}),
+                                        dcc.Checklist(
+                                            id='firm-lines-checklist',
+                                            options=[
+                                                {'label': 'Inventory', 'value': 'Firm inventory'},
+                                                {'label': 'Revenue', 'value': 'Firm revenue'},
+                                                {'label': 'Debt', 'value': 'Firm debt'},
+                                            ],
+                                            values=[],
+                                            labelStyle={'display':'block','font-size':'0.8em'}),
+                                        html.P('Macro',
+                                            style={'margin-bottom':'0%'}),
+                                        dcc.Checklist(
+                                            id='macro-lines-checklist',
+                                            options=[
+                                                {'label': 'Inflation', 'value': 'CPI (R)'},
+                                                {'label': 'Interest rate', 'value': 'Interest rate (R)'},
+                                                {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
+                                            ],
+                                            values=[],
+                                            labelStyle={'display':'block','font-size':'0.8em'}),
+                                    ], style={'display':'inline-block','width':'16%','margin-left':'4%','margin-top':'3%','float':'right'})
+                                ]),
+                        ]),
+                        dcc.Tab(
+                            label='Looking deeper',
+                            className='custom-tab',
+                            selected_className='custom-tab--selected',
+                            children=[
+                                html.Div(dcc.Dropdown(id='relationships-dropdown',
                                     options=[
-                                        {'label': 'Clear all', 'value': 'Clear'},
-                                    ],
-                                    values=[],
-                                    labelStyle={'display':'block','font-size':'0.8em'}),
-                                html.P('Households', style={'margin-bottom':'0%'}),
-                                dcc.Checklist(
-                                    id='household-lines-checklist',
-                                    options=[
-                                        {'label': 'Income', 'value': 'Household income'},
-                                        {'label': 'Savings', 'value': 'Household savings'},
-                                        {'label': 'Spending', 'value': 'Household spending'},
-                                    ],
-                                    values=['Household savings', 'Household spending'],
-                                    labelStyle={'display':'block','font-size':'0.8em'}),
-                                html.P('Firms', style={'margin-bottom':'0%'}),
-                                dcc.Checklist(
-                                    id='firm-lines-checklist',
-                                    options=[
-                                        {'label': 'Inventory', 'value': 'Firm inventory'},
-                                        {'label': 'Revenue', 'value': 'Firm revenue'},
-                                        {'label': 'Debt', 'value': 'Firm debt'},
-                                    ],
-                                    values=[],
-                                    labelStyle={'display':'block','font-size':'0.8em'}),
-                                html.P('Macro', style={'margin-bottom':'0%'}),
-                                dcc.Checklist(
-                                    id='macro-lines-checklist',
-                                    options=[
-                                        {'label': 'Inflation', 'value': 'CPI (R)'},
-                                        {'label': 'Interest rate', 'value': 'Interest rate (R)'},
-                                        {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
-                                    ],
-                                    values=[],
-                                    labelStyle={'display':'block','font-size':'0.8em'}),
-                            ], style={'display':'inline-block','width':'16%','padding-left':'4%','padding-top':'3%','float':'right'})]),
-                    ]),
-                    dcc.Tab(label='Looking deeper',children=[
-                        html.Div(dcc.Dropdown(id='relationships-dropdown',
-                            options=[
-                                {'label':'Okun\'s Law','value':'Okun'},
-                                {'label':'Phillip\'s curve','value':'Phillip'},
-                                {'label':'Cobb-Douglas test','value':'Cobb-Douglas'},
-                                {'label':'___________________','value':'-','disabled': True},
-                                {'label':'Firms','value':'Firms'},
-                                {'label':'Households','value':'Household'},
-                                ], style={'width':'100%','float':'right'}),
-                            style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
-                        html.Div([
-                            html.Div(id='relationships-text',
-                                children=[''],
-                                style={'display':'inline-block','width':'40%','padding-top':'6%'}),
-                            dcc.Graph(id='relationships-graph',config={'displayModeBar': False},
-                                style={'display':'inline-block','width':'50%','height':'45%','margin-top':'0%','margin-right':'0%','float':'right'}),
-                        ], style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'})
-                    ]),
+                                        {'label':'Okun\'s Law','value':'Okun'},
+                                        {'label':'Phillip\'s curve','value':'Phillip'},
+                                        {'label':'Cobb-Douglas test','value':'Cobb-Douglas'},
+                                        {'label':'___________________','value':'-','disabled': True},
+                                        {'label':'Firms','value':'Firms'},
+                                        {'label':'Households','value':'Household'},
+                                        ], style={'width':'100%','float':'right'}),
+                                    style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'}),
+                                html.Div([
+                                    html.Div(id='relationships-text',
+                                        children=[''],
+                                        style={'display':'inline-block','width':'40%','padding-top':'6%'}),
+                                    dcc.Graph(id='relationships-graph',config={'displayModeBar': False},
+                                        style={'display':'inline-block','width':'50%','height':'45%','margin-top':'0%','margin-right':'0%','float':'right'}),
+                                ], style={'padding-left':'3%','padding-right':'3%','padding-top':'3%'})
+                        ]),
+                        dcc.Tab(
+                            label='Settings',
+                            className='custom-tab',
+                            selected_className='custom-tab--selected',
+                            children=[
+
+                        ]),
                 ]),
-            ], style={'margin-top':'4%','padding-left':'3%','padding-right':'3%'}),
+            ], style={'margin-top':'7%','margin-left':'5%','margin-right':'5%'}),
 
             html.Hr(style={'margin-top':'5%','margin-bottom':'-3%'}),
             html.Div([

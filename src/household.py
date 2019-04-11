@@ -22,7 +22,7 @@ class Household():
     # Update expected income in light of current income. Expected wages rise with CPI,
     # but sticky wages mean expected wages flat if CPI < 0.
     def update_production(self, income, CPI):
-        self.expected_income.pop()
+        self.expected_income.pop(0)
         if income < 0: income = 0
         self.income = income
         if CPI > 1:

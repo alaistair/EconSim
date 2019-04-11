@@ -27,11 +27,11 @@ class Economy():
 
         # Initialise dataframe for household data
         tuples = [(self.time, 'p', i) for i in range(settings.init_households)]
-        self.households_data = pd.DataFrame({'income':[0.],
-                                'savings':[0.],
-                                'spending':[0.],
-                                'expected income':[0.],
-                                'human capital':[0.],
+        self.households_data = pd.DataFrame({'Human capital':[0.],
+                                'Expected income':[0.],
+                                'Income':[0.],
+                                'Spending':[0.],
+                                'Savings':[0.],
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'hhID']))
 
         # Initialise dictionary of firms
@@ -39,17 +39,17 @@ class Economy():
 
         # Initialise dataframe for firm data
         tuples = [(self.time, 'p', i) for i in range(settings.init_firms)]
-        self.firms_data = pd.DataFrame({'inventory':[0.],
-                                'production':[0.],
-                                'price':[0.],
-                                'revenue':[0.],
-                                'expected production':[0.],
-                                'capital investment':[0.],
-                                'capital stock':[0.],
-                                'debt':[0.],
-                                'debt/revenue':[0.],
-                                'profit':[0.],
-                                'workers':[0.],
+        self.firms_data = pd.DataFrame({'Expected production':[0.],
+                                'Production':[0.],
+                                'Product price':[0.],
+                                'Revenue':[0.],
+                                'Inventory':[0.],
+                                'Capital investment':[0.],
+                                'Capital stock':[0.],
+                                'Debt':[0.],
+                                'Debt/revenue':[0.],
+                                'Profit':[0.],
+                                'Workers':[0.],
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
 
         # Initialise government
@@ -57,9 +57,9 @@ class Economy():
 
         # Initialise dataframe for government data
         tuples = [(self.time, 'p')]
-        self.government_data = pd.DataFrame({'revenue':[0.],
-                                'expenditure':[0.],
-                                'debt':[0.]
+        self.government_data = pd.DataFrame({'Revenue':[0.],
+                                'Expenditure':[0.],
+                                'Debt':[0.]
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
         # Initialise dataframe for economy data
@@ -111,29 +111,29 @@ class Economy():
         # update economy dataframe
         for hhID, household in self.households.items():
             self.households_data.loc[(self.time, 'p', hhID)] = {
-                                'income':household.income,
-                                'savings':household.savings,
-                                'spending':household.spending,
-                                'expected income':np.mean(household.expected_income),
-                                'human capital':household.human_capital}
+                                'Human capital':household.human_capital,
+                                'Expected income':np.mean(household.expected_income),
+                                'Income':household.income,
+                                'Spending':household.spending,
+                                'Savings':household.savings,}
 
         for firmID, firm in self.firms.items():
             self.firms_data.loc[(self.time, 'p', firmID)] = {
-                                'inventory':firm.inventory,
-                                'production':firm.production,
-                                'price':firm.product_price,
-                                'revenue':firm.revenue,
-                                'expected production':firm.expected_production,
-                                'capital investment':firm.capital_investment,
-                                'capital stock':firm.capital_stock,
-                                'debt':firm.debt,
-                                'debt/revenue':firm.debt/firm.revenue,
-                                'profit':firm.profit,
-                                'workers':len(firm.workers.keys())}
+                                'Expected production':firm.expected_production,
+                                'Production':firm.production,
+                                'Product price':firm.product_price,
+                                'Revenue':firm.revenue,
+                                'Inventory':firm.inventory,
+                                'Capital investment':firm.capital_investment,
+                                'Capital stock':firm.capital_stock,
+                                'Debt':firm.debt,
+                                'Debt/revenue':firm.debt/firm.revenue,
+                                'Profit':firm.profit,
+                                'Workers':len(firm.workers.keys())}
 
-        self.government_data = pd.DataFrame({'revenue':self.government.revenue,
-                                'expenditure':self.government.expenditure,
-                                'debt':self.government.debt,
+        self.government_data = pd.DataFrame({'Revenue':self.government.revenue,
+                                'Expenditure':self.government.expenditure,
+                                'Debt':self.government.debt,
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle']))
 
         df1 = self.households_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
@@ -141,17 +141,17 @@ class Economy():
         df3 = self.government_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
 
         self.economy_data.loc[(self.time, 'p')] = {
-                                    'Household income':float(df1['income']),
-                                    'Household savings':float(df1['savings']),
-                                    'Household spending':float(df1['spending']),
-                                    'Household expected income':float(df1['expected income']),
-                                    'Firm inventory':float(df2['inventory']),
-                                    'Firm production':float(df2['production']),
-                                    'Firm revenue':float(df2['revenue']),
-                                    'Firm debt':float(df2['debt']),
-                                    'Government revenue':float(df3['revenue']),
-                                    'Government expenditure':float(df3['expenditure']),
-                                    'Government debt':float(df3['debt']),
+                                    'Household income':float(df1['Income']),
+                                    'Household savings':float(df1['Savings']),
+                                    'Household spending':float(df1['Spending']),
+                                    'Household expected income':float(df1['Expected income']),
+                                    'Firm inventory':float(df2['Inventory']),
+                                    'Firm production':float(df2['Production']),
+                                    'Firm revenue':float(df2['Revenue']),
+                                    'Firm debt':float(df2['Debt']),
+                                    'Government revenue':float(df3['Revenue']),
+                                    'Government expenditure':float(df3['Expenditure']),
+                                    'Government debt':float(df3['Debt']),
                                     'CPI':float(self.CPI),
                                     'Interest rate':float(self.interest_rate),
                                     'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
@@ -281,10 +281,6 @@ class Economy():
             f.production = 0
 
     def consumption_market(self):
-        # rando housekeeping
-        #self.government.revenue = 0
-        #self.government.expenditure = 0
-
         # Cycle through every household's spending.
         # randomly assign 10% of spending to random firm
         # if firm has no inventory, reallocate
@@ -380,26 +376,26 @@ class Economy():
         #self.firms_data = pd.concat(self.update_firms_data(self.firms_data, self.firms, self.time, cycle))
 
         self.government_data = pd.concat([self.government_data,
-                            pd.DataFrame({'revenue':float(self.government.revenue),
-                                        'expenditure':float(self.government.expenditure),
-                                        'debt':float(self.government.debt)},
+                            pd.DataFrame({'Revenue':float(self.government.revenue),
+                                        'Expenditure':float(self.government.expenditure),
+                                        'Debt':float(self.government.debt)},
                                         index = [(self.time, cycle)])])
 
         df1 = self.households_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
         df2 = self.firms_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
         df3 = self.government_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
 
-        sum = pd.DataFrame({'Household income': float(df1['income']),
-                            'Household savings': '{0:f}'.format(df1['savings']),
-                            'Household spending': float(df1['spending']),
-                            'Household expected income':float(df1['expected income']),
-                            'Firm inventory': float(df2['inventory']),
-                            'Firm production': float(df2['production']),
-                            'Firm revenue': float(df2['revenue']),
-                            'Firm debt': float(df2['debt']),
-                            'Government revenue':float(df3['revenue']),
-                            'Government expenditure':float(df3['expenditure']),
-                            'Government debt':float(df3['debt']),
+        sum = pd.DataFrame({'Household income':float(df1['Income']),
+                            'Household savings':float(df1['Savings']),
+                            'Household spending':float(df1['Spending']),
+                            'Household expected income':float(df1['Expected income']),
+                            'Firm inventory':float(df2['Inventory']),
+                            'Firm production':float(df2['Production']),
+                            'Firm revenue':float(df2['Revenue']),
+                            'Firm debt':float(df2['Debt']),
+                            'Government revenue':float(df3['Revenue']),
+                            'Government expenditure':float(df3['Expenditure']),
+                            'Government debt':float(df3['Debt']),
                             'CPI':float(self.CPI),
                             'Interest rate':float(self.interest_rate),
                             'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
@@ -436,9 +432,10 @@ class Economy():
             #self.status()
 
         end = time.time()
+        #print('time ' + str(round(end - start,2)))
         self.print_households_data(-1)
         self.print_firms_data(-1)
-        print('time ' + str(round(end - start,2)))
+        self.print_government_data(-1)
         self.print_all()
 
     def get_production_cycle_data(self):
@@ -471,13 +468,15 @@ class Economy():
 
     def print_households_data(self, time):
         if time == -1:
-            print(self.households_data.to_string())
+            #print(self.households_data.to_string())
+            print(self.households_data.xs(1, level=2, drop_level=False))
         else:
             print(self.households_data.loc[(time,):(time,)])
 
     def print_firms_data(self, time):
         if time == -1:
-            print(self.firms_data.to_string())
+            #print(self.firms_data.to_string())
+            print(self.firms_data.xs(1, level=2, drop_level=False))
         else:
             print(self.firms_data.loc[(time,):(time,)])
 

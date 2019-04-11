@@ -58,6 +58,7 @@ button,
 input[type="submit"],
 input[type="reset"],
 input[type="button"] {
+  font-family: 'Avenir-Book', 'Montserrat';
   display: inline-block;
   height: 38px;
   padding: 0 30px;
@@ -109,3 +110,20 @@ input[type="button"].button-primary:focus {
   color: #FFF;
   background-color: #1EAEDB;
   border-color: #1EAEDB; }
+
+/* Tabs –––––––––––––––––––––––––––––––––––––––––––––––––– */
+.custom-tabs-container {
+  width: 50%;
+}
+.custom-tabs {
+}
+.custom-tab {
+  font-family: 'Avenir-Book','Montserrat';
+  border-top-left-radius: 5px;
+  border-top-right-radius: 5px;
+  align-items: center;
+
+
+}
+.custom-tab--selected {
+}
