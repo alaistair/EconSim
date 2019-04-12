@@ -8,6 +8,7 @@ import numpy as np
 import pandas as pd
 import time
 import sys
+from functools import reduce
 
 import src.updateeconomydata as updateeconomydata
 
@@ -105,6 +106,7 @@ class Economy():
         self.production_market()
         self.income_tax()
         self.welfare()
+        self.update_household_income_expectations(1)
         self.accounting_pre()
 
         # update economy dataframe
@@ -143,7 +145,7 @@ class Economy():
                                     'Household income':float(df1['Income']),
                                     'Household savings':float(df1['Savings']),
                                     'Household spending':float(df1['Spending']),
-                                    'Household expected income':float(df1['Expected income']),
+                                    'Household expected income':float(np.mean(df1['Expected income'])),
                                     'Firm inventory':float(df2['Inventory']),
                                     'Firm production':float(df2['Production']),
                                     'Firm revenue':float(df2['Revenue']),
@@ -159,6 +161,7 @@ class Economy():
         self.accounting_post()
         self.move_production_to_inventory()
         self.consumption_market()
+        self.calculate_CPI()
         self.update_economy_data('c')
         self.financial_market()
         self.update_economy_data('f')
@@ -166,15 +169,16 @@ class Economy():
     def labour_market(self):
         # Workforce seperations
         for firmID, firm in self.firms.items():
+            firm.update_expected_production()
 
-            # Randomly fire one person
-            if bool(firm.workers):
+            # One worker quits
+            if len(firm.workers) > 1:
                 hhID, household = random.choice(list(firm.workers.items()))
                 self.government.unemployed[hhID] = household
                 del firm.workers[hhID]
 
             # Also fire least productive worker
-            if bool(firm.workers):
+            if len(firm.workers) > 1:
                 lowest_productive_hhID = next(iter(firm.workers))
                 lowest_productive = firm.workers[lowest_productive_hhID].human_capital/np.mean(firm.workers[lowest_productive_hhID].expected_income)
                 for hhID, household in firm.workers.items():
@@ -185,12 +189,17 @@ class Economy():
                 self.government.unemployed[lowest_productive_hhID] = firm.workers[lowest_productive_hhID]
                 del firm.workers[lowest_productive_hhID]
 
-            # Most underpaid person quits
-            if bool(firm.workers):
-                pass
+            expected_additional_labour_spending = firm.update_hiring_intentions(self.interest_rate)
+            while expected_additional_labour_spending < 0: # keep firing
+                if len(firm.workers) > 1:
+                    hhID, household = random.choice(list(firm.workers.items()))
+                    self.government.unemployed[hhID] = household
+                    del firm.workers[hhID]
+                else:
+                    print('one worker left')
+                    break
 
-        # Cycle through each firm
-        # Each firm 'hires' labour to create production
+        # Workforce hiring. Each firm 'hires' labour to create production
         for firmID, firm in self.firms.items():
             # Get how much more each firm expecting to spend on labour
             expected_additional_labour_spending = firm.update_hiring_intentions(self.interest_rate)
@@ -210,38 +219,32 @@ class Economy():
                     candidate_list[candidate] = self.government.unemployed[candidate]
 
                 best_candidate = -1 # hhID
-                best_candidate_productivity = -100
+                best_candidate_productivity = 0
                 for hhID, household in candidate_list.items():
                     if expected_additional_labour_spending == 0:
                         break
                     if expected_additional_labour_spending < np.mean(household.expected_income):
-                        if bool(firm.workers): # firm has workers
-                            continue
-                        else:
-                            expected_additional_labour_spending *= 1.05
+                        expected_additional_labour_spending *= 1.05
                     worker_productivity = household.human_capital/np.mean(household.expected_income)
                     if worker_productivity > best_candidate_productivity:
                         best_candidate = hhID
                         best_candidate_productivity = worker_productivity
 
-                if best_candidate == -1:
-                    expected_additional_labour_spending = 0
-                else:
-                    firm.workers[best_candidate] = self.government.unemployed[best_candidate]
-                    expected_additional_labour_spending -= np.mean(household.expected_income)
-                    del candidate_list[best_candidate]
-                    del self.government.unemployed[best_candidate]
-
-        for hhID, household in self.government.unemployed.items():
-            household.expected_income = [income * 0.99 for income in household.expected_income]
-            household.human_capital *= 0.995
+                firm.workers[best_candidate] = self.government.unemployed[best_candidate]
+                del candidate_list[best_candidate]
+                del self.government.unemployed[best_candidate]
+                expected_additional_labour_spending -= np.mean(household.expected_income)
 
     def production_market(self):
-        for firmID, firm in self.firms.items():
-            for hhID, household in firm.workers.items():
-                household.update_production(np.mean(household.expected_income), self.growth_rate(self.economy_data['CPI']))
-                firm.update_production(np.mean(household.expected_income))
-                household.human_capital *= firm.labour_productivity
+        for f in self.firms.values():
+            for h in f.workers.values():
+                h.update_production(np.mean(h.expected_income))
+                f.update_production(np.mean(h.expected_income))
+                h.human_capital *= f.labour_productivity
+
+            # cobb doug
+            print('actual production ' + str(f.production))
+            print('cobb doug ' + str((f.capital_stock ** 0.7) * (f.labour_cost ** (1-0.7))))
 
     def income_tax(self):
         for h in self.households.values():
@@ -251,8 +254,8 @@ class Economy():
     def welfare(self):
         # Get average incomes
         total_income = 0
-        for hhID, household in self.households.items():
-            total_income += household.income
+        for h in self.households.values():
+            total_income += h.income
 
         total_unemployed = len(self.government.unemployed.keys())
         total_employed = len(self.households.keys()) - total_unemployed
@@ -266,9 +269,18 @@ class Economy():
         if total_unemployed == 0:
             pass
         else:
-            for hhID, household in self.government.unemployed.items():
-                household.income = welfare_per_household
+            for h in self.government.unemployed.values():
+                h.income = welfare_per_household
                 self.government.expenditure += welfare_per_household
+                h.human_capital *= 0.995
+
+    def update_household_income_expectations(self, CPI):
+        if CPI < 1: CPI = 1 # sticky wage expectations
+        for h in self.households.values():
+            h.expected_income.pop(0)
+            h.expected_income.append(h.income * CPI)
+
+        return h.expected_income
 
     # update economy data (p)
 
@@ -281,48 +293,49 @@ class Economy():
         # Cycle through every household's spending.
         # randomly assign 10% of spending to random firm
         # if firm has no inventory, reallocate
-        total_quantity = 0
-        total_sales = 0
         for hhID, household in self.households.items():
             household.update_consumption()
             if household.savings < -100:
-                print('hhID ' + str(hhID) + ' savings ' + str(household.savings) + ' income ' + str(household.income) + ' ex income ' + str(np.mean(household.expected_income)))
+                print('hhID ' + str(hhID) + ' savings ' + str(household.savings) + ' income ' +
+                    str(household.expected_income[-1]) + ' ex income ' + str(household.expected_income) +
+                    ' MPC ' + str(household.MPC))
+                print(self.households_data.xs(hhID, level=2, drop_level=False))
+
                 self.status()
                 sys.exit()
 
             # Cycle through each product in household's spending basket
             for household_product in household.spending_basket:
-                spending = household.spending * household_product['Proportion']
+                product_spending = household.spending * household_product['Proportion']
                 random.shuffle(self.products[household_product['Name']])
-                total_sales += spending
-                while spending > 0:
+                while product_spending > 0:
                     # Cycle though list of firms that makes product
                     for firmID in self.products[household_product['Name']]:
                         if household_product['Price'] >= self.firms[firmID].product_price:
-                            total_quantity += spending/self.firms[firmID].product_price
-                            spending -= self.firms[firmID].update_revenue(spending) # return fulfilled sales
-                            total_quantity -= spending/self.firms[firmID].product_price
+                            product_spending -= self.firms[firmID].update_revenue(product_spending) # return fulfilled sales
 
-                        if spending == 0:
+                        if product_spending == 0:
                             break
-                    if spending > 0:
+                    if product_spending > 0:
                         household_product['Price'] *= 1.03
 
-                    # check if all firms are out of stock
+                    # check if firms are all out of stock
                     out_of_stock = 1
                     for firmID in self.products[household_product['Name']]:
                         if self.firms[firmID].inventory > 0:
                             out_of_stock = 0
                     if out_of_stock:
-                        household.savings += spending
-                        household.spending -= spending
-                        total_sales -= spending
+                        print('hhid ' + str(hhID) + ' out of stock ' + str(product_spending) + ' savings ' + str(household.savings))
                         break
 
-        if total_quantity != 0:
-            self.CPI = total_sales/total_quantity
-        else:
-            self.CPI = float('NaN')
+    def calculate_CPI(self):
+        total_revenue = 0
+        total_production = 0
+        for firmID, firm in self.firms.items():
+            total_revenue += firm.revenue
+            total_production += firm.revenue/firm.product_price
+
+        self.CPI = total_revenue/total_production
 
     # update economy data (c)
 
@@ -338,43 +351,46 @@ class Economy():
 
     # update economy data (f)
 
-    '''def update_households_data(self, households_data, households, time, cycle):
-        new_data = [pd.DataFrame({'income':household.income,
-            'savings':household.savings,
-            'spending':household.spending,
-            'expected income':np.mean(household.expected_income),
-            'human capital':household.human_capital,},
+    def update_households_data(self, households_data, households, time, cycle):
+        new_data = [pd.DataFrame({'Human capital':float(household.human_capital),
+            'Expected income':np.mean(household.expected_income),
+            'Income':float(household.income),
+            'Spending':float(household.spending),
+            'Savings':float(household.savings),},
             index = [(time, cycle, hhID)]) for hhID, household in households.items()]
         new_households_data = [households_data] + new_data
 
         return new_households_data
 
     def update_firms_data(self, firms_data, firms, time, cycle):
-        new_firms_data = [pd.DataFrame({'inventory':firm.inventory,
-            'production':firm.production,
-            'price':firm.product_price,
-            'revenue':firm.revenue,
-            'expected production':firm.expected_production,
-            'capital investment':firm.capital_investment,
-            'capital stock':firm.capital_stock,
-            'debt':firm.debt,},
+        new_data = [pd.DataFrame({'Expected production':float(firm.expected_production),
+            'Production':float(firm.production),
+            'Product price':float(firm.product_price),
+            'Revenue':float(firm.revenue),
+            'Inventory':float(firm.inventory),
+            'Capital investment':float(firm.capital_investment),
+            'Capital stock':float(firm.capital_stock),
+            'Debt':float(firm.debt),
+            'Debt/revenue':float(firm.debt/firm.revenue),
+            'Profit':float(firm.profit),
+            'Workers':int(len(firm.workers.keys()))},
             index = [(self.time, cycle, firmID)]) for firmID, firm in self.firms.items()]
 
         new_firms_data = [firms_data] + new_data
         return new_firms_data
-        '''
+
     def accounting_pre(self):
-        for hhID, household in self.households.items():
-            household.savings += household.income
+        for h in self.households.values():
+            h.savings += h.income - h.spending
 
     def update_economy_data(self, cycle):
         self.accounting_pre()
 
-        self.households_data = pd.concat(updateeconomydata.update_households_data(self.households_data, self.households, self.time, cycle))
-        #self.households_data = pd.concat(self.update_household_data(self.households_data, self.households, self.time, cycle))
+        #self.households_data = pd.concat(updateeconomydata.update_households_data(self.households_data, self.households, self.time, cycle))
+        self.households_data = pd.concat(self.update_households_data(self.households_data, self.households, self.time, cycle))
 
-        self.firms_data = pd.concat(updateeconomydata.update_firms_data(self.firms_data, self.firms, self.time, cycle))
-        #self.firms_data = pd.concat(self.update_firms_data(self.firms_data, self.firms, self.time, cycle))
+        #self.firms_data = pd.concat(updateeconomydata.update_firms_data(self.firms_data, self.firms, self.time, cycle))
+        self.firms_data = pd.concat(self.update_firms_data(self.firms_data, self.firms, self.time, cycle))
 
         self.government_data = pd.concat([self.government_data,
                             pd.DataFrame({'Revenue':float(self.government.revenue),
@@ -389,7 +405,7 @@ class Economy():
         sum = pd.DataFrame({'Household income':float(df1['Income']),
                             'Household savings':float(df1['Savings']),
                             'Household spending':float(df1['Spending']),
-                            'Household expected income':float(df1['Expected income']),
+                            'Household expected income':float(np.mean(df1['Expected income'])),
                             'Firm inventory':float(df2['Inventory']),
                             'Firm production':float(df2['Production']),
                             'Firm revenue':float(df2['Revenue']),
@@ -407,6 +423,11 @@ class Economy():
         self.accounting_post()
 
     def accounting_post(self):
+        for h in self.households.values():
+            h.income = 0
+            h.spending = 0
+        for f in self.firms.values():
+            f.capital_investment = 0
         self.government.debt += self.government.expenditure - self.government.revenue
         self.government.expenditure = 0
         self.government.revenue = 0
@@ -423,9 +444,11 @@ class Economy():
             self.production_market()
             self.income_tax()
             self.welfare()
+            self.update_household_income_expectations(self.growth_rate(self.economy_data['CPI']))
             self.update_economy_data('p')
             self.move_production_to_inventory()
             self.consumption_market()
+            self.calculate_CPI()
             self.update_economy_data('c')
             self.financial_market()
             self.update_economy_data('f')
@@ -469,15 +492,15 @@ class Economy():
 
     def print_households_data(self, time):
         if time == -1:
-            #print(self.households_data.to_string())
-            print(self.households_data.xs(1, level=2, drop_level=False))
+            print(self.households_data.to_string())
+            #print(self.households_data.xs(1, level=2, drop_level=False))
         else:
             print(self.households_data.loc[(time,):(time,)])
 
     def print_firms_data(self, time):
         if time == -1:
-            #print(self.firms_data.to_string())
-            print(self.firms_data.xs(1, level=2, drop_level=False))
+            print(self.firms_data.to_string())
+            #print(self.firms_data.xs(1, level=2, drop_level=False))
         else:
             print(self.firms_data.loc[(time,):(time,)])
 
@@ -506,10 +529,10 @@ class Economy():
             return 0
 
     def status(self):
-        self.print_economy_data(self.time)
         self.print_households_data(self.time)
         self.print_firms_data(self.time)
         self.print_government_data(self.time)
+        self.print_economy_data(self.time)
 
     def print_all(self):
         print(self.economy_data.to_string())
