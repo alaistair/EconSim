@@ -3,3 +3,4 @@ venv
 *.pyo
 *.DS_Store
 .env
+*no_upload*
