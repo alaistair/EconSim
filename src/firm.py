@@ -8,17 +8,22 @@ class Firm():
     def __init__(self, settings):
         self.product_name = 'A'
 
-        self.expected_production = settings.init_production
+        self.expected_production = float(settings.init_production)
         self.production = 0 # flow of production (one cycle)
-        self.product_price = 1 + (random.random() - 0.5) * 0.2
+        self.product_price = 2 + (random.random() - 0.5) * 0.2
         self.inventory = int(0) # stock of inventory (units of output)
         self.revenue = 0 # flow of revenue (one cycle)
+        self.labour_cost = 0
         self.profit = 0
 
-        self.labour_productivity = settings.init_labour_productivity # output per labour input (1.05)
-        self.labour_cost = 0
-        self.capital_stock = settings.init_production
+        self.productivity = settings.init_productivity # output per capital/labour input (1.05)
         self.capital_investment = 0
+        self.capital_stock = settings.init_production
+        self.capital_share = 0.3 # 'alpha' in Cobb-Douglas production function
+        self.human_capital = 0
+        self.human_capital_share = 0.1 # 'beta'
+        self.labour_share = 1 - self.capital_share - self.human_capital_share # 'gamma'
+
         self.debt = self.capital_stock
         self.capital_depreciation = settings.init_capital_depreciation # 0.04 (4%)
 
@@ -26,9 +31,6 @@ class Firm():
         self.owners = {} # hhID, owner dictionary
 
     def update_expected_production(self):
-        # Update firm productivity based on capital spending
-        #self.labour_productivity *= (1 + self.capital_investment/self.capital_stock)
-
         # Update firm's expected revenue based on past sales
         if self.inventory == 0: # Ran out of inventory
             self.product_price *= 1.1
@@ -41,27 +43,40 @@ class Firm():
             self.expected_production *= 1.02
         if self.product_price < 0: self.product_price = 0.01
 
-    def update_hiring_intentions(self, interest_rate):
-        expected_revenue = self.expected_production * self.product_price
-        expected_labour_spending = expected_revenue/self.labour_productivity
-
+    def update_hiring_intentions(self):
         # Cobb-Douglas production function
-        A = 1
-        alpha = 0.3 # capital share of income
-        log_expected_labour_spending = math.log(self.expected_production/(self.capital_stock**alpha))/(1-alpha)
-        expected_labour_spending = math.exp(log_expected_labour_spending)
+        # Y = A(K^alpha)(H^beta)(L^(1-alpha-beta))
+        A = self.productivity
+        alpha = self.capital_share # capital share of income
+        beta = self.human_capital_share
+        gamma = self.labour_share
 
-        expected_additional_labour_spending = expected_labour_spending
-        print('ex additional labour spending ' + str(expected_additional_labour_spending))
-        for hhID, household in self.workers.items():
-            expected_additional_labour_spending -= np.mean(household.expected_income)
+        expected_labour_spending = self.expected_production/(A * (self.capital_stock**alpha))
 
-        return expected_additional_labour_spending
+        # calculate firm human capital
+        self.labour_cost = 0
+        self.human_capital = 0
+        for hhID, w in self.workers.items():
+            self.labour_cost += w.update_production(np.mean(w.expected_income))
 
-    def update_production(self, labour_cost):
-        self.production += labour_cost * self.labour_productivity
-        self.labour_cost += labour_cost
-        self.debt += labour_cost
+        for w in self.workers.values():
+            self.human_capital += w.human_capital * w.income/self.labour_cost
+
+        if self.expected_production/(A * (self.capital_stock**alpha)) > (self.human_capital**beta) * (self.labour_cost**gamma):
+            return 1 # hiring
+        else:
+            return -1 # firing
+
+        return 0 # labour force optimal
+
+    def update_production(self):
+        # Cobb-Douglas production function
+        A = self.productivity
+        alpha = self.capital_share # capital share of income
+        beta = self.human_capital_share
+        gamma = self.labour_share
+
+        self.production = A * (self.capital_stock ** alpha) * (self.human_capital ** beta) * (self.labour_cost ** gamma)
         return 1
 
     # Adds sales to firm's revenue.
@@ -84,7 +99,6 @@ class Firm():
         cost_of_capital = self.capital_stock * (interest_rate - CPI + self.capital_depreciation)
         profit_rate = self.revenue - cost_of_capital
         self.profit = profit_rate - self.labour_cost
-        self.labour_cost = 0
 
         if self.profit <= 0:
             self.capital_investment = 0

@@ -7,11 +7,13 @@ class Household():
     def __init__(self, settings):
         self.people = 2 # labour endowment
         self.age = 18
-        self.human_capital = random.choice(settings.init_human_capital) #[10,20,30]
+        self.working = 'O'
+        self.human_capital = np.random.normal(1, 0.25) # mean 1, sd 1
+        if self.human_capital < 0: self.human_capital = 0 # no ZMP, for now
 
-        self.expected_income = [self.human_capital, self.human_capital, self.human_capital] # permanent income. Average of past three incomes
+        self.expected_income = [10*self.human_capital, 10*self.human_capital, 10*self.human_capital] # pretax permanent income. Average of past three incomes
         self.income = 0 # income from working for one cycle
-        self.savings = settings.init_household_savings # stock of savings
+        self.savings = settings.init_household_savings # stock of savings (20)
         self.MPC = settings.init_MPC # 0.95
 
         self.spending = 0 # spending for one cycle

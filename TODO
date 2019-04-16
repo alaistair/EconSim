@@ -1,11 +1,10 @@
 Household enter/exit
  - household aging
- - intertemporal budgeting
+ - intertemporal budgeting eq
 Firm enter/exit
 Asset market
  - Housing market
  - stock market
 Government debt
  - bond market
-International trade
-Cython dataframe concat
+International trade (cobb-douglas w natural resource availability)
