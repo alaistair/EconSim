@@ -34,19 +34,19 @@ class App():
                 html.H1('Kuznets core model demo', style={'display':'inline-block',}),
                 html.A('Contact', href='mailto:alaistair@gmail.com',
                     style={'display':'inline-block',
-                        'margin-top':'1em',
+                        'margin-top':'1.5em',
                         'float':'right',
                         'text-decoration':'none',
                         'padding-left':'1%',
                         'font-size':'0.8em'}),
                 html.P('|',
                     style={'display':'inline-block',
-                        'margin-top':'0.5em',
+                        'margin-top':'0.85em',
                         'float':'right',
                         'font-size':'1.1em'}),
                 html.A('About', href='https://www.alaistairchan.com/kuznets.html',
                     style={'display':'inline-block',
-                        'margin-top':'1em',
+                        'margin-top':'1.5em',
                         'float':'right',
                         'text-decoration':'none',
                         'padding-right':'1%',
@@ -62,7 +62,7 @@ class App():
                     options=[
                         {'label': '1 ', 'value': '1'},
                         {'label': '5 ', 'value': '5'},
-                        {'label': '100 ', 'value': '100'}
+                        {'label': '20 ', 'value': '20'}
                     ],
                     value='5'),
                     style={'display':'inline-block','vertical-align':'middle','margin-top':'1%'}),
@@ -110,26 +110,25 @@ class App():
                         disabled=self.interest_rate_slider,
                         marks={i:'{}'.format(i) for i in range(11)}
                     )
-                ], style={'display':'inline-block','width':'50%',}),
+                ], style={'display':'inline-block','width':'50%'}),
             ], style={'margin-left':'5%','margin-right':'5%'}),
 
             html.Div([
                 dcc.Tabs(
                     id='tabs',
                     value='tab-1',
-                    parent_className='custom-tabs',
-                    className='custom-tabs-container',
+                    className='custom-tabs',
                     children=[
                         dcc.Tab(
                             label='Main graph',
-                            className='custom-tab',
-                            selected_className='custom-tab--selected',
+                            className='custom-tab-left',
+                            selected_className='custom-tab--selected-left',
                             children=[
                                 html.Div([
                                     dcc.Graph(
                                         id='main-graph',
                                         config={'displayModeBar':False},
-                                        style={'display':'inline-block','width':'80%','margin-top':'0%'}),
+                                        style={'display':'inline-block','width':'75%','height':'35em','margin-top':'0%', 'margin-left':'5%'}),
                                     html.Div([
                                         html.P('Plot display',
                                             style={'font-weight':'bold'}),
@@ -167,7 +166,7 @@ class App():
                                         dcc.Checklist(
                                             id='macro-lines-checklist',
                                             options=[
-                                                {'label': 'Inflation', 'value': 'CPI (R)'},
+                                                {'label': 'Inflation', 'value': 'CPI, % change (R)'},
                                                 {'label': 'Interest rate', 'value': 'Interest rate (R)'},
                                                 {'label': 'Unemployment rate', 'value': 'Unemployment rate (R)'},
                                             ],
@@ -201,9 +200,11 @@ class App():
                         ]),
                         dcc.Tab(
                             label='Settings',
-                            className='custom-tab',
-                            selected_className='custom-tab--selected',
+                            className='custom-tab-right',
+                            selected_className='custom-tab--selected-right',
                             children=[
+                                html.Div([html.P('Hello',
+                                    style={'margin-bottom':'0%'}),], style={'padding':'50em'}),
 
                         ]),
                 ]),
@@ -283,6 +284,7 @@ class App():
                         y = self.economy.get_production_cycle_data()[i],
                         name = i,
                         line = {'color':'rgb(255,255,0)'},
+                        mode = 'lines',
                         legendgroup = 'Households',
                     ))
                 elif i == 'Household spending':
@@ -290,7 +292,8 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(255,0,0)'},
+                        line = {'color':'rgb(0,102,0)'},
+                        mode = 'lines',
                         legendgroup = 'Households',
                     ))
                 elif i == 'Household savings':
@@ -299,15 +302,16 @@ class App():
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i,
                         line = {'color':'rgb(128,0,0)'},
+                        mode = 'lines',
                         legendgroup = 'Households',
                     ))
             for i in firm_lines_checklist:
                 if i == 'Firm inventory':
-                    main_graph_data.append(go.Scatter(
+                    main_graph_data.append(go.Bar(
                         x = self.index,
                         y = self.economy.get_production_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(0,255,255)'},
+                        marker = {'color':'rgb(25,25,112)'},
                         legendgroup = 'Firms',
                     ))
                 elif i == 'Firm revenue':
@@ -315,25 +319,27 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(100,149,237)'},
+                        line = {'color':'rgb(25,25,112)'},
+                        mode = 'lines',
                         legendgroup = 'Firms',
-
                     ))
                 elif i == 'Firm debt':
                     main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_financial_cycle_data()[i],
                         name = i,
-                        line = {'color':'rgb(25,25,112)'},
+                        line = {'color':'rgb(100,149,237)'},
+                        mode = 'lines',
                         legendgroup = 'Firms',
                     ))
             for i in macro_lines_checklist:
-                if i == 'CPI (R)':
+                if i == 'CPI, % change (R)':
                     main_graph_data.append(go.Scatter(
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['CPI'].pct_change()*100,
                         name = i,
                         line = {'color':'rgb(191,0,255)'},
+                        mode = 'lines',
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))
@@ -342,6 +348,7 @@ class App():
                         x = self.index,
                         y = (self.economy.get_consumption_cycle_data()['Interest rate']-1)*100,
                         name = i,
+                        mode = 'lines',
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))
@@ -350,7 +357,8 @@ class App():
                         x = self.index,
                         y = self.economy.get_consumption_cycle_data()['Unemployment rate']*100,
                         name = i,
-                        line = {'color':'rgb(128,255,0)'},
+                        line = {'color':'rgb(255,0,0)'},
+                        mode = 'lines',
                         yaxis = 'y2',
                         legendgroup = 'Macro',
                     ))

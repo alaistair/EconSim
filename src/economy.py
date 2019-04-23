@@ -18,7 +18,7 @@ class Economy():
         self.time = int(0)
         self.interest_rate = settings.init_interest_rate
         self.products = defaultdict(list)
-        self.CPI = 1
+        self.CPI = 2
         self.unemployment_rate = settings.init_unemployment_rate # 10%
 
         # Initialise dictionary of households
@@ -48,6 +48,7 @@ class Economy():
                                 'Workers':[0],
                                 'Capital investment':[0.],
                                 'Capital stock':[0.],
+                                'Marginal cost':[0.],
                                 'Debt':[0.],
                                 'Profit':[0.],
                                 }, index = pd.MultiIndex.from_tuples(tuples, names=['time', 'cycle', 'firmID']))
@@ -71,9 +72,7 @@ class Economy():
                                         'Firm production':[0.],
                                         'Firm revenue':[0.],
                                         'Firm debt':[0.],
-                                        'Government revenue':[0.],
-                                        'Government expenditure':[0.],
-                                        'Government debt':[0.],
+                                        'Firm profit':[0.],
                                         'CPI':[0.],
                                         'Interest rate':[0.],
                                         'Unemployment rate':[0.],
@@ -84,29 +83,34 @@ class Economy():
             self.products[firm.product_name].append(firmID)
 
         # Initialise labour market
-        # All households are unemployed at start of cycle
-        for hhID, household in self.households.items():
-            self.government.unemployed[hhID] = household
-            self.government.unemployed[hhID].working = 'U'
-
         # Every firm gets at least one worker
-        for firmID, firm in self.firms.items():
-            i = random.choice(list(self.government.unemployed.keys()))
-            firm.workers[i] = self.government.unemployed[i]
-            firm.workers[i].working = 'E'
-            del self.government.unemployed[i]
+        workers = (1 - self.unemployment_rate) * len(self.households.keys())
+        workers_per_firm = int(workers/len(self.firms.keys()))
 
-        # Allocate remaining workers until ~ unemployment rate. At least one
-        # household will be unemployed.
-        '''while float(len(self.government.unemployed)/len(self.households)) > self.unemployment_rate:
-            if len(self.government.unemployed) == 1:
-                break
-            i = random.choice(list(self.government.unemployed.keys()))
-            j = random.choice(list(self.firms.keys()))
-            self.firms[j].workers[i] = self.households[i]
-            del self.government.unemployed[i]'''
+        for i in range(workers_per_firm):
+            for firmID, firm in self.firms.items():
+                hhID, household = random.choice(list(self.get_unemployed().items()))
+                firm.workers[hhID] = household
+                household.working = 'E'
+
+        # Firms update expected production given labour force and capital stock
+        '''for f in self.firms.values():
+            A = f.productivity
+            alpha = f.capital_share # capital share of income
+            beta = f.human_capital_share
+            gamma = f.labour_share
+
+            labour_cost = 0
+            for w in f.workers.values():
+                labour_cost += np.mean(w.expected_income)
+            human_capital = 0
+            for w in f.workers.values():
+                human_capital += w.human_capital * w.income/labour_cost
+
+            f.expected_production = A * (f.capital_stock ** alpha) * (human_capital ** beta) * (labour_cost ** gamma)'''
 
         self.labour_market()
+
         self.production()
         self.income_tax()
         self.welfare()
@@ -136,6 +140,7 @@ class Economy():
                                     'Workers':len(firm.workers.keys()),
                                     'Capital investment':firm.capital_investment,
                                     'Capital stock':firm.capital_stock,
+                                    'Marginal cost':firm.marginal_cost,
                                     'Debt':firm.debt,
                                     'Profit':firm.profit,}
 
@@ -146,7 +151,7 @@ class Economy():
 
         df1 = self.households_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
         df2 = self.firms_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
-        df3 = self.government_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
+        #df3 = self.government_data.xs('p', level='cycle').groupby(level=0).sum().loc[self.time]
 
         self.economy_data.loc[(self.time, 'p')] = {
                                     'Household income':float(df1['Income']),
@@ -157,12 +162,10 @@ class Economy():
                                     'Firm production':float(df2['Production']),
                                     'Firm revenue':float(df2['Revenue']),
                                     'Firm debt':float(df2['Debt']),
-                                    'Government revenue':float(df3['Revenue']),
-                                    'Government expenditure':float(df3['Expenditure']),
-                                    'Government debt':float(df3['Debt']),
+                                    'Firm profit':float(df2['Profit']),
                                     'CPI':float(self.CPI),
                                     'Interest rate':float(self.interest_rate),
-                                    'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
+                                    'Unemployment rate':float(len(self.get_unemployed().keys())/len(self.households)),
                                     }
 
         self.accounting_post()
@@ -175,74 +178,76 @@ class Economy():
 
     def labour_market(self):
         # Workforce seperations
-        for firmID, firm in self.firms.items():
-            firm.update_expected_production()
+        if self.time != 0:
+            for f in self.firms.values():
+                f.update_expected_production(self.growth_rate(self.economy_data['CPI']))
 
-            # One worker quits
-            if len(firm.workers) > 1:
-                hhID, household = random.choice(list(firm.workers.items()))
-                self.government.unemployed[hhID] = household
-                household.working = 'U'
-                del firm.workers[hhID]
-
-            # Firm reduces labour further if necessary
-            while firm.update_hiring_intentions() == -1:
-                if len(firm.workers) > 1:
-                    hhID, household = random.choice(list(firm.workers.items()))
-                    self.government.unemployed[hhID] = household
+                # One worker quits
+                if len(f.workers) > 1:
+                    hhID, household = random.choice(list(f.workers.items()))
                     household.working = 'U'
-                    del firm.workers[hhID]
-                else:
-                    print('one worker left in economy')
-                    break
+                    del f.workers[hhID]
+
+                # Firm reduces labour further if necessary
+                while f.update_hiring_intentions() == -1:
+                    if len(f.workers) > 1:
+                        hhID, household = random.choice(list(f.workers.items()))
+                        household.working = 'U'
+                        del f.workers[hhID]
+                    else:
+                        print('only one worker left in firm')
+                        break
 
         # Workforce hiring. Each firm 'hires' labour to create production
-        for firmID, firm in self.firms.items():
-            # Firm uses '37% rule' to hire, ie picks best candidate from random
-            # 37% subset of candidates
-            round = 1
-            while firm.update_hiring_intentions() == 1 and round < 3:
-                if len(self.government.unemployed.keys()) <= 1:
-                    break # already at lowest rate of unemployment
+        hiring = True
+        while hiring:
+            hiring = False
 
-                candidates = int(0.37 * len(self.government.unemployed))
-                if candidates < 1: candidates = 1 # at least one candidate in consideration
+            hiring_firms = [firm for firm in self.firms.values() if firm.update_hiring_intentions() == 1]
+
+            if not hiring_firms:
+                break
+
+            random.shuffle(hiring_firms)
+            for firm in hiring_firms:
+                if len(self.get_unemployed().keys()) <= 1: # economy already at lowest rate of unemployment
+                    hiring = False
+                    break
+
+                # Firm uses '37% rule' to hire, ie picks best candidate from random 37% subset of candidates
+                candidates = int(0.37 * len(self.get_unemployed().keys()))
+                if candidates < 1: candidates = 1 # ensure at least one candidate in consideration
                 candidate_list = {}
-                for i in range(0, candidates):
-                    candidate = random.choice(list(self.government.unemployed.keys()))
-                    candidate_list[candidate] = self.government.unemployed[candidate]
+                for i in range(0, candidates): # choose candidates randomly from unemployed
+                    candidate = random.choice(list(self.get_unemployed().keys()))
+                    candidate_list[candidate] = self.get_unemployed()[candidate]
 
-                # find best candidate. Change in future to allow diff hc needs
+                # find best candidate. Change this in future to allow diff hc needs
                 best_candidate_hhID = -1
                 best_candidate_human_capital = -1
                 for hhID, household in candidate_list.items():
                     if household.human_capital > best_candidate_human_capital:
                         best_candidate_hhID = hhID
 
-                if best_candidate_hhID == -1: # cannot find suitable candidate
-                    round += 1
-                else:
-                    # check candidate falls under firm budget
-                    labour_cost = 0
+                if best_candidate_hhID != -1:
+                    # check candidate falls within firm production function
+                    labour_cost = np.mean(self.households[best_candidate_hhID].expected_income)
+
                     for w in firm.workers.values():
                         labour_cost += np.mean(w.expected_income)
-                    labour_cost += np.mean(self.households[best_candidate_hhID].expected_income)
-                    human_capital = 0
+                    human_capital = self.households[best_candidate_hhID].human_capital * np.mean(self.households[best_candidate_hhID].expected_income)/labour_cost
                     for w in firm.workers.values():
                         human_capital += w.human_capital * w.income/labour_cost
-                    human_capital += self.households[best_candidate_hhID].human_capital * np.mean(self.households[best_candidate_hhID].expected_income)/labour_cost
+
                     if firm.expected_production/(firm.productivity * (firm.capital_stock**firm.capital_share)) > human_capital**firm.human_capital_share * labour_cost**firm.labour_share:
-                        firm.workers[best_candidate_hhID] = self.government.unemployed[best_candidate_hhID]
-                        firm.workers[best_candidate_hhID].working = 'E'
-                        del candidate_list[best_candidate_hhID]
-                        del self.government.unemployed[best_candidate_hhID]
-                        round = 1
-                    else:
-                        round += 1
+                        firm.workers[best_candidate_hhID] = self.households[best_candidate_hhID]
+                        self.households[best_candidate_hhID].working = 'E'
+                        hiring = True
 
     def production(self):
         for f in self.firms.values():
             f.update_production()
+            f.get_marginal_cost(self.growth_rate(self.economy_data['CPI']))
 
     def income_tax(self):
         for h in self.households.values():
@@ -255,30 +260,33 @@ class Economy():
         for h in self.households.values():
             total_income += h.income
 
-        total_unemployed = len(self.government.unemployed.keys())
+        total_unemployed = len(self.get_unemployed().keys())
         total_employed = len(self.households.keys()) - total_unemployed
         if total_employed == 0:
             income_per_household = 0
         else:
             income_per_household = total_income/total_employed
 
-        welfare_per_household = 0.8 * income_per_household
+        welfare_per_household = 0.6 * income_per_household
 
         if total_unemployed == 0:
             pass
         else:
-            for h in self.government.unemployed.values():
+            for h in self.get_unemployed().values():
                 h.income = welfare_per_household
                 self.government.expenditure += welfare_per_household
-                h.human_capital *= 0.995
 
     def update_household_income_expectations(self, CPI):
         if CPI < 1: CPI = 1 # sticky wage expectations
 
-        for hhID, h in self.households.items():
-            print(str(hhID) + ' ex income ' + str(np.mean(h.expected_income)) + ' income ' + str(h.income))
+        for h in self.households.values():
             h.expected_income.pop(0)
-            h.expected_income.append(h.income/(1 - self.government.income_tax) * CPI) # pretax income expectations
+            if h.working == 'E':
+                h.expected_income.append(h.income/(1 - self.government.income_tax) * CPI) # pretax income expectations
+                h.human_capital *= 1.001
+            elif h.working == 'U':
+                h.expected_income.append(h.income) # pretax income expectations
+                h.human_capital *= 0.995
 
         return h.expected_income
 
@@ -306,11 +314,18 @@ class Economy():
                     # Cycle though list of firms that makes product
                     for firmID in self.products[household_product['Name']]:
                         if household_product['Price'] >= self.firms[firmID].product_price:
-                            product_spending -= self.firms[firmID].update_revenue(product_spending) # return fulfilled sales
+                            quantity = product_spending/self.firms[firmID].product_price#household_product['Price']
+                            sales = self.firms[firmID].update_revenue(quantity, self.firms[firmID].product_price) # return fulfilled sales
+                            product_spending -= sales
+
+                            # firms adjust pricing based on sales. firm increases price linearly until max 3% gain if everything sold
+                            max_price_gain = self.firms[firmID].max_price_gain # 3%
+                            self.firms[firmID].product_price = self.firms[firmID].product_price * (1+max_price_gain*sales/self.firms[firmID].expected_production)
+
                         if product_spending == 0: # spent all expected spending
                             break
 
-                    if product_spending > 0:
+                    if product_spending > 0: # household still wants to spend
                         household_product['Price'] *= 1.03
 
                     # check if firms are all out of stock
@@ -319,7 +334,7 @@ class Economy():
                         if self.firms[firmID].inventory > 0:
                             out_of_stock = 0
                     if out_of_stock:
-                        print('hhid ' + str(hhID) + ' out of stock ' + str(product_spending) + ' savings ' + str(household.savings))
+                        household.spending -= product_spending
                         break
 
     def calculate_CPI(self):
@@ -329,6 +344,7 @@ class Economy():
             total_revenue += firm.revenue
             total_production += firm.revenue/firm.product_price
 
+        print('total rev' + str(total_revenue) + ' total pro ' + str(total_production))
         self.CPI = total_revenue/total_production
 
     # update economy data (c)
@@ -367,6 +383,7 @@ class Economy():
             'Workers':int(len(firm.workers.keys())),
             'Capital investment':float(firm.capital_investment),
             'Capital stock':float(firm.capital_stock),
+            'Marginal cost':float(firm.marginal_cost),
             'Debt':float(firm.debt),
             'Profit':float(firm.profit),
             },
@@ -380,6 +397,8 @@ class Economy():
             h.savings += h.income - h.spending
         for f in self.firms.values():
             f.debt += f.labour_cost
+            f.debt -= f.revenue
+        self.government.debt += self.government.expenditure - self.government.revenue
 
     def update_economy_data(self, cycle):
         self.accounting_pre()
@@ -398,7 +417,7 @@ class Economy():
 
         df1 = self.households_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
         df2 = self.firms_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
-        df3 = self.government_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
+        #df3 = self.government_data.xs(cycle, level='cycle').groupby(level=0).sum().loc[self.time]
 
         sum = pd.DataFrame({'Household income':float(df1['Income']),
                             'Household savings':float(df1['Savings']),
@@ -408,12 +427,10 @@ class Economy():
                             'Firm production':float(df2['Production']),
                             'Firm revenue':float(df2['Revenue']),
                             'Firm debt':float(df2['Debt']),
-                            'Government revenue':float(df3['Revenue']),
-                            'Government expenditure':float(df3['Expenditure']),
-                            'Government debt':float(df3['Debt']),
+                            'Firm profit':float(df2['Profit']),
                             'CPI':float(self.CPI),
                             'Interest rate':float(self.interest_rate),
-                            'Unemployment rate':float(len(self.government.unemployed)/len(self.households)),
+                            'Unemployment rate':float(len(self.get_unemployed().keys())/len(self.households.keys())),
                             },
                             index = [(self.time, cycle)])
 
@@ -427,7 +444,8 @@ class Economy():
         for f in self.firms.values():
             f.capital_investment = 0
             f.labour_cost = 0
-        self.government.debt += self.government.expenditure - self.government.revenue
+            f.revenue = 0
+            f.profit = 0
         self.government.expenditure = 0
         self.government.revenue = 0
 
@@ -456,10 +474,17 @@ class Economy():
 
         end = time.time()
         #print('time ' + str(round(end - start,2)))
-        self.print_households_data(-1)
+        #self.print_households_data(-1)
         self.print_firms_data(-1)
-        self.print_government_data(-1)
+        #self.print_government_data(-1)
         self.print_all()
+
+    def get_unemployed(self):
+        unemployed = {}
+        for hhID, household in self.households.items():
+            if household.working == 'U':
+                unemployed[hhID] = household
+        return unemployed
 
     def get_production_cycle_data(self):
         return self.economy_data.iloc[::3,]
@@ -513,7 +538,7 @@ class Economy():
         print("Labour market allocation to firms:")
         for firmID, firm in self.firms.items():
             print("Firm ID: " + str(firmID) + " " + str(firm.workers.keys()))
-        print("Unemployed: " + str(self.government.unemployed.keys()))
+        print("Unemployed: " + str(self.get_unemployed().keys()))
 
     def update_time(self):
         self.time += 1

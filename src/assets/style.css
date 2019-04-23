@@ -112,18 +112,38 @@ input[type="button"].button-primary:focus {
   border-color: #1EAEDB; }
 
 /* Tabs –––––––––––––––––––––––––––––––––––––––––––––––––– */
-.custom-tabs-container {
-  width: 50%;
-}
 .custom-tabs {
+  font-family: 'Avenir-Book','Montserrat';
+  font-size:0.9em;
+  height:48px;
+  line-height:10px;
+  width:50%;
 }
 .custom-tab {
-  font-family: 'Avenir-Book','Montserrat';
-  border-top-left-radius: 5px;
-  border-top-right-radius: 5px;
-  align-items: center;
-
-
+  padding:6px;
+}
+.custom-tab-left {
+  border-top-left-radius:10px !important;
+  border-bottom-left-radius:10px !important;
+}
+.custom-tab-right {
+  border-top-right-radius:10px !important;
+  border-bottom-right-radius:10px !important;
 }
 .custom-tab--selected {
+  border-top:1px solid #d6d6d6 !important;
+  border-bottom:1px solid #d6d6d6 !important;
+  background-color:#d6d6d6 !important;
+}
+.custom-tab--selected-left {
+  border-top:1px solid #d6d6d6 !important;
+  border-bottom:1px solid #d6d6d6 !important;
+  background-color:#d6d6d6 !important;
+
+}
+.custom-tab--selected-right {
+  border-top:1px solid #d6d6d6 !important;
+  border-bottom:1px solid #d6d6d6 !important;
+  background-color:#d6d6d6 !important;
+
 }

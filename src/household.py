@@ -7,7 +7,7 @@ class Household():
     def __init__(self, settings):
         self.people = 2 # labour endowment
         self.age = 18
-        self.working = 'O'
+        self.working = 'U'
         self.human_capital = np.random.normal(1, 0.25) # mean 1, sd 1
         if self.human_capital < 0: self.human_capital = 0 # no ZMP, for now
 
@@ -51,9 +51,4 @@ class Household():
 
     def update_financial(self, interest_rate):
         self.savings *= interest_rate
-
-        return 0
-
-    def status(self):
-        status = "Income: " + str(round(self.income,2)) + " savings: " + str(round(self.savings,2)) + " spending: " + str(round(self.spending,2))
-        return status
+        return self.savings
