@@ -1,37 +1,90 @@
-""" Class for all information about a household """
+"""Kuznets Households class."""
+
 import numpy as np
 import random
 
+
 class Household():
+    """
+    Kuznets Households class.
+
+    Each household earns income, spends, and saves. Each household is
+    initialised with random human capital, which affects their expected income.
+    Future development include life cycle (aging, family formation) and asset
+    markets.
+
+    Args:
+        settings: Initial household settings.
+
+    Attributes:
+        people: Does nothing so far.
+        age: Does nothing so far.
+        human_capital: Randomly initialised, normally distributed at 1. Human
+            capital cannot go below zero (for now), ie no zero marginal
+            product workers. In periods of employment it accrues while in
+            periods of unemployment it depreciates.
+
+        life_stage: 'U' = unemployed, 'E' = employed, 'S' = studying, 'R' =
+            retired.
+        expected_income: Pretax expected income. Average of past three incomes.
+        income: Income from working for one cycle.
+
+        MPC: Marginal propensity to consume.
+        spending: Spending for one cycle.
+        spending_basket: List of products along with willing bid prices and the
+            proportion of total household spending on that product.
+        savings: Stock of savings.
+
+    """
 
     def __init__(self, settings):
-        self.people = 2 # labour endowment
+        """Init Household with Settings."""
+        self.people = 1
         self.age = 18
-        self.working = 'U'
-        self.human_capital = np.random.normal(1, 0.25) # mean 1, sd 1
-        if self.human_capital < 0: self.human_capital = 0 # no ZMP, for now
+        self.human_capital = np.random.normal(1, 0.25)
+        if self.human_capital < 0:
+            self.human_capital = 0
 
-        self.expected_income = [10*self.human_capital, 10*self.human_capital, 10*self.human_capital] # pretax permanent income. Average of past three incomes
-        self.income = 0 # income from working for one cycle
-        self.savings = settings.init_household_savings # stock of savings (20)
-        self.MPC = settings.init_MPC # 0.95
+        self.life_stage = 'U'
+        self.expected_income = [10*self.human_capital,
+                                10*self.human_capital,
+                                10*self.human_capital]
+        self.income = 0
 
-        self.spending = 0 # spending for one cycle
+        self.MPC = settings.init_MPC
+        self.spending = 0
         self.spending_basket = [{'Name': 'A',
-                            'Price': 1 + (random.random() - 0.5) * 0.1,
-                            'Proportion': 1}] # proportion = % spending
+                                 'Price': 1 + (random.random() - 0.5) * 0.1,
+                                 'Proportion': 1}]
+        self.savings = settings.init_household_savings
 
-    # Update expected income in light of current income. Expected wages rise with CPI,
-    # but sticky wages mean expected wages flat if CPI < 0.
     def update_production(self, income):
-        if income < 0: income = 0
+        """Update income."""
+        income = 0 if income < 0 else income
         self.income = income
         return self.income
 
-    # Decide how much to spend and how much to save
     def update_consumption(self):
+        """Decide spending/saving in light of income.
+
+        When this is called, current income (expected_income[-1]) should
+        already have been added to savings. Hence if savings are equal to
+        current income, the household has no savings. Moreover if the latest
+        income is below expectations, current income likely is falling. In
+        these cases the household will not save (permanent income hypothesis
+        assumption).
+
+        However if savings are above current income then we adjust the MPC in
+        line with the stock of savings.
+
+        Returns:
+            spending_basket: This reflects that this function will eventually
+                incorporate decisions on the spending mix as well as the total
+                sum of spending.
+
+        """
         if self.savings <= self.expected_income[-1]:
-            if self.expected_income[-1] < np.mean(self.expected_income): # no savings, income falling = paycheck to paycheck
+            if self.expected_income[-1] < np.mean(self.expected_income):
                 self.spending = self.expected_income[-1]
             else:
                 self.spending = np.mean(self.expected_income)
@@ -50,5 +103,15 @@ class Household():
         return self.spending_basket
 
     def update_financial(self, interest_rate):
+        """Household adjusts asset allocation.
+
+        Args:
+            interest_rate (float): rate that the household receives on its
+                savings.
+
+        Returns:
+            savings (float)
+
+        """
         self.savings *= interest_rate
         return self.savings

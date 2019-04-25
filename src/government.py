@@ -1,24 +1,39 @@
-""" Class for all information about a government """
+"""Kuznets Government class."""
+
 
 class Government():
+    """
+    Kuznets Government class.
+
+    Each economy instantiates one government only.
+
+    Args:
+        settings: Initial government settings.
+
+    Attributes:
+        revenue: Init at 0.
+        expenditure: Init at 0.
+        debt: Init at 0.
+
+        income_tax: Flat tax (for now). Init at 10%.
+        corporate_tax: Init at 10%.
+
+    """
 
     def __init__(self, settings):
-        self.revenue = settings.init_govt_revenue # 0
-        self.expenditure = settings.init_govt_expenditure # 0
-        self.debt = settings.init_govt_debt # 0
+        """Init Government using Settings class."""
+        self.revenue = settings.init_govt_revenue
+        self.expenditure = settings.init_govt_expenditure
+        self.debt = settings.init_govt_debt
 
-        self.income_tax = settings.init_income_tax #0.10
-        self.corporate_tax = settings.init_corporate_tax # 0.10
-
-    def govt_production_taxation(self):
-        pass
-
-    def govt_consumption_taxation(self):
-        pass
-
-    def govt_spending(self):
-        pass
+        self.income_tax = settings.init_income_tax
+        self.corporate_tax = settings.init_corporate_tax
 
     def govt_financial(self, interest_rate):
+        """
+        Government financial actions.
+
+        TODO: expand govt financial decisions.
+        """
         self.debt *= interest_rate
         return 1
