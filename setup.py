@@ -1,4 +1,4 @@
-from src.app import App
+from Kuznets.app import App
 
 
 Kuznets = App()

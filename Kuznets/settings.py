@@ -53,5 +53,6 @@ class Settings():
         self.init_govt_revenue = 0
         self.init_govt_expenditure = 0
         self.init_govt_debt = 0
-        self.init_income_tax = 0.10
-        self.init_corporate_tax = 0.30
+        self.init_income_tax_rate = 0.10
+        self.init_corporate_tax_rate = 0.30
+        self.init_welfare_share = 0.6

@@ -34,7 +34,9 @@ class Firm():
         revenue:
         labour_cost:
         marginal_cost:
-        max_price_gain:
+        max_price_gain: Firm raises product price to whatever this is as
+            inventory is depleted per cycle. It is a stand in for product
+            elasticity, for now.
         profit:
         workers:
         owners:
@@ -63,7 +65,7 @@ class Firm():
         self.revenue = 0
         self.labour_cost = 0
         self.marginal_cost = 0
-        self.max_price_gain = 0.03  # stand in for product elasticity, for now
+        self.max_price_gain = 0.03
         self.profit = 0
 
         self.workers = {}  # {hhID, worker}
@@ -139,12 +141,6 @@ class Firm():
 
         self.marginal_cost = marginal_cost_of_capital + marginal_cost_of_labour
         self.marginal_cost = marginal_cost_of_capital
-        print('self.interest_rate - inflation + self.capital_depreciation '
-              + str(self.interest_rate - inflation
-                    + self.capital_depreciation))
-        print('self.interest_rate ' + str(self.interest_rate)
-              + ' inflation ' + str(inflation)
-              + ' cap d ' + str(self.capital_depreciation))
 
         return self.marginal_cost
 
@@ -179,18 +175,18 @@ class Firm():
         """
         # Calculate firm human capital
         labour_cost = 0
-        for w in self.workers.values():
+        for id, w in self.workers.items():
             labour_cost += np.mean(w.expected_income)
         human_capital = 0
         for w in self.workers.values():
             human_capital += (w.human_capital
                               * np.mean(w.expected_income)/labour_cost)
 
-        if self.expected_production/(self.productivity
-                                     * (self.capital_stock**self.capital_share)
-                                     ) > ((human_capital
-                                           ** self.human_capital_share)
-                                          * (labour_cost**self.labour_share)):
+        left_side = self.expected_production/(
+            self.productivity * (self.capital_stock**self.capital_share))
+        right_side = (human_capital ** self.human_capital_share
+                      * labour_cost**self.labour_share)
+        if left_side > right_side:
             return 1
         else:
             return -1
@@ -230,19 +226,20 @@ class Firm():
 
         return self.production
 
-    def update_revenue(self, quantity, price):
+    def update_revenue(self, quantity):
         """
         Update firm's revenue based on sales, return the sales fulfilled.
 
+        Firm also adjusts product price based on sales. Firm increases price
+        linearly until max price gain (when all inventory is sold).
+
         Args:
             quantity (float): Quantity of goods purchased.
-            price (float): Price paid for given quantity of goods.
 
         Returns:
             sales (float): Sales fulfilled.
 
         """
-        self.product_price = price
         sales = self.product_price * quantity
         if self.inventory > quantity:  # firm fulfils all sales
             self.inventory -= quantity
@@ -253,6 +250,9 @@ class Firm():
             self.inventory = 0
         elif self.inventory == 0:  # firm out of stock, no sales
             sales = 0
+
+        self.product_price *= (
+            1 + self.max_price_gain * sales/self.expected_production)
 
         return sales
 

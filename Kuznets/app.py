@@ -1,5 +1,5 @@
-from src.economy import Economy
-from src.settings import Settings
+from Kuznets.economy import Economy
+from Kuznets.settings import Settings
 
 import flask
 import dash

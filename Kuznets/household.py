@@ -64,6 +64,21 @@ class Household():
         self.income = income
         return self.income
 
+    def update_income_expectations(self, inflation, income_tax_rate):
+        if inflation < 1:
+            inflation = 1  # sticky wage expectations
+
+        self.expected_income.pop(0)
+        if self.life_stage == 'E':
+            self.expected_income.append(
+                self.income/(1 - income_tax_rate) * inflation)
+            self.human_capital *= 1.001
+        elif self.life_stage == 'U':
+            self.expected_income.append(self.income)
+            self.human_capital *= 0.995
+
+        return self.expected_income
+
     def update_consumption(self):
         """Decide spending/saving in light of income.
 
