@@ -275,11 +275,13 @@ class Firm():
 
         cost_of_capital = self.capital_stock * (self.interest_rate - inflation
                                                 + self.capital_depreciation)
-        profit_rate = self.revenue - cost_of_capital
+
         labour_cost = 0
         for w in self.workers.values():
             labour_cost += np.mean(w.expected_income)
-        self.profit = profit_rate - labour_cost  # - self.debt * interest_rate
+        self.profit = self.revenue - cost_of_capital - labour_cost
+        # - self.debt * interest_rate
+        self.revenue = 0  # reset now that we have calculated profit.
 
         if self.profit <= 0:
             self.capital_investment = 0

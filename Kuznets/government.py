@@ -44,11 +44,26 @@ class Government():
         """
         Flat income tax.
 
+        Args:
+            households (dict): {hhID, household}
+
         TODO: allow progressivity.
         """
         for h in households.values():
             self.revenue += h.income * self.income_tax_rate
             h.income *= (1-self.income_tax_rate)
+
+    def corporate_tax(self, firm):
+        """
+        Corporate tax on profits.
+
+        Args:
+            firm (obj): Firm to be assessed.
+
+        TODO: incentives for cap depn, borrowing etc
+        """
+        self.revenue += (firm.profit * self.corporate_tax_rate)
+        firm.debt += firm.profit * self.corporate_tax_rate
 
     def welfare(self, income_per_capita, unemployed):
         """

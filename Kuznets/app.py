@@ -172,14 +172,13 @@ class App():
                                             id='household-lines-checklist',
                                             options=[
                                                 {'label': 'Income',
-                                                 'value': 'Household income'},
+                                                 'value': 'Income'},
                                                 {'label': 'Savings',
-                                                 'value': 'Household savings'},
+                                                 'value': 'Savings'},
                                                 {'label': 'Spending',
-                                                 'value': 'Household spending'},
+                                                 'value': 'Spending'},
                                             ],
-                                            values=['Household savings',
-                                                    'Household spending'],
+                                            values=['Savings', 'Spending'],
                                             labelStyle={'display': 'block',
                                                         'font-size': '0.8em'}),
                                         html.P('Firms',
@@ -188,11 +187,11 @@ class App():
                                             id='firm-lines-checklist',
                                             options=[
                                                 {'label': 'Inventory',
-                                                 'value': 'Firm inventory'},
+                                                 'value': 'Inventory'},
                                                 {'label': 'Revenue',
-                                                 'value': 'Firm revenue'},
+                                                 'value': 'Revenue'},
                                                 {'label': 'Debt',
-                                                 'value': 'Firm debt'},
+                                                 'value': 'Debt'},
                                             ],
                                             values=[],
                                             labelStyle={'display': 'block',
@@ -357,55 +356,36 @@ class App():
                     household_lines_checklist = ''
 
             for i in household_lines_checklist:
-                if i == 'Household income':
-                    main_graph_data.append(go.Scatter(
-                        x=self.index,
-                        y=self.economy.get_production_cycle_data()[i],
-                        name=i,
-                        line={'color': 'rgb(255,255,0)'},
-                        mode='lines',
-                        legendgroup='Households',
-                    ))
-                elif i == 'Household spending':
-                    main_graph_data.append(go.Scatter(
-                        x=self.index,
-                        y=self.economy.get_consumption_cycle_data()[i],
-                        name=i,
-                        line={'color': 'rgb(0,102,0)'},
-                        mode='lines',
-                        legendgroup='Households',
-                    ))
-                elif i == 'Household savings':
-                    main_graph_data.append(go.Scatter(
-                        x=self.index,
-                        y=self.economy.get_financial_cycle_data()[i],
-                        name=i,
-                        line={'color': 'rgb(128,0,0)'},
-                        mode='lines',
-                        legendgroup='Households',
-                    ))
+                main_graph_data.append(go.Scatter(
+                    x=self.index,
+                    y=self.economy.get_households_data(i),
+                    name=i,
+                    line={'color': self.settings.series_color[i]},
+                    mode='lines',
+                    legendgroup='Households',
+                ))
             for i in firm_lines_checklist:
-                if i == 'Firm inventory':
+                if i == 'Inventory':
                     main_graph_data.append(go.Bar(
                         x=self.index,
-                        y=self.economy.get_production_cycle_data()[i],
+                        y=self.economy.get_firms_data('p', i),
                         name=i,
-                        marker={'color': 'rgb(25,25,112)'},
+                        marker={'color': self.settings.series_color[i]},
                         legendgroup='Firms',
                     ))
-                elif i == 'Firm revenue':
+                elif i == 'Revenue':
                     main_graph_data.append(go.Scatter(
                         x=self.index,
-                        y=self.economy.get_consumption_cycle_data()[i],
+                        y=self.economy.get_firms_data('c', i),
                         name=i,
                         line={'color': 'rgb(25,25,112)'},
                         mode='lines',
                         legendgroup='Firms',
                     ))
-                elif i == 'Firm debt':
+                elif i == 'Debt':
                     main_graph_data.append(go.Scatter(
                         x=self.index,
-                        y=self.economy.get_financial_cycle_data()[i],
+                        y=self.economy.get_firms_data('f', i),
                         name=i,
                         line={'color': 'rgb(100,149,237)'},
                         mode='lines',
@@ -415,8 +395,7 @@ class App():
                 if i == 'CPI, % change (R)':
                     main_graph_data.append(go.Scatter(
                         x=self.index,
-                        y=self.economy.get_consumption_cycle_data()[
-                            'CPI'].pct_change()*100,
+                        y=self.economy.get_economy_data('c', 'CPI').pct_change()*100,
                         name=i,
                         line={'color': 'rgb(191,0,255)'},
                         mode='lines',
@@ -426,8 +405,7 @@ class App():
                 elif i == 'Interest rate (R)':
                     main_graph_data.append(go.Scatter(
                         x=self.index,
-                        y=(self.economy.get_consumption_cycle_data()[
-                            'Interest rate']-1)*100,
+                        y=(self.economy.get_economy_data('c', 'Interest rate')-1)*100,
                         name=i,
                         mode='lines',
                         yaxis='y2',
@@ -436,8 +414,7 @@ class App():
                 elif i == 'Unemployment rate (R)':
                     main_graph_data.append(go.Scatter(
                         x=self.index,
-                        y=self.economy.get_consumption_cycle_data()[
-                            'Unemployment rate']*100,
+                        y=self.economy.get_economy_data('c', 'Unemployment rate')*100,
                         name=i,
                         line={'color': 'rgb(255,0,0)'},
                         mode='lines',
@@ -446,10 +423,8 @@ class App():
                     ))
             if relationships_dropdown == 'Okun':
                 relationships_graph_data.append(go.Scatter(
-                    x=self.economy.get_consumption_cycle_data()[
-                        'Unemployment rate'].diff()*100,
-                    y=self.economy.get_production_cycle_data()[
-                        'Firm production'].pct_change()*100,
+                    x=self.economy.get_economy_data('c', 'Unemployment rate')*100,
+                    y=self.economy.get_firms_data('p', 'Production').pct_change()*100,
                     name='Okun',
                     mode='markers'
                 ))
@@ -463,10 +438,8 @@ class App():
                 )
             elif relationships_dropdown == 'Phillip':
                 relationships_graph_data.append(go.Scatter(
-                    x=self.economy.get_consumption_cycle_data()[
-                        'CPI'].pct_change()*100,
-                    y=self.economy.get_production_cycle_data()[
-                        'Unemployment rate']*100,
+                    x=self.economy.get_economy_data('c', 'CPI').pct_change()*100,
+                    y=self.economy.get_economy_data('c', 'Unemployment rate')*100,
                     name='Phillip',
                     mode='markers'
                 ))
@@ -480,10 +453,8 @@ class App():
                 )
             elif relationships_dropdown == 'test':
                 relationships_graph_data.append(go.Scatter(
-                    x=self.economy.get_production_cycle_data()[
-                        'Firm production'].pct_change()*100,
-                    y=self.economy.get_production_cycle_data()[
-                        'Firm inventory'],
+                    x=self.economy.get_economy_data('p', 'Firm production').pct_change()*100,
+                    y=self.economy.get_firms_data('p', 'Firm inventory'),
                     name='Phillip',
                     mode='markers'
                 ))

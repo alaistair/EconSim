@@ -37,10 +37,14 @@ class Economy():
             capital, expected income, income, life_stage, spending, savings).
             MultiIndex is hhID, time, cycle (production, consumption,
             financial).
+        households_data_sum (dataframe): Summary of households_data. MultiIndex
+            is time, cycle (p, c, f).
         firms_data (dataframe): Key data for each firm (expected prodcution,
             production, product price, revenue, inventory, labour cost,
             workers, capital investment', capital stock, marginal cost, debt,
             profit). MultiIndex is firmID, time, cycle (p, c, f).
+        firms_data_sum (dataframe): Summary of firms_data. MultiIndex is time,
+            cycle (p, c, f).
         government_data (dataframe): Key government data (revenue, expenditure,
             debt). MultiIndex is time, cycle (p, c, f).
         economy_data (dataframe): Key aggregate economic data ('household
@@ -96,6 +100,23 @@ class Economy():
                 'time', 'cycle', 'firmID']))
 
         tuples = [(self.time, 'p')]
+        self.households_data_sum = pd.DataFrame({
+            'Income': [0.],
+            'Savings': [0.],
+            'Spending': [0.],
+            'Expected income': [0.],
+            }, index=pd.MultiIndex.from_tuples(tuples, names=[
+                'time', 'cycle']))
+
+        self.firms_data_sum = pd.DataFrame({
+            'Inventory': [0.],
+            'Production': [0.],
+            'Revenue': [0.],
+            'Debt': [0.],
+            'Profit': [0.],
+            }, index=pd.MultiIndex.from_tuples(tuples, names=[
+                'time', 'cycle']))
+
         self.government_data = pd.DataFrame({
             'Revenue': [0.],
             'Expenditure': [0.],
@@ -104,15 +125,7 @@ class Economy():
                 'time', 'cycle']))
 
         self.economy_data = pd.DataFrame({
-            'Household income': [0.],
-            'Household savings': [0.],
-            'Household spending': [0.],
-            'Household expected income': [0.],
-            'Firm inventory': [0.],
-            'Firm production': [0.],
-            'Firm revenue': [0.],
-            'Firm debt': [0.],
-            'Firm profit': [0.],
+            'GDP': [0.],
             'CPI': [0.],
             'Interest rate': [0.],
             'Unemployment rate': [0.],
@@ -211,17 +224,23 @@ class Economy():
         df2 = self.firms_data.xs('p', level='cycle').groupby(
             level=0).sum().loc[self.time]
 
+        self.households_data_sum.loc[(self.time, 'p')] = {
+            'Income': float(df1['Income']),
+            'Savings': float(df1['Savings']),
+            'Spending': float(df1['Spending']),
+            'Expected income': float(np.mean(df1['Expected income'])),
+        }
+
+        self.firms_data_sum.loc[(self.time, 'p')] = {
+            'Inventory': float(df2['Inventory']),
+            'Production': float(df2['Production']),
+            'Revenue': float(df2['Revenue']),
+            'Debt': float(df2['Debt']),
+            'Profit': float(df2['Profit']),
+        }
+
         self.economy_data.loc[(self.time, 'p')] = {
-            'Household income': float(df1['Income']),
-            'Household savings': float(df1['Savings']),
-            'Household spending': float(df1['Spending']),
-            'Household expected income':
-                float(np.mean(df1['Expected income'])),
-            'Firm inventory': float(df2['Inventory']),
-            'Firm production': float(df2['Production']),
-            'Firm revenue': float(df2['Revenue']),
-            'Firm debt': float(df2['Debt']),
-            'Firm profit': float(df2['Profit']),
+            'GDP': float(self.GDP),
             'CPI': float(self.CPI),
             'Interest rate': float(self.interest_rate),
             'Unemployment rate':
@@ -229,9 +248,7 @@ class Economy():
             }
 
         self.accounting_post()
-        self.move_production_to_inventory()
-        self.consumption_market()
-        self.calculate_CPI()
+        self.consumption_cycle()
         self.update_economy_data('c')
         self.financial_market()
         self.update_economy_data('f')
@@ -398,20 +415,43 @@ class Economy():
     def calculate_CPI(self):
         total_revenue = 0
         total_production = 0
-        for firmID, firm in self.firms.items():
-            total_revenue += firm.revenue
-            total_production += firm.revenue/firm.product_price
+        for f in self.firms.values():
+            total_revenue += f.revenue
+            total_production += f.revenue/f.product_price
 
         self.CPI = total_revenue/total_production
+        return self.CPI
+
+    def get_inflation(self):
+        if self.time == 0:
+            return 1
+        if self.time == 1:
+            return self.economy_data['CPI'][-1]/self.economy_data['CPI'][-3]
+        return self.economy_data['CPI'][-1]/self.economy_data['CPI'][-4]
 
     def calculate_GDP(self):
-        GDP = 0
-        for f in self.firms.values():
-            GDP += f.revenue
-            GDP += f.inventory * f.product_price
+        """
+        Add total firm revenue to inventories (at market price) to get GDP.
 
-        self.GDP = GDP
-        return GDP
+        Given the latest CPI is not yet written into economy_data, we use
+        self.CPI as the numerator and self.economy_data['CPI'][-1] as the
+        denominator when calculating CPI.
+
+        Returns:
+            GDP (float)
+
+        """
+        total_revenue = 0
+        total_inventory = 0
+        for id, f in self.firms.items():
+            total_revenue += f.revenue
+            total_inventory += f.inventory
+
+        change_inventory = (total_inventory
+                            - self.firms_data_sum['Inventory'][-1])
+        self.GDP = total_revenue + (
+            change_inventory * self.CPI/self.economy_data['CPI'][-1])
+        return self.GDP
     # update economy data (c)
 
     def financial_market(self):
@@ -430,34 +470,46 @@ class Economy():
             h.update_financial(self.interest_rate)
         for f in self.firms.values():
             profit = f.update_financial(self.interest_rate + 0.02,
-                                        self.growth_rate(
-                                            self.economy_data['CPI']))
-            if profit > 0:  # company tax
-                self.government.revenue += (profit
-                                            * self.government.corporate_tax)
-                f.debt += profit * self.government.corporate_tax
+                                        self.get_inflation())
+            if profit > 0:
+                self.government.corporate_tax(f)
+
         self.government.update_financial(self.interest_rate)
 
     # update economy data (f)
 
-    def update_households_data(self, households_data, households, time, cycle):
+    def update_households_data(self, cycle):
         """Add latest data to household dataframe."""
-        new_data = [pd.DataFrame({
+        new_households_data = [self.households_data] + [pd.DataFrame({
             'Human capital': float(household.human_capital),
             'Expected income': np.mean(household.expected_income),
             'Income': float(household.income),
             'Life stage': str(household.life_stage),
             'Spending': float(household.spending),
             'Savings': float(household.savings), },
-            index=[(time, cycle, hhID)])
-                for hhID, household in households.items()]
-        new_households_data = [households_data] + new_data
+            index=[(self.time, cycle, hhID)])
+                for hhID, household in self.households.items()]
 
-        return new_households_data
+        self.households_data = pd.concat(new_households_data)
 
-    def update_firms_data(self, firms_data, firms, time, cycle):
+        df1 = self.households_data.xs(cycle, level='cycle').groupby(
+            level=0).sum().loc[self.time]
+
+        new_households_data_sum = pd.DataFrame({
+            'Income': float(df1['Income']),
+            'Savings': float(df1['Savings']),
+            'Spending': float(df1['Spending']),
+            'Expected income': float(np.mean(df1['Expected income'])),
+        }, index=[(self.time, cycle)])
+
+        self.households_data_sum = pd.concat(
+            [self.households_data_sum, new_households_data_sum], sort=False)
+
+        return 1
+
+    def update_firms_data(self, cycle):
         """Add latest data to firms dataframe."""
-        new_data = [pd.DataFrame({
+        new_firms_data = [self.firms_data] + [pd.DataFrame({
             'Expected production': float(firm.expected_production),
             'Production': float(firm.production),
             'Product price': float(firm.product_price),
@@ -474,8 +526,23 @@ class Economy():
             index=[(self.time, cycle, firmID)])
                 for firmID, firm in self.firms.items()]
 
-        new_firms_data = [firms_data] + new_data
-        return new_firms_data
+        self.firms_data = pd.concat(new_firms_data)
+
+        df2 = self.firms_data.xs(cycle, level='cycle').groupby(
+            level=0).sum().loc[self.time]
+
+        new_firms_data_sum = pd.DataFrame({
+            'Inventory': float(df2['Inventory']),
+            'Production': float(df2['Production']),
+            'Revenue': float(df2['Revenue']),
+            'Debt': float(df2['Debt']),
+            'Profit': float(df2['Profit']),
+        }, index=[(self.time, cycle)])
+
+        self.firms_data_sum = pd.concat(
+            [self.firms_data_sum, new_firms_data_sum], sort=False)
+
+        return 1
 
     def accounting_pre(self):
         """
@@ -499,14 +566,11 @@ class Economy():
         """ self.households_data = pd.concat(
             updateeconomydata.update_households_data(self.households_data,
             self.households, self.time, cycle))"""
-        self.households_data = pd.concat(
-            self.update_households_data(self.households_data, self.households,
-                                        self.time, cycle))
+        self.update_households_data(cycle)
 
         """ self.firms_data = pd.concat(updateeconomydata.update_firms_data(
             self.firms_data, self.firms, self.time, cycle))"""
-        self.firms_data = pd.concat(self.update_firms_data(self.firms_data,
-                                    self.firms, self.time, cycle))
+        self.update_firms_data(cycle)
 
         self.government_data = pd.concat([
             self.government_data,
@@ -517,24 +581,8 @@ class Economy():
                 }, index=[(self.time, cycle)])
             ])
 
-        df1 = self.households_data.xs(cycle, level='cycle').groupby(
-            level=0).sum().loc[self.time]
-        df2 = self.firms_data.xs(cycle, level='cycle').groupby(
-            level=0).sum().loc[self.time]
-        """ df3 = self.government_data.xs(cycle, level='cycle').groupby(
-            level=0).sum().loc[self.time]"""
-
         sum = pd.DataFrame({
-            'Household income': float(df1['Income']),
-            'Household savings': float(df1['Savings']),
-            'Household spending': float(df1['Spending']),
-            'Household expected income':
-                float(np.mean(df1['Expected income'])),
-            'Firm inventory': float(df2['Inventory']),
-            'Firm production': float(df2['Production']),
-            'Firm revenue': float(df2['Revenue']),
-            'Firm debt': float(df2['Debt']),
-            'Firm profit': float(df2['Profit']),
+            'GDP': float(self.GDP),
             'CPI': float(self.CPI),
             'Interest rate': float(self.interest_rate),
             'Unemployment rate':
@@ -559,7 +607,6 @@ class Economy():
         for f in self.firms.values():
             f.capital_investment = 0
             f.labour_cost = 0
-            f.revenue = 0
             f.profit = 0
         self.government.expenditure = 0
         self.government.revenue = 0
@@ -574,6 +621,19 @@ class Economy():
         """
         number_households = len(self.households.keys())
         return number_households
+
+    def household_add(self):
+        print("Household add")
+
+    def household_remove(self, hhID):
+        # del self.household(hhID)
+        pass
+
+    def firm_add(self):
+        print("Firm add")
+
+    def firm_remove(self, firmID):
+        print("Firm remove")
 
     def production_cycle(self):
         """
@@ -590,14 +650,13 @@ class Economy():
         Final step is households update their future income expectations.
         """
         for f in self.firms.values():
-            f.update_expected_production(
-                self.growth_rate(self.economy_data['CPI']))
+            f.update_expected_production(self.get_inflation())
         self.worker_seperations()
         self.worker_hiring()
 
         for f in self.firms.values():
             f.update_production()
-            f.get_marginal_cost(self.growth_rate(self.economy_data['CPI']))  # move financial?
+            f.get_marginal_cost(self.get_inflation())  # move financial?
 
         self.government.income_tax(self.households)
         self.government.welfare(
@@ -606,13 +665,14 @@ class Economy():
 
         for h in self.households.values():
             h.update_income_expectations(
-                self.growth_rate(self.economy_data['CPI']),
+                self.get_inflation(),
                 self.government.income_tax_rate)
 
     def consumption_cycle(self):
         self.move_production_to_inventory()
         self.consumption_market()
         self.calculate_CPI()
+        self.calculate_GDP()
 
     def financial_cycle(self):
         self.financial_market()
@@ -645,30 +705,49 @@ class Economy():
                 unemployed[hhID] = household
         return unemployed
 
-    def get_production_cycle_data(self):
-        """Return dataframe of data captured in production cycle."""
-        return self.economy_data.iloc[::3, ]
+    def get_households_data(self, series):
+        if series == 'Income':
+            return self.households_data_sum.iloc[::3, ][series]
+        if series == 'Savings':
+            return self.households_data_sum.iloc[2::3, ][series]
+        if series == 'Spending':
+            return self.households_data_sum.iloc[1::3, ][series]
+        else:
+            return self.households_data_sum.iloc[::3, ][series]
+        """if cycle == 'p':
+            return self.households_data_sum.iloc[::3, ][series]
+        if cycle == 'c':
+            return self.households_data_sum.iloc[1::3, ][series]
+        if cycle == 'f':
+            return self.households_data_sum.iloc[2::3, ][series]"""
+        return 0
 
-    def get_consumption_cycle_data(self):
-        """Return dataframe of data captured in consumption cycle."""
-        return self.economy_data.iloc[1::3, ]
+    def get_firms_data(self, cycle, series):
+        if cycle == 'p':
+            return self.firms_data_sum.iloc[::3, ][series]
+        if cycle == 'c':
+            return self.firms_data_sum.iloc[1::3, ][series]
+        if cycle == 'f':
+            return self.firms_data_sum.iloc[2::3, ][series]
+        return 0
 
-    def get_financial_cycle_data(self):
-        """Return dataframe of data captured in financial cycle."""
-        return self.economy_data.iloc[2::3, ]
+    def get_government_data(self, cycle, series):
+        if cycle == 'p':
+            return self.government_data_sum.iloc[::3, ][series]
+        if cycle == 'c':
+            return self.government_data_sum.iloc[1::3, ][series]
+        if cycle == 'f':
+            return self.government_data_sum.iloc[2::3, ][series]
+        return 0
 
-    def household_add(self):
-        print("Household add")
-
-    def household_remove(self, hhID):
-        # del self.household(hhID)
-        pass
-
-    def firm_add(self):
-        print("Firm add")
-
-    def firm_remove(self, firmID):
-        print("Firm remove")
+    def get_economy_data(self, cycle, series):
+        if cycle == 'p':
+            return self.economy_data.iloc[::3, ][series]
+        if cycle == 'c':
+            return self.economy_data.iloc[1::3, ][series]
+        if cycle == 'f':
+            return self.economy_data.iloc[2::3, ][series]
+        return 0
 
     def print_economy_data(self, time):
         if time == -1:
@@ -679,7 +758,7 @@ class Economy():
     def print_households_data(self, time):
         if time == -1:
             print(self.households_data.to_string())
-            # print(self.households_data.xs(1, level=2, drop_level=False))
+            print(self.households_data_sum.to_string())
         else:
             print(self.households_data.loc[(time,):(time,)])
 
@@ -690,6 +769,8 @@ class Economy():
         """
         if time == -1:
             print(self.firms_data.to_string())
+            print(self.firms_data_sum.to_string())
+
             # print(self.firms_data.xs(1, level=2, drop_level=False))
         else:
             print(self.firms_data.loc[(time,):(time,)])
@@ -712,11 +793,11 @@ class Economy():
 
     def growth_rate(self, series):
         if self.time == 0:
-            return 0
+            return 1
         try:
             return series[-1]/series[-4]
         except IndexError:
-            return 0
+            return 1
 
     def status(self):
         self.print_households_data(self.time)

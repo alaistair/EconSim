@@ -33,10 +33,15 @@ class Settings():
     def __init__(self):
         """Settings."""
         # App settings
+        self.series_color = {'Income': 'rgb(255,255,0)',
+                             'Inventory': 'rgb(25,25,112)',
+                             'Savings': 'rgb(128,0,0)',
+                             'Spending': 'rgb(0,102,0)',
+                             }
 
         # Initial economy settings. Households >= firms
-        self.init_households = 80
-        self.init_firms = 3
+        self.init_households = 10
+        self.init_firms = 2
         self.init_interest_rate = 1.02
         self.init_unemployment_rate = 0.2
         self.init_population_growth = 1.01

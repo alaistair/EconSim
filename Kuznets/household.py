@@ -65,13 +65,31 @@ class Household():
         return self.income
 
     def update_income_expectations(self, inflation, income_tax_rate):
+        """
+        Update expected income given current income.
+
+        If household is employed, append current income and increase human
+        capital endowment slightly to account for increase in on-the-job
+        knowledge.
+
+        If unemployed, also append current income (welfare) and decrease
+        human capital to reflect deterioration in skills.
+
+        Args:
+            inflation (float): Inflation rate (1.05 === 5%).
+            income_tax_rate (float): Flat tax.
+
+        Returns:
+            expected_income ([float]): List of past three incomes.
+
+        """
         if inflation < 1:
             inflation = 1  # sticky wage expectations
 
         self.expected_income.pop(0)
         if self.life_stage == 'E':
             self.expected_income.append(
-                self.income/(1 - income_tax_rate) * inflation)
+                self.income/(1 - income_tax_rate) * (1 + inflation/100))
             self.human_capital *= 1.001
         elif self.life_stage == 'U':
             self.expected_income.append(self.income)
@@ -80,7 +98,7 @@ class Household():
         return self.expected_income
 
     def update_consumption(self):
-        """Decide spending/saving in light of income.
+        """Decide spending/saving mix for this cycle.
 
         When this is called, current income (expected_income[-1]) should
         already have been added to savings. Hence if savings are equal to
@@ -121,11 +139,11 @@ class Household():
         """Household adjusts asset allocation.
 
         Args:
-            interest_rate (float): rate that the household receives on its
+            interest_rate (float): Rate that the household receives on its
                 savings.
 
         Returns:
-            savings (float)
+            savings (float):
 
         """
         self.savings *= interest_rate
