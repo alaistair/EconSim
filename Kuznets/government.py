@@ -22,14 +22,14 @@ class Government():
 
     def __init__(self, settings):
         """Init Government using Settings class."""
-        self.revenue = settings.init_govt_revenue
-        self.expenditure = settings.init_govt_expenditure
-        self.debt = settings.init_govt_debt
+        self.revenue = settings.govt_revenue
+        self.expenditure = settings.govt_expenditure
+        self.debt = settings.govt_debt
 
-        self.income_tax_rate = settings.init_income_tax_rate
-        self.corporate_tax_rate = settings.init_corporate_tax_rate
+        self.income_tax_rate = settings.income_tax_rate
+        self.corporate_tax_rate = settings.corporate_tax_rate
 
-        self.welfare_share = settings.init_welfare_share
+        self.welfare_share = settings.welfare_share
 
     def update_financial(self, interest_rate):
         """

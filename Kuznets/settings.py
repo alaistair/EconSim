@@ -40,24 +40,24 @@ class Settings():
                              }
 
         # Initial economy settings. Households >= firms
-        self.init_households = 10
-        self.init_firms = 2
-        self.init_interest_rate = 1.02
-        self.init_unemployment_rate = 0.2
-        self.init_population_growth = 1.01
+        self.households = 10
+        self.firms = 2
+        self.interest_rate = 1.02
+        self.unemployment_rate = 0.2
+        self.population_growth = 1.01
 
         # Initial household settings
-        self.init_household_savings = 10
-        self.init_MPC = 0.95
+        self.household_savings = 10
+        self.MPC = 0.95
 
         # Initial firm settings
-        self.init_productivity = 1.05  # output per labour input
-        self.init_capital_depreciation = 0.03  # capital stock depn per cycle
+        self.productivity = 1.05  # output per labour input
+        self.capital_depreciation = 0.03  # capital stock depn per cycle
 
         # Initial government settings
-        self.init_govt_revenue = 0
-        self.init_govt_expenditure = 0
-        self.init_govt_debt = 0
-        self.init_income_tax_rate = 0.10
-        self.init_corporate_tax_rate = 0.30
-        self.init_welfare_share = 0.6
+        self.govt_revenue = 0
+        self.govt_expenditure = 0
+        self.govt_debt = 0
+        self.income_tax_rate = 0.10
+        self.corporate_tax_rate = 0.30
+        self.welfare_share = 0.6

@@ -46,7 +46,7 @@ class Firm():
     def __init__(self, settings):
         """Init Firm using Settings class."""
         self.product_name = 'A'
-        self.productivity = settings.init_productivity
+        self.productivity = settings.productivity
         self.capital_investment = 0
         self.capital_stock = 10 * random.choice([10, 20, 30])
         self.capital_share = 0.3
@@ -54,9 +54,9 @@ class Firm():
         self.human_capital_share = 0.1
         self.labour_share = 1 - self.capital_share - self.human_capital_share
 
-        self.interest_rate = settings.init_interest_rate + 0.02
+        self.interest_rate = settings.interest_rate + 0.02
         self.debt = self.capital_stock
-        self.capital_depreciation = settings.init_capital_depreciation
+        self.capital_depreciation = settings.capital_depreciation
 
         self.expected_production = self.capital_stock * .25
         self.production = 0

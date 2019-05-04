@@ -67,11 +67,11 @@ class Economy():
         self.time = int(0)
 
         self.households = {i: Household(settings) for i in
-                           range(settings.init_households)}
-        self.firms = {i: Firm(settings) for i in range(settings.init_firms)}
+                           range(settings.households)}
+        self.firms = {i: Firm(settings) for i in range(settings.firms)}
         self.government = Government(settings)
 
-        tuples = [(self.time, 'p', i) for i in range(settings.init_households)]
+        tuples = [(self.time, 'p', i) for i in range(settings.households)]
         self.households_data = pd.DataFrame({
             'Human capital': [0.],
             'Expected income': [0.],
@@ -82,7 +82,7 @@ class Economy():
             }, index=pd.MultiIndex.from_tuples(tuples, names=[
                 'time', 'cycle', 'hhID']))
 
-        tuples = [(self.time, 'p', i) for i in range(settings.init_firms)]
+        tuples = [(self.time, 'p', i) for i in range(settings.firms)]
         self.firms_data = pd.DataFrame({
             'Expected production': [0.],
             'Production': [0.],
@@ -134,8 +134,8 @@ class Economy():
 
         self.GDP = 0
         self.CPI = 2
-        self.interest_rate = settings.init_interest_rate
-        self.unemployment_rate = settings.init_unemployment_rate
+        self.interest_rate = settings.interest_rate
+        self.unemployment_rate = settings.unemployment_rate
 
         self.products = defaultdict(list)
 

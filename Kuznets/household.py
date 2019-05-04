@@ -51,12 +51,12 @@ class Household():
                                 10*self.human_capital]
         self.income = 0
 
-        self.MPC = settings.init_MPC
+        self.MPC = settings.MPC
         self.spending = 0
         self.spending_basket = [{'Name': 'A',
                                  'Price': 1 + (random.random() - 0.5) * 0.1,
                                  'Proportion': 1}]
-        self.savings = settings.init_household_savings
+        self.savings = settings.household_savings
 
     def update_production(self, income):
         """Update income."""
@@ -133,7 +133,7 @@ class Household():
 
             self.spending = np.mean(self.expected_income) * self.MPC
 
-        return self.spending_basket
+        return (self.spending, self.spending_basket)
 
     def update_financial(self, interest_rate):
         """Household adjusts asset allocation.
