@@ -100,38 +100,26 @@ class Household():
     def update_consumption(self):
         """Decide spending/saving mix for this cycle.
 
-        When this is called, current income (expected_income[-1]) should
-        already have been added to savings. Hence if savings are equal to
-        current income, the household has no savings. Moreover if the latest
-        income is below expectations, current income likely is falling. In
-        these cases the household will not save (permanent income hypothesis
-        assumption).
-
-        However if savings are above current income then we adjust the MPC in
-        line with the stock of savings.
+        Consumption is dependent on income and savings, with the relationship
+        determined with a magic number such that if savings == income then
+        the MPC is 0.65, rising to an MPC of 1.3 if savings == 2x income.
 
         Returns:
+            spending (float): Total dollar amount of spending.
             spending_basket: This reflects that this function will eventually
                 incorporate decisions on the spending mix as well as the total
                 sum of spending.
 
         """
-        if self.savings <= self.expected_income[-1]:
-            if self.expected_income[-1] < np.mean(self.expected_income):
-                self.spending = self.expected_income[-1]
-            else:
-                self.spending = np.mean(self.expected_income)
-        else:
-            if self.savings < 1.3 * self.expected_income[-1]:
-                self.MPC = 0.8
-            elif self.savings < 1.7 * self.expected_income[-1]:
-                self.MPC = 0.95
-            elif self.savings < 2 * self.expected_income[-1]:
-                self.MPC = 1.04
-            else:
-                self.MPC = 1.3
+        magic_number = 1.5385
 
-            self.spending = np.mean(self.expected_income) * self.MPC
+        if self.savings < self.expected_income[-1]:
+            raise Exception("Household saving should be equal or above income "
+                            "before consumption cycle.")
+
+        self.MPC = self.savings/self.expected_income[-1]/magic_number
+
+        self.spending = np.mean(self.expected_income) * self.MPC
 
         return (self.spending, self.spending_basket)
 

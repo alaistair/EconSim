@@ -6,6 +6,7 @@ from pytest import approx
 from Kuznets.household import Household
 from Kuznets.settings import Settings
 
+
 settings = Settings()
 household = Household(settings)
 
@@ -38,52 +39,32 @@ def test_update_consumption():
     TODO: test basket updates (when multiple products are available.)
 
     """
-    # Spending == average expected income if savings <= last income and
-    # incomes rising.
-    household.savings = 0
-    household.expected_income = [5, 10, 15]
-    spending, spending_basket = household.update_consumption()
-    assert spending == 10
-
     household.savings = 10
     household.expected_income = [10, 10, 10]
     spending, spending_basket = household.update_consumption()
-    assert spending == 10
+    spending == approx(6.5)
 
-    # Spending == last income if savings <= last income and incomes falling.
-    household.savings = 0
-    household.expected_income = [15, 10, 5]
+    household.savings = 20
+    household.expected_income = [20, 20, 20]
     spending, spending_basket = household.update_consumption()
-    assert spending == 5
+    spending == approx(13)
 
-    household.savings = 11
+    # Savings should not be below income.
+    household.savings = 5
     household.expected_income = [10, 10, 10]
-    spending, spending_basket = household.update_consumption()
-    assert spending == 8
-
-    household.savings = 13
-    household.expected_income = [10, 10, 10]
-    spending, spending_basket = household.update_consumption()
-    assert spending == 9.5
+    with pytest.raises(Exception):
+        household.update_consumption()
 
     household.savings = 15
     household.expected_income = [10, 10, 10]
     spending, spending_basket = household.update_consumption()
-    assert spending == 9.5
+    spending == approx(9.75)
 
-    household.savings = 17
+    household.savings = 20
     household.expected_income = [10, 10, 10]
     spending, spending_basket = household.update_consumption()
-    assert spending == 10.4
+    spending == approx(13)
 
-@pytest.mark.parametrize(
-    "savings, expected",
-    [(11, 8)])
-def test_update_consumption2():
-    household.savings = savings
-    spending, spending_basket = household.update_consumption()
-
-    assert household.spending == expected
 
 def test_update_financial():
     household.savings = 100
